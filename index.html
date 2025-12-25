@@ -53,17 +53,34 @@
     .btn-book { background:#f3e5f5; color:#9c27b0; }
     .btn-disabled { background:#eee; color:#999; }
 
-    /* --- NEW DATE SCROLLER STYLE --- */
+    /* --- DATE SCROLLER STYLE (PC FIXED) --- */
     .date-scroller-wrapper { 
         display: flex; 
         overflow-x: auto; 
         padding: 10px 0 15px; 
         gap: 10px; 
-        /* Hide scrollbar */
-        -ms-overflow-style: none;  
-        scrollbar-width: none;  
+        /* เปิด Scrollbar ให้เห็นบน PC */
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255,255,255,0.5) rgba(255,255,255,0.1);
+        cursor: grab;
     }
-    .date-scroller-wrapper::-webkit-scrollbar { display: none; }
+    
+    /* ตกแต่ง Scrollbar สำหรับ Chrome/Edge */
+    .date-scroller-wrapper::-webkit-scrollbar {
+        height: 6px; /* ความสูงของ Scrollbar แนวนอน */
+        display: block;
+    }
+    .date-scroller-wrapper::-webkit-scrollbar-track {
+        background: rgba(255,255,255,0.1);
+        border-radius: 3px;
+    }
+    .date-scroller-wrapper::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.4); 
+        border-radius: 3px;
+    }
+    .date-scroller-wrapper:active {
+        cursor: grabbing;
+    }
     
     .date-box { 
         min-width: 65px; 
@@ -79,6 +96,7 @@
         cursor: pointer; 
         transition: 0.2s;
         flex-shrink: 0;
+        user-select: none; /* ป้องกันการคลุมดำเวลาคลิกรัวๆ */
     }
     .date-box.active { 
         background: white; 
@@ -203,7 +221,7 @@
 
     let currentApp = '', bookingData = {};
     let currentPT = 1.5;
-    let selectedDateStr = ""; // เก็บวันที่เลือก (yyyy-mm-dd)
+    let selectedDateStr = ""; 
 
     // --- STANDARD APP ---
     function openApp(type) {
@@ -228,7 +246,7 @@
        document.getElementById('view-home').classList.add('hidden');
        document.getElementById('view-imc-setup').classList.remove('hidden');
        
-       renderIMCDates(); // สร้างแถบวันที่
+       renderIMCDates(); 
        changePT(1.5);
     }
     
@@ -242,30 +260,33 @@
         const scroller = document.getElementById('imc-date-scroller');
         scroller.innerHTML = '';
         
+        // เพิ่ม Mouse Wheel Scrolling สำหรับ PC
+        scroller.addEventListener('wheel', (evt) => {
+            evt.preventDefault();
+            scroller.scrollLeft += evt.deltaY; // เปลี่ยนแกนหมุนแนวตั้ง เป็นเลื่อนแนวนอน
+        });
+        
         const thDays = ["อา.", "จ.", "อ.", "พ.", "พฤ.", "ศ.", "ส."];
         const thMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
         
         const today = new Date();
         
-        // Loop สร้าง 14 วัน
         for (let i = 0; i < 14; i++) {
             let d = new Date();
             d.setDate(today.getDate() + i);
             
-            let dateVal = d.toISOString().split('T')[0]; // yyyy-mm-dd
+            let dateVal = d.toISOString().split('T')[0];
             let dayName = thDays[d.getDay()];
             let dateNum = d.getDate();
             
-            // สร้างกล่อง
             let box = document.createElement('div');
-            box.className = `date-box ${i === 0 ? 'active' : ''}`; // เลือกวันแรก (วันนี้) อัตโนมัติ
+            box.className = `date-box ${i === 0 ? 'active' : ''}`; 
             box.innerHTML = `<div class="date-day-text">${dayName}</div>
                              <div class="date-num-text">${dateNum}</div>`;
             box.onclick = () => selectIMCDate(dateVal, box, d);
             
             scroller.appendChild(box);
             
-            // Set ค่าเริ่มต้น
             if (i === 0) {
                 selectedDateStr = dateVal;
                 updateDateDisplay(d);
@@ -275,12 +296,11 @@
     
     function selectIMCDate(dateVal, el, dObj) {
         selectedDateStr = dateVal;
-        // เปลี่ยน class active
         document.querySelectorAll('.date-box').forEach(b => b.classList.remove('active'));
         el.classList.add('active');
         
         updateDateDisplay(dObj);
-        searchIMCSlots(); // ค้นหาทันทีเมื่อกด
+        searchIMCSlots(); 
     }
     
     function updateDateDisplay(d) {
@@ -303,10 +323,9 @@
        
        if(!selectedDateStr) return;
        
-       // แปลงวันที่สำหรับส่งไป Backend
+       // แปลงวันที่ส่งไป Backend (ตัดปีออก)
        var dObj = new Date(selectedDateStr);
        var thMonthFull = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
-       // ส่งไปรูปแบบ "7 มกราคม" (ตัดปีออก)
        var dateThai = `${dObj.getDate()} ${thMonthFull[dObj.getMonth()]}`;
 
        var resDiv = document.getElementById('imc-results');
@@ -368,7 +387,6 @@
 
     function prepareIMCBooking(slot) {
         currentApp = 'imc';
-        // สร้างข้อความสรุป
         let detail = (currentPT > 0) ? `PT (${currentPT} ชม.) เริ่ม ${slot.time}` : `เริ่มรักษา ${slot.time}`;
         
         if(slot.plan.tcmTime) detail += `\n- จีน: ${slot.plan.tcmTime}`;
