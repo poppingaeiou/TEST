@@ -19,7 +19,7 @@
     /* Layout */
     .home-container { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 40px; }
     
-    /* Hero Banner */
+    /* Banner */
     .hero-banner { width: 100%; height: 250px; position: relative; border-radius: 0 0 30px 30px; overflow: hidden; margin-bottom: -40px; background:#2e7d32; }
     .hero-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; background: linear-gradient(to bottom, rgba(46,125,50,0.3), rgba(27,94,32,0.9)); padding: 20px; }
     .main-logo { width: 80px; height: 80px; background: white; border-radius: 50%; padding: 2px; margin-bottom: 10px; object-fit: contain; }
@@ -52,6 +52,44 @@
     .slot-btn { padding:6px 15px; border-radius:20px; font-size:0.85rem; font-weight:600; }
     .btn-book { background:#f3e5f5; color:#9c27b0; }
     .btn-disabled { background:#eee; color:#999; }
+
+    /* --- NEW DATE SCROLLER STYLE --- */
+    .date-scroller-wrapper { 
+        display: flex; 
+        overflow-x: auto; 
+        padding: 10px 0 15px; 
+        gap: 10px; 
+        /* Hide scrollbar */
+        -ms-overflow-style: none;  
+        scrollbar-width: none;  
+    }
+    .date-scroller-wrapper::-webkit-scrollbar { display: none; }
+    
+    .date-box { 
+        min-width: 65px; 
+        height: 75px; 
+        background: rgba(255,255,255,0.2); 
+        border: 1px solid rgba(255,255,255,0.3);
+        border-radius: 14px; 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        justify-content: center; 
+        color: white; 
+        cursor: pointer; 
+        transition: 0.2s;
+        flex-shrink: 0;
+    }
+    .date-box.active { 
+        background: white; 
+        color: #9c27b0; 
+        transform: scale(1.05); 
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
+        font-weight: bold;
+        border: none;
+    }
+    .date-day-text { font-size: 0.8rem; opacity: 0.9; }
+    .date-num-text { font-size: 1.6rem; font-weight: 700; line-height: 1; margin-top: 2px; }
 
     /* Modal */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; display: none; }
@@ -107,8 +145,8 @@
   </div>
 
   <div id="view-imc-setup" class="hidden home-container" style="background:#f9f9f9; align-items:stretch;">
-      <div style="background:#9c27b0; padding:20px 20px 30px; color:white; border-radius:0 0 25px 25px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-         <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div style="background:#9c27b0; padding:20px 20px 10px; color:white; border-radius:0 0 25px 25px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
              <div onclick="closeIMC()" style="cursor:pointer; display:inline-flex; align-items:center; gap:5px; background:rgba(255,255,255,0.2); padding:5px 12px; border-radius:20px; font-size:0.9rem;">
                  <i class="fas fa-arrow-left"></i> หน้าหลัก
              </div>
@@ -116,12 +154,12 @@
              <div style="width:70px;"></div>
          </div>
          
-         <div style="margin-top:20px; display:flex; justify-content:center;">
-             <input type="date" id="imc-date" class="form-control" style="background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.4); color:white; text-align:center; width:auto; font-weight:bold; margin:0;" onchange="searchIMCSlots()">
-         </div>
+         <div id="imc-date-scroller" class="date-scroller-wrapper">
+             </div>
+         <div id="selected-date-display" style="text-align:center; font-size:0.9rem; opacity:0.9; margin-bottom:10px;"></div>
       </div>
       
-      <div style="margin:-25px 20px 10px; background:white; border-radius:15px; padding:10px; box-shadow:0 4px 15px rgba(0,0,0,0.05); display:flex; flex-direction:column; gap:8px;">
+      <div style="margin:-15px 20px 10px; background:white; border-radius:15px; padding:10px; box-shadow:0 4px 15px rgba(0,0,0,0.05); display:flex; flex-direction:column; gap:8px;">
           <div style="display:flex; gap:5px; background:#f5f5f5; border-radius:10px; padding:4px;">
               <div id="pt-1.5" class="toggle-btn active" onclick="changePT(1.5)">PT 1.5 ชม.</div>
               <div id="pt-1" class="toggle-btn" onclick="changePT(1)">PT 1.0 ชม.</div>
@@ -153,7 +191,7 @@
 
   <script>
     // **********************************************************
-    // ⚠️ ใส่ URL Web App ที่ Deploy ล่าสุด
+    // ⚠️ ใส่ URL Web App ที่ Deploy ล่าสุด (Backend เดิมใช้ได้เลย ไม่ต้องแก้)
     const API_ENDPOINT = "https://script.google.com/macros/s/AKfycbxMVqlYGeuj75wQm41kZCD4wf2weZajj27b0omuC6HlHzWja4sJYz6HF6m5b5nlmSUMtw/exec";
     const LINE_OA_ID = "@649dqeft";
     // **********************************************************
@@ -165,6 +203,7 @@
 
     let currentApp = '', bookingData = {};
     let currentPT = 1.5;
+    let selectedDateStr = ""; // เก็บวันที่เลือก (yyyy-mm-dd)
 
     // --- STANDARD APP ---
     function openApp(type) {
@@ -175,7 +214,6 @@
         document.documentElement.style.setProperty('--primary', conf.color);
         document.getElementById('app-title').innerText = conf.title;
         document.getElementById('contentArea').innerHTML = 'กำลังโหลด...';
-        // Mock fetch for standard (since we focus on IMC)
         fetch(`${API_ENDPOINT}?action=${conf.func}`)
             .then(res=>res.json()).then(d=>document.getElementById('contentArea').innerHTML='โหลดข้อมูลสำเร็จ (Standard)')
             .catch(e=>document.getElementById('contentArea').innerHTML='กำลังเชื่อมต่อ...');
@@ -190,14 +228,68 @@
        document.getElementById('view-home').classList.add('hidden');
        document.getElementById('view-imc-setup').classList.remove('hidden');
        
-       let today = new Date().toISOString().split('T')[0];
-       document.getElementById('imc-date').value = today;
+       renderIMCDates(); // สร้างแถบวันที่
        changePT(1.5);
     }
+    
     function closeIMC() {
        document.getElementById('view-imc-setup').classList.add('hidden');
        document.getElementById('view-home').classList.remove('hidden');
     }
+
+    // สร้างวันที่ล่วงหน้า 14 วัน
+    function renderIMCDates() {
+        const scroller = document.getElementById('imc-date-scroller');
+        scroller.innerHTML = '';
+        
+        const thDays = ["อา.", "จ.", "อ.", "พ.", "พฤ.", "ศ.", "ส."];
+        const thMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+        
+        const today = new Date();
+        
+        // Loop สร้าง 14 วัน
+        for (let i = 0; i < 14; i++) {
+            let d = new Date();
+            d.setDate(today.getDate() + i);
+            
+            let dateVal = d.toISOString().split('T')[0]; // yyyy-mm-dd
+            let dayName = thDays[d.getDay()];
+            let dateNum = d.getDate();
+            
+            // สร้างกล่อง
+            let box = document.createElement('div');
+            box.className = `date-box ${i === 0 ? 'active' : ''}`; // เลือกวันแรก (วันนี้) อัตโนมัติ
+            box.innerHTML = `<div class="date-day-text">${dayName}</div>
+                             <div class="date-num-text">${dateNum}</div>`;
+            box.onclick = () => selectIMCDate(dateVal, box, d);
+            
+            scroller.appendChild(box);
+            
+            // Set ค่าเริ่มต้น
+            if (i === 0) {
+                selectedDateStr = dateVal;
+                updateDateDisplay(d);
+            }
+        }
+    }
+    
+    function selectIMCDate(dateVal, el, dObj) {
+        selectedDateStr = dateVal;
+        // เปลี่ยน class active
+        document.querySelectorAll('.date-box').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+        
+        updateDateDisplay(dObj);
+        searchIMCSlots(); // ค้นหาทันทีเมื่อกด
+    }
+    
+    function updateDateDisplay(d) {
+        const thMonthsFull = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
+        const thDaysFull = ["วันอาทิตย์", "วันจันทร์", "วันอังคาร", "วันพุธ", "วันพฤหัสบดี", "วันศุกร์", "วันเสาร์"];
+        let txt = `${thDaysFull[d.getDay()]}ที่ ${d.getDate()} ${thMonthsFull[d.getMonth()]} ${d.getFullYear() + 543}`;
+        document.getElementById('selected-date-display').innerText = txt;
+    }
+
     function changePT(val) {
         currentPT = val;
         document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
@@ -208,12 +300,14 @@
     function searchIMCSlots() {
        var needTTM = document.getElementById('chk_ttm').checked;
        var needTCM = document.getElementById('chk_tcm').checked;
-       var dateVal = document.getElementById('imc-date').value; 
        
-       // แปลงวันที่ (ตัดปีออก)
-       var dObj = new Date(dateVal);
-       var thMonth = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
-       var dateThai = `${dObj.getDate()} ${thMonth[dObj.getMonth()]}`;
+       if(!selectedDateStr) return;
+       
+       // แปลงวันที่สำหรับส่งไป Backend
+       var dObj = new Date(selectedDateStr);
+       var thMonthFull = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
+       // ส่งไปรูปแบบ "7 มกราคม" (ตัดปีออก)
+       var dateThai = `${dObj.getDate()} ${thMonthFull[dObj.getMonth()]}`;
 
        var resDiv = document.getElementById('imc-results');
        resDiv.innerHTML = '<div style="text-align:center; padding:30px; color:#9c27b0;"><i class="fas fa-circle-notch fa-spin"></i> กำลังโหลดคิว...</div>';
@@ -280,7 +374,7 @@
         if(slot.plan.tcmTime) detail += `\n- จีน: ${slot.plan.tcmTime}`;
         if(slot.plan.ttmTime) detail += `\n- ไทย: ${slot.plan.ttmTime}`;
         
-        bookingData = { detail: detail, date: document.getElementById('imc-date').value, time: slot.time };
+        bookingData = { detail: detail, date: document.getElementById('selected-date-display').innerText, time: slot.time };
         document.getElementById('modal-content').innerText = detail;
         document.getElementById('bookingModal').classList.add('show');
     }
