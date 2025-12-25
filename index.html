@@ -4,20 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>จองคิวออนไลน์ รพ.สะเดา</title>
-  
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   <style>
-    /* --- CSS Variables & Reset --- */
+    /* --- CSS Variables & Reset (From Original Code) --- */
     :root { 
         --primary: #2e7d32; 
         --primary-dark: #1b5e20; 
         --bg-color: #f8fafc; 
         --radius: 20px; 
         --shadow-sm: 0 4px 6px -1px rgba(0,0,0,0.05); 
-        --imc-color: #9c27b0;
+        --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.08); 
+        --wellness-primary: #D4AF37; 
+        --wellness-dark: #AA8C2C;
+        --wellness-text: #423818;
+        --imc-color: #9c27b0; /* เพิ่มสี IMC */
     }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body { font-family: 'Prompt', sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; min-height: 100vh; color: #333; position: relative; overflow-x: hidden; }
@@ -26,100 +28,158 @@
     .fade-in { animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
     /* --- Language Button --- */
-    .lang-btn {
-        position: fixed;
-        top: 15px;
-        right: 15px;
-        z-index: 9999;
-        background: rgba(255, 255, 255, 0.9);
-        border: 2px solid var(--primary);
-        color: var(--primary);
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-weight: bold;
-        font-family: 'Prompt', sans-serif;
-        cursor: pointer;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
+    .lang-btn { position: fixed; top: 15px; right: 15px; z-index: 9999; background: rgba(255, 255, 255, 0.9); border: 2px solid var(--primary); color: var(--primary); padding: 5px 12px; border-radius: 20px; font-weight: bold; font-family: 'Prompt', sans-serif; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: all 0.2s; display: flex; align-items: center; gap: 5px; }
     .lang-btn:hover { background: var(--primary); color: white; }
-    .lang-btn img { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; }
 
     /* --- Layout & Components --- */
     .home-container { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 40px; }
-    .hero-banner { width: 100%; height: 280px; background-image: url('https://img2.pic.in.th/pic/2e56ebb3c838125fd55c9db5dcd51baf.png'); background-size: cover; background-position: center; position: relative; border-radius: 0 0 30px 30px; overflow: hidden; margin-bottom: -40px; z-index: 1; }
-    .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(46,125,50,0.3), rgba(27,94,32,0.85)); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; color: white; backdrop-filter: blur(1px); }
-    .main-logo { width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px; background: white; border-radius: 50%; padding: 2px; }
-    .home-title h1 { font-size: 1.5rem; font-weight: 700; margin: 5px 0 10px; }
-    .status-pill { background: rgba(255,255,255,0.2); padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; gap: 6px; }
+    .hero-banner { width: 100%; height: 280px; background-image: url('https://img2.pic.in.th/pic/2e56ebb3c838125fd55c9db5dcd51baf.png'); background-size: cover; background-position: center; position: relative; border-radius: 0 0 30px 30px; overflow: hidden; box-shadow: var(--shadow-md); margin-bottom: -40px; z-index: 1; }
+    .hero-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to bottom, rgba(46,125,50,0.3), rgba(27,94,32,0.85)); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; color: white; backdrop-filter: blur(1px); }
+    .main-logo { width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3)); background: white; border-radius: 50%; padding: 2px; }
+    .home-title h1 { font-size: 1.5rem; font-weight: 700; margin: 5px 0 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    .status-pill { background: rgba(255,255,255,0.2); padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; gap: 6px; }
     
     .menu-container { width: 100%; padding: 0 20px; z-index: 2; }
-    .dept-card { background: white; border-radius: var(--radius); padding: 24px; margin-bottom: 16px; display: flex; align-items: center; cursor: pointer; box-shadow: var(--shadow-sm); border-left: 6px solid #ccc; position: relative; overflow: hidden; transition: all 0.3s; }
-    .dept-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+    .dept-card { background: white; border-radius: var(--radius); padding: 24px; margin-bottom: 16px; display: flex; align-items: center; cursor: pointer; box-shadow: var(--shadow-md); border: 1px solid rgba(255,255,255,0.8); position: relative; overflow: hidden; transition: all 0.3s; }
+    .dept-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+    .dept-card::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; }
     
-    .card-ttm { border-left-color: #2e7d32; }
-    .card-tcm { border-left-color: #e53935; }
-    .card-postpartum { border-left-color: #ec4899; }
-    .card-steam { border-left-color: #0288d1; }
+    .card-ttm::after { background: #2e7d32; }
+    .card-tcm::after { background: #e53935; }
+    .card-postpartum::after { background: #ec4899; }
+    .card-steam::after { background: #0288d1; }
+    /* New IMC Card Style */
+    .card-imc::after { background: var(--imc-color); }
+    .card-imc .dept-icon { background: #f3e5f5; padding: 10px; box-sizing: border-box; } /* Special BG for IMC Icon */
+    
     .card-wellness { border: 1px solid #F8E79B; background: linear-gradient(135deg, #fff 50%, #fffcf2 100%); }
-    .card-imc { border-left-color: var(--imc-color); background: linear-gradient(to right, #fff, #faf5ff); }
+    .card-wellness::after { background: linear-gradient(to bottom, #D4AF37, #AA8C2C); }
+    .card-wellness h3 { color: #AA8C2C !important; }
 
     .dept-icon { width: 60px; height: 60px; border-radius: 50%; margin-right: 20px; object-fit: cover; border: 4px solid #f1f5f9; }
-    .imc-icon-box { width: 60px; height: 60px; background: #f3e5f5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 20px; color: var(--imc-color); font-size: 1.8rem; border: 4px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-    
+    .dept-info h3 { margin: 0 0 6px 0; font-size: 1.2rem; font-weight: 700; color: #1e293b; }
+    .dept-info p { margin: 0; font-size: 0.85rem; color: #64748b; line-height: 1.4; }
     .arrow-btn { margin-left: auto; width: 36px; height: 36px; border-radius: 50%; background: #f8fafc; display: flex; align-items: center; justify-content: center; color: #94a3b8; }
-    
-    /* --- Dashboard --- */
-    .top-section { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 15px 15px 25px 15px; position: sticky; top: 0; z-index: 100; border-radius: 0 0 30px 30px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.3); }
-    .back-btn { position: absolute; top: 15px; left: 15px; background: rgba(255,255,255,0.2); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .dept-card:hover .arrow-btn { color: white; }
+    .card-ttm:hover .arrow-btn { background: #2e7d32; }
+    .card-tcm:hover .arrow-btn { background: #e53935; }
+    .card-imc:hover .arrow-btn { background: var(--imc-color); }
+
+    .info-card { margin-top: 20px; background: white; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); border: 1px solid #e2e8f0; }
+    .info-img { width: 100%; height: 160px; object-fit: cover; }
+    .info-content { padding: 15px 20px; }
+    .info-content h4 { margin: 0 0 5px; color: #1e293b; font-size: 1rem; }
+    .info-content p { margin: 0; color: #64748b; font-size: 0.85rem; }
+
+    /* --- Dashboard & Slots --- */
+    .top-section { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 15px 15px 25px 15px; position: sticky; top: 0; z-index: 100; border-radius: 0 0 30px 30px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.3); transition: background 0.5s ease; }
+    .back-btn { position: absolute; top: 15px; left: 15px; background: rgba(255,255,255,0.2); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(4px); }
+    .header-content { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px; margin-top: 5px; }
+    .app-logo { width: 50px; height: 50px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.9); background: white; object-fit:contain; }
+    .header-titles h1 { margin: 0; font-size: 1.3rem; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .live-clock { text-align: center; background: rgba(0,0,0,0.15); border-radius: 20px; padding: 4px 14px; font-size: 0.8rem; margin: 10px auto 15px; width: fit-content; display: flex; gap: 6px; align-items: center; color: rgba(255,255,255,0.95); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.2); }
     
     .date-scroller { display: flex; overflow-x: auto; padding-bottom: 5px; gap: 10px; scrollbar-width: none; margin: 0 5px; }
-    .date-chip { background: rgba(255,255,255,0.15); color: white; border-radius: 16px; padding: 10px 0; min-width: 65px; text-align: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; }
-    .date-chip.active { background: white; color: #333; transform: scale(1.1); font-weight: bold; border: none; }
+    .date-chip { --day-color: #555; background: rgba(255,255,255,0.15); backdrop-filter: blur(4px); color: white; border-radius: 16px; padding: 10px 0; min-width: 65px; text-align: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; transition: all 0.3s; position: relative; overflow: hidden; }
+    .date-chip small { font-size: 0.75rem; display: block; margin-bottom: 4px; opacity: 0.9; }
+    .date-chip span { font-size: 1.2rem; display: block; line-height: 1; font-weight: 700; }
+    .date-chip.active { background: white; color: var(--day-color); transform: scale(1.1); font-weight: bold; border: none; box-shadow: 0 8px 20px rgba(0,0,0,0.25); }
+    .date-chip.active::after { content:''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: var(--day-color); }
 
-    /* --- IMC Dashboard UI --- */
-    .toggle-group { display: flex; gap: 5px; background: #f1f5f9; border-radius: 12px; padding: 5px; margin-bottom: 10px; }
-    .toggle-btn { flex: 1; text-align: center; padding: 10px 4px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; color: #64748b; display: flex; flex-direction: column; justify-content: center; align-items: center; line-height: 1.3; min-height: 55px; }
+    .container { max-width: 600px; margin: 0 auto; padding: 0 15px 80px; }
+    .selected-date-header { font-size: 1.1rem; font-weight: 700; color: #334155; padding: 25px 5px 15px; display: flex; align-items: center; }
+    .header-bar { width: 6px; height: 24px; border-radius: 4px; margin-right: 12px; background-color: var(--primary); }
+    .grid-container { display: flex; flex-direction: column; gap: 14px; }
+    
+    .slot-card { display: flex; justify-content: space-between; align-items: center; background: white; border-radius: 18px; padding: 18px 20px; box-shadow: var(--shadow-sm); border: 1px solid #f1f5f9; position: relative; overflow: hidden; opacity: 0; animation: slideUp 0.3s ease-out forwards; min-height: 75px; transition: transform 0.2s; }
+    .slot-card:active { transform: scale(0.98); }
+    .slot-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; }
+    .is-available::before { background: #4caf50; }
+    .is-full::before { background: #ef4444; }
+
+    .time-wrap { display: flex; align-items: center; gap: 16px; }
+    .icon-status { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+    .time-text { font-weight: 700; font-size: 1.1rem; color: #334155; }
+    .is-available .icon-status { background: #e8f5e9; color: #2e7d32; }
+    .is-full .icon-status { background: #fee2e2; color: #c62828; }
+    .status-badge { padding: 6px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; min-width: 70px; text-align: center; }
+    .bg-av { background: #e8f5e9; color: #1b5e20; border: 1px solid #c8e6c9; }
+    .bg-full { background: #fee2e2; color: #b71c1c; border: 1px solid #ffcdd2; }
+
+    /* --- IMC Dashboard UI (New to match original style) --- */
+    .toggle-group { display: flex; gap: 5px; background: rgba(255,255,255,0.2); border-radius: 12px; padding: 5px; margin: 10px 0; }
+    .toggle-btn { flex: 1; text-align: center; padding: 10px 4px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; color: rgba(255,255,255,0.8); display: flex; flex-direction: column; justify-content: center; align-items: center; line-height: 1.3; min-height: 55px; border: 1px solid transparent; }
+    .toggle-btn span { font-weight: 600; font-size: 0.85rem; display:block; }
+    .toggle-btn small { font-size: 0.75rem; font-weight: normal; opacity:0.8; }
     .toggle-btn.active { background: white; color: var(--imc-color); font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
     
-    .imc-slot-card { background: white; border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; border-left: 6px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.2s; position: relative; overflow: hidden; }
+    .imc-slot-card { background: white; border-radius: 18px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; border-left: 6px solid #ccc; box-shadow: var(--shadow-sm); position: relative; overflow: hidden; transition: 0.2s; }
+    .imc-slot-card:active { transform: scale(0.98); }
     .imc-slot-card.available { border-left-color: #4caf50; }
     .imc-slot-card.full { border-left-color: #ff9800; background: #fffbf0; }
-    .slot-btn { padding: 8px 18px; border-radius: 25px; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 5px; }
-    .btn-book { background: #f3e5f5; color: var(--imc-color); }
-    .btn-full { background: #fff3e0; color: #ff9800; cursor: not-allowed; }
-
-    /* --- General UI --- */
-    .slot-card { display: flex; justify-content: space-between; align-items: center; background: white; border-radius: 18px; padding: 18px 20px; box-shadow: var(--shadow-sm); border: 1px solid #f1f5f9; position: relative; overflow: hidden; margin-bottom:14px; }
-    .is-available::before { content:''; position:absolute; left:0; top:0; bottom:0; width:6px; background: #4caf50; }
-    .is-full::before { content:''; position:absolute; left:0; top:0; bottom:0; width:6px; background: #ef4444; }
     
-    /* --- Modal --- */
+    .imc-time { font-size: 1.4rem; font-weight: 700; color: #333; line-height: 1; }
+    .imc-flow { font-size: 0.75rem; color: var(--imc-color); margin-top: 4px; font-weight: 500; background: #f3e5f5; padding: 2px 8px; border-radius: 4px; display: inline-block; }
+    .imc-btn { padding: 8px 18px; border-radius: 25px; font-size: 0.9rem; font-weight: 600; }
+    .imc-btn-book { background: #f3e5f5; color: var(--imc-color); }
+    .imc-btn-full { background: #fff3e0; color: #ff9800; }
+
+    /* --- Modal & Inputs --- */
     .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.3s; backdrop-filter: blur(5px); }
     .modal-overlay.show { opacity: 1; visibility: visible; }
     .modal-card { background: white; width: 90%; max-width: 380px; border-radius: 28px; padding: 28px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); transform: translateY(20px); transition: all 0.3s; max-height: 90vh; overflow-y: auto; }
     .modal-overlay.show .modal-card { transform: translateY(0); }
-    .form-control { width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 14px; font-family: 'Prompt', sans-serif; font-size: 1rem; outline: none; background: #f8fafc; margin-bottom:15px; }
-    .btn { width: 100%; padding: 14px; border: none; border-radius: 14px; font-size: 1rem; cursor: pointer; font-weight: 600; font-family: 'Prompt'; }
-    .btn-confirm { background: var(--primary); color: white; }
+    .modal-header { font-size: 1.3rem; font-weight: 700; margin-bottom: 24px; color: var(--primary); border-bottom: 2px solid #f1f5f9; padding-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .form-group { margin-bottom: 20px; position: relative; }
+    .form-label { display: block; margin-bottom: 8px; font-size: 0.95rem; color: #334155; font-weight: 600; }
+    .form-control { width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 14px; font-family: 'Prompt', sans-serif; font-size: 1rem; outline: none; background: #f8fafc; }
+    .form-control:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.1); }
+    textarea.form-control { resize: none; height: 90px; }
+
+    .custom-select-wrapper { position: relative; user-select: none; }
+    .custom-select { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 14px; background: #f8fafc; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
+    .select-items { position: absolute; top: 115%; left: 0; right: 0; background: white; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 20px 40px rgba(0,0,0,0.15); max-height: 260px; overflow-y: auto; z-index: 20; display: none; }
+    .custom-select.open + .select-items { display: block; animation: fadeIn 0.2s; }
+    .select-item { padding: 12px; display: flex; align-items: center; gap: 12px; cursor: pointer; border-bottom: 1px solid #f1f5f9; }
     
+    .btn-group { display: flex; gap: 14px; margin-top: 30px; }
+    .btn { flex: 1; padding: 14px; border: none; border-radius: 14px; font-size: 1rem; cursor: pointer; font-family: 'Prompt', sans-serif; transition: 0.2s; font-weight: 600; }
+    .btn-cancel { background: #f1f5f9; color: #64748b; }
+    .btn-confirm { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3); }
+
+    .summary-box { background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; border-left: 6px solid var(--primary); margin-bottom: 24px; }
+    .summary-row { display: flex; margin-bottom: 8px; font-size: 1rem; }
+    .summary-label { flex: 0 0 110px; color: #64748b; font-size: 0.9rem; }
+    .summary-val { flex: 1; color: #1e293b; font-weight: 600; }
+
+    /* Contact Section */
+    .contact-section { background: white; border-radius: var(--radius); padding: 30px; margin-top: 30px; text-align: center; box-shadow: var(--shadow-sm); border: 1px solid #f1f5f9; }
+    .social-btn { display: inline-flex; width: 40px; height: 40px; border-radius: 50%; background: #ddd; color: white; align-items: center; justify-content: center; margin: 0 5px; text-decoration: none; font-size: 1.1rem; transition: transform 0.2s; }
+    .btn-fb { background: #1877F2; } .btn-line { background: #06C755; } .btn-yt { background: #FF0000; } .btn-phone { background: #333; }
+    
+    /* Autocomplete */
+    .autocomplete-list { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #cbd5e1; border-radius: 0 0 14px 14px; max-height: 160px; overflow-y: auto; z-index: 10; box-shadow: 0 10px 20px rgba(0,0,0,0.1); display: none; }
+    .autocomplete-item { padding: 10px 14px; cursor: pointer; font-size: 0.95rem; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; gap: 8px; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   </style>
 </head>
 <body>
 
-  <button class="lang-btn" onclick="toggleLanguage()"><i class="fas fa-globe"></i> <span id="lang-text">TH</span></button>
+  <button class="lang-btn" onclick="toggleLanguage()">
+    <i class="fas fa-globe"></i> <span id="lang-text">TH</span>
+  </button>
 
   <div id="view-home" class="home-container fade-in">
     <div class="hero-banner">
         <div class="hero-overlay">
             <img src="https://img2.pic.in.th/pic/6f7b352408393a1295f3000e7d9e6754.md.png" class="main-logo">
             <div class="home-title">
-                <h2 data-i18n="dept_ttm_alt">กลุ่มงานการแพทย์แผนไทยฯ</h2>
+                <h2 data-i18n="dept_ttm_alt">กลุ่มงานการแพทย์แผนไทยและการแพทย์ทางเลือก</h2>
                 <h1 data-i18n="hospital_name">โรงพยาบาลสะเดา</h1>
+                <div class="status-pill"><i class="fas fa-circle" style="color:#4caf50; font-size:0.6rem;"></i> <span data-i18n="online_24">ระบบออนไลน์ 24 ชม.</span></div>
             </div>
         </div>
     </div>
@@ -136,23 +196,25 @@
           <div class="arrow-btn"><i class="fas fa-chevron-right"></i></div>
         </div>
         <div class="dept-card card-imc" onclick="openIMCSetup()">
-           <div class="imc-icon-box"><i class="fas fa-wheelchair"></i></div>
-           <div class="dept-info"><h3>กลุ่มผู้ป่วย IMC</h3><p>กายภาพ + แผนไทย/จีน</p></div>
+           <div class="dept-icon" style="background:#f3e5f5; display:flex; align-items:center; justify-content:center; color:#9c27b0; font-size:1.5rem;">
+              <i class="fas fa-wheelchair"></i>
+           </div>
+           <div class="dept-info"><h3>กลุ่มผู้ป่วย IMC</h3><p style="color:#9c27b0;">กายภาพ + แผนไทย/จีน</p></div>
            <div class="arrow-btn"><i class="fas fa-chevron-right"></i></div>
         </div>
         <div class="dept-card card-postpartum" onclick="openApp('postpartum')">
           <img src="https://img2.pic.in.th/pic/eb06897c542c79b64690c8e794fa84a4.png" class="dept-icon">
-          <div class="dept-info"><h3 data-i18n="pp_title">บริการหลังคลอด</h3></div>
+          <div class="dept-info"><h3 data-i18n="pp_title">บริการหลังคลอด</h3><p data-i18n="pp_desc">หลังคลอด</p></div>
           <div class="arrow-btn"><i class="fas fa-chevron-right"></i></div>
         </div>
         <div class="dept-card card-steam" onclick="openApp('steam')">
           <img src="https://img2.pic.in.th/pic/-3b445847427fcbfd.png" class="dept-icon">
-          <div class="dept-info"><h3 data-i18n="steam_title">อบไอน้ำสมุนไพร</h3></div>
+          <div class="dept-info"><h3 data-i18n="steam_title">อบไอน้ำสมุนไพร</h3><p data-i18n="steam_desc">ช่วยการไหลเวียนโลหิต</p></div>
           <div class="arrow-btn"><i class="fas fa-chevron-right"></i></div>
         </div>
         <div class="dept-card card-wellness" onclick="openApp('wellness')">
             <img src="https://img2.pic.in.th/pic/Wellness-logo.png" class="dept-icon" style="background:white; padding:2px;">
-            <div class="dept-info"><h3>Wellness Clinic</h3></div>
+            <div class="dept-info"><h3>Wellness Clinic</h3><p data-i18n="well_desc">สครับผิว, สปา</p></div>
             <div class="arrow-btn"><i class="fas fa-chevron-right"></i></div>
         </div>
     </div>
@@ -161,125 +223,173 @@
   <div id="view-dashboard" class="hidden">
     <div class="top-section">
       <div class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i></div>
-      <div style="text-align:center; color:white; margin-top:5px;">
-        <h1 id="app-title" style="margin:0; font-size:1.3rem;"></h1>
-        <p><span data-i18n="sched_realtime">ตารางนัด (Real-time)</span> <span id="loadingIndicator" class="mini-loader" style="display:none;"><i class="fas fa-circle-notch fa-spin"></i></span></p>
+      <div class="header-content">
+        <img id="app-logo" src="" class="app-logo">
+        <div class="header-titles">
+          <h1 id="app-title"></h1>
+          <p><span data-i18n="sched_realtime">ตารางนัด (Real-time)</span> <span id="loadingIndicator" class="mini-loader" style="display:none;"><i class="fas fa-circle-notch fa-spin"></i></span></p>
+        </div>
       </div>
+      <div id="liveClock" class="live-clock"><i class="far fa-clock"></i> <span>...</span></div>
       <div id="dateScroller" class="date-scroller"></div>
     </div>
-    <div class="container" style="padding-top:20px;">
+    <div class="container">
       <div id="contentArea"></div>
+      <div class="contact-section">
+        <p style="font-weight:600; margin-bottom:15px; font-size:0.9rem; color:#64748b;" data-i18n="contact_channel">ช่องทางติดต่อ</p>
+        <div style="white-space:nowrap;">
+          <a href="#" class="social-btn btn-fb"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-btn btn-line"><i class="fab fa-line"></i></a>
+          <a href="#" class="social-btn btn-phone"><i class="fas fa-phone"></i></a>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div id="view-imc-setup" class="hidden home-container" style="background:#f9f9f9; align-items:stretch;">
-      <div style="background:var(--imc-color); padding:20px 20px 15px; color:white; border-radius:0 0 30px 30px; box-shadow:0 4px 15px rgba(0,0,0,0.15);">
-         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-             <div onclick="closeIMC()" style="cursor:pointer; display:inline-flex; align-items:center; gap:5px; background:rgba(255,255,255,0.25); padding:6px 14px; border-radius:20px; font-size:0.9rem;">
-                 <i class="fas fa-arrow-left"></i> หน้าหลัก
+  <div id="view-imc-setup" class="hidden">
+      <div class="top-section" style="background: linear-gradient(135deg, #9c27b0, #6a1b9a);">
+          <div class="back-btn" onclick="closeIMC()"><i class="fas fa-arrow-left"></i></div>
+          <div class="header-content">
+             <div class="app-logo" style="background:#f3e5f5; display:flex; align-items:center; justify-content:center; color:#9c27b0; font-size:1.5rem;"><i class="fas fa-wheelchair"></i></div>
+             <div class="header-titles">
+                 <h1>กลุ่มผู้ป่วย IMC</h1>
+                 <p>ตารางนัดแบบบูรณาการ</p>
              </div>
-             <div style="font-weight:600; font-size:1.1rem;">ตารางคิว IMC</div>
-             <div style="width:80px;"></div>
-         </div>
-         <div id="imc-date-scroller" class="date-scroller"></div>
-         <div id="selected-date-display" style="text-align:center; font-size:0.9rem; opacity:0.95; margin-top:5px; font-weight:300;"></div>
-      </div>
-      
-      <div style="margin:-20px 20px 10px; background:white; border-radius:20px; padding:15px; box-shadow:0 10px 25px rgba(0,0,0,0.05); z-index:10;">
+          </div>
           <div class="toggle-group">
               <div id="pt-1.5" class="toggle-btn active" onclick="changePT(1.5)"><span>กายภาพ</span><small>1.5 ชม.</small></div>
               <div id="pt-1" class="toggle-btn" onclick="changePT(1)"><span>กายภาพ</span><small>1.0 ชม.</small></div>
               <div id="pt-0" class="toggle-btn" onclick="changePT(0)"><span>ไม่ทำ</span><small>กายภาพ</small></div>
           </div>
-          <div style="display:flex; justify-content:space-around; font-size:0.9rem; color:#555; padding-top:5px;">
-              <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-                  <input type="checkbox" id="chk_ttm" checked onchange="searchIMCSlots()" style="accent-color:var(--imc-color); transform:scale(1.2);"> +นวดไทย
-              </label>
-              <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-                  <input type="checkbox" id="chk_tcm" checked onchange="searchIMCSlots()" style="accent-color:var(--imc-color); transform:scale(1.2);"> +ฝังเข็ม
-              </label>
+          <div style="display:flex; justify-content:center; gap:20px; color:white; font-size:0.9rem; padding-bottom:10px;">
+              <label style="display:flex; align-items:center; gap:6px;"><input type="checkbox" id="chk_ttm" checked onchange="searchIMCSlots()"> +นวดไทย</label>
+              <label style="display:flex; align-items:center; gap:6px;"><input type="checkbox" id="chk_tcm" checked onchange="searchIMCSlots()"> +ฝังเข็ม</label>
           </div>
+          <div id="imc-date-scroller" class="date-scroller"></div>
+          <div id="selected-date-display" style="text-align:center; color:rgba(255,255,255,0.8); font-size:0.8rem; margin-top:5px;"></div>
       </div>
-      <div id="imc-results" style="padding:10px 20px 60px; width:100%;"></div>
+      
+      <div class="container" style="padding-top:20px;">
+          <div id="imc-results"></div>
+      </div>
   </div>
 
   <div id="bookingModal" class="modal-overlay">
     <div class="modal-card">
       <div id="step-form">
-        <div class="modal-header" style="text-align:center; margin-bottom:20px;">
-            <h3 style="margin:0; color:var(--primary);">กรอกข้อมูลจองคิว</h3>
+        <div class="modal-header">
+            <span><i class="fas fa-edit"></i> <span data-i18n="form_title">กรอกข้อมูลจองคิว</span></span>
+            <button id="btn-use-old" class="btn-autofill" onclick="fillUserData()">
+                <i class="fas fa-history"></i> <span data-i18n="use_old_data">ใช้ข้อมูลเดิม</span>
+            </button>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" data-i18n="lbl_name">ชื่อ-นามสกุล</label>
+          <input type="text" id="inp-name" class="form-control" placeholder="เช่น ใจดี มีสุข" data-i18n-ph="ph_name" autocomplete="off">
+          <div id="list-name" class="autocomplete-list"></div>
         </div>
         
-        <div id="normal-fields" class="hidden">
-             <label class="form-label">เลือกบริการ</label>
-             <select id="inp-service" class="form-control" onchange="updatePriceDisplay()"></select>
-             <div id="price-tag" style="display:none; margin-bottom:10px; color:blue;"></div>
-             
-             <div id="group-staff" class="hidden">
-                <label class="form-label">ผู้ให้บริการ</label>
-                <div class="custom-select-wrapper">
-                    <select id="inp-staff-val" class="form-control">
-                        </select>
-                </div>
-             </div>
-             
-             <div id="box-option-2hr" style="display:none;">
-                 <label><input type="checkbox" id="inp-2hr"> จอง 2 ชั่วโมง</label>
-             </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="lbl_tel">เบอร์โทรศัพท์</label>
+          <input type="tel" id="inp-tel" class="form-control" placeholder="08x-xxx-xxxx" autocomplete="off">
+          <div id="list-tel" class="autocomplete-list"></div>
+        </div>
+        
+        <div id="normal-fields">
+            <div class="form-group">
+              <label class="form-label" data-i18n="lbl_service">เลือกบริการ</label>
+              <select id="inp-service" class="form-control" onchange="updatePriceDisplay()"></select>
+              <div id="price-tag" style="margin-top:10px; display:none; animation:fadeIn 0.3s;">
+                  <div style="background:#f0f9ff; color:#0369a1; padding:12px; border-radius:12px; font-size:0.9rem; border:1px solid #bae6fd;">
+                      <span id="price-val">-</span>
+                  </div>
+              </div>
+            </div>
+
+            <div class="form-group" id="group-staff">
+              <label class="form-label"><span data-i18n="lbl_provider">ผู้ให้บริการ (ผู้ช่วยแพทย์แผนไทย)</span></label>
+              <div class="custom-select-wrapper">
+                 <div class="custom-select" id="staff-trigger" onclick="toggleStaffDropdown()">
+                     <div class="select-selected">
+                         <img id="staff-display-img" src="https://img2.pic.in.th/pic/1c189d2a727f532d391a5ab0604ccd2f.png" class="select-img">
+                         <span id="staff-display-name" data-i18n="unspecified">ไม่ระบุ</span>
+                     </div>
+                     <i class="fas fa-chevron-down select-arrow"></i>
+                 </div>
+                 <div class="select-items" id="staff-options"></div>
+              </div>
+              <input type="hidden" id="inp-staff-val" value="ไม่ระบุ">
+            </div>
+
+            <div id="box-option-2hr" class="option-2hr-container">
+                <label class="option-2hr-label">
+                    <input type="checkbox" id="inp-2hr" class="chk-2hr">
+                    <span><i class="fas fa-star" style="color:#f59e0b;"></i> <span data-i18n="book_2hr">จองต่อเนื่อง 2 ชั่วโมง</span></span>
+                </label>
+            </div>
         </div>
 
         <div id="postpartum-fields" class="hidden">
-            <input type="date" id="inp-birth-date" class="form-control">
-            <select id="inp-delivery-type" class="form-control">
-                <option value="คลอดเอง">คลอดเอง</option>
-                <option value="ผ่าคลอด">ผ่าคลอด</option>
-            </select>
-            <input type="text" id="inp-hospital" class="form-control" placeholder="รพ.ที่คลอด">
+            <div class="form-group"><label class="form-label" data-i18n="lbl_birthdate">วันเดือนปี ที่คลอด</label><input type="date" id="inp-birth-date" class="form-control"></div>
+            <div class="form-group"><label class="form-label" data-i18n="lbl_delivery_type">ประเภทการคลอด</label><select id="inp-delivery-type" class="form-control"><option value="คลอดเอง">คลอดเอง</option><option value="ผ่าคลอด">ผ่าคลอด</option></select></div>
+            <div class="form-group"><label class="form-label" data-i18n="lbl_hospital">คลอดโรงพยาบาลอะไร</label><input type="text" id="inp-hospital" class="form-control"></div>
         </div>
 
         <div id="steam-fields" class="hidden">
-            <select id="inp-gender" class="form-control">
-                <option value="หญิง">หญิง</option>
-                <option value="ชาย">ชาย</option>
-            </select>
-            <div id="extra-patients-container"></div>
-            <button onclick="addPatient()" class="btn" style="background:#ddd; color:#333; margin-bottom:10px;">+ เพิ่มเพื่อน</button>
+           <div class="form-group"><label class="form-label" data-i18n="lbl_gender">เพศ</label><select id="inp-gender" class="form-control"><option value="หญิง">หญิง</option><option value="ชาย">ชาย</option></select></div>
+           <label class="form-label" data-i18n="lbl_extra_patient">ผู้รับบริการเพิ่มเติม</label><div id="extra-patients-container"></div>
+           <button type="button" class="btn-add-patient" onclick="addPatient()">+ เพิ่มผู้รับบริการ</button>
         </div>
 
-        <div id="imc-detail-box" class="hidden" style="background:#f0fdf4; padding:15px; border-radius:12px; border:1px solid #bbf7d0; margin-bottom:20px; font-size:0.9rem; white-space:pre-line; color:#14532d;"></div>
+        <div id="imc-fields" class="hidden">
+            <div style="background:#f3e5f5; padding:15px; border-radius:12px; border:1px solid #e1bee7; margin-bottom:20px; color:#6a1b9a;">
+                <label class="form-label" style="color:#6a1b9a;">แผนการรักษา:</label>
+                <div id="imc-plan-detail" style="font-weight:600; white-space:pre-line;"></div>
+            </div>
+        </div>
 
-        <input type="text" id="inp-name" class="form-control" placeholder="ชื่อ-นามสกุล">
-        <input type="tel" id="inp-tel" class="form-control" placeholder="เบอร์โทรศัพท์">
-        <textarea id="inp-note" class="form-control" placeholder="หมายเหตุ (ถ้ามี)"></textarea>
+        <div class="form-group">
+          <label class="form-label" data-i18n="lbl_note">หมายเหตุ</label>
+          <textarea id="inp-note" class="form-control"></textarea>
+        </div>
 
-        <button class="btn btn-confirm" onclick="goToSummary()">ยืนยันการจอง</button>
-        <button class="btn" style="background:#f1f5f9; color:#64748b; margin-top:10px;" onclick="closeModal()">ยกเลิก</button>
+        <div class="btn-group">
+          <button class="btn btn-cancel" onclick="closeModal()" data-i18n="btn_cancel">ยกเลิก</button>
+          <button class="btn btn-confirm" onclick="goToSummary()" data-i18n="btn_save">บันทึก</button>
+        </div>
       </div>
-    </div>
+
+      </div>
   </div>
 
   <script>
-    // --- SETUP ---
+    // --- VARIABLES & CONFIG ---
+    // ⚠️ 1. ใส่ URL Web App ของคุณ
     const API_ENDPOINT = "https://script.google.com/macros/s/AKfycbxMVqlYGeuj75wQm41kZCD4wf2weZajj27b0omuC6HlHzWja4sJYz6HF6m5b5nlmSUMtw/exec";
     const LINE_OA_ID = "@649dqeft";
+    
     let currentLang = 'th';
-    let currentApp = ''; 
+    let currentApp = '';
     let globalData = [];
     let bookingData = {};
     let nextSlotStaffList = [];
     let currentSlotCapacity = 0;
     let patientCount = 1;
-    
-    // IMC VARS
+    let selectedIndex = 0;
+    let refreshInterval;
+
+    // IMC Specific
     let currentPT = 1.5;
     let selectedDateStr = "";
 
     const APP_CONFIG = {
-      ttm: { title: "แพทย์แผนไทย", color: "#2e7d32", func: "getTTMData" },
-      tcm: { title: "แพทย์แผนจีน", color: "#e53935", func: "getTCMData" },
-      postpartum: { title: "บริการหลังคลอด", color: "#ec4899", func: "getPostpartumData" },
-      steam: { title: "อบไอน้ำสมุนไพร", color: "#0288d1", func: "getSteamData" },
-      wellness: { title: "Wellness Clinic", color: "#D4AF37", func: "getWellnessData" }
+      ttm: { title: "แพทย์แผนไทย", titleEn: "Thai Traditional Medicine", logo: "https://img2.pic.in.th/pic/6f7b352408393a1295f3000e7d9e6754.md.png", color: "#2e7d32", dark: "#1b5e20", func: "getTTMData" },
+      tcm: { title: "แพทย์แผนจีน", titleEn: "Chinese Medicine", logo: "https://img2.pic.in.th/pic/--06d2d95efaba2074.md.png", color: "#e53935", dark: "#b71c1c", func: "getTCMData" },
+      postpartum: { title: "บริการหลังคลอด", titleEn: "Postpartum Care", logo: "https://img2.pic.in.th/pic/eb06897c542c79b64690c8e794fa84a4.png", color: "#ec4899", dark: "#be185d", func: "getPostpartumData" },
+      steam: { title: "อบไอน้ำสมุนไพร", titleEn: "Herbal Steam", logo: "https://img2.pic.in.th/pic/-3b445847427fcbfd.png", color: "#0288d1", dark: "#01579b", func: "getSteamData" },
+      wellness: { title: "Wellness Clinic", titleEn: "Wellness Clinic", logo: "https://img2.pic.in.th/pic/Wellness-logo.png", color: "#D4AF37", dark: "#AA8C2C", func: "getWellnessData" },
+      imc: { title: "กลุ่มผู้ป่วย IMC", titleEn: "IMC Patient", color: "#9c27b0", dark: "#6a1b9a" }
     };
 
     const SERVICE_OPTIONS = {
@@ -292,101 +402,83 @@
         "จุฑามาศ F": "Jutamat (Fon)", "ณิชาภัทร W": "Nichapat (Wawa)", "นิกษ์นิภา T": "Niknipha (Kartoon)",
         "รัตน์ชนก KW": "Ratchanok (Kwang)", "จินดา J": "Jinda (Jeab)"
     };
+    
+    const STAFF_IMAGES = {
+        "รจนา M": "https://img2.pic.in.th/pic/-b38b682db8ac596b.png",
+        "อรรถพล B": "https://img5.pic.in.th/file/secure-sv1/6b74e1ebb096c81368605ff43948dab4.png",
+        "ศินารัตน์ C": "https://img2.pic.in.th/pic/-df4e3c6f4a4b331f.png",
+        "จุฑามาศ F": "https://img5.pic.in.th/file/secure-sv1/709dfc05071615eaaf008ea63d1e037e.png",
+        "รัตน์ชนก KW": "https://img2.pic.in.th/pic/-83673d6d528be12a.png",
+        "นิกษ์นิภา T": "https://img5.pic.in.th/file/secure-sv1/-c4fe207fa6c04aa3.png",
+        "ณิชาภัทร W": "https://img2.pic.in.th/pic/1ef0aa325ccac37724897c9f2c10e5f4.png",
+        "จินดา J": "https://img2.pic.in.th/pic/93b060e9e4b3fc9a9070d5ac2768c879.png"
+    };
+    const DEFAULT_IMG = "https://img2.pic.in.th/pic/1c189d2a727f532d391a5ab0604ccd2f.png";
 
-    function t(key) { return (key === 'sched_realtime') ? 'ตารางนัด (Real-time)' : key; } // Simplified translation
-    function toggleLanguage() { currentLang = (currentLang==='th')?'en':'th'; document.getElementById('lang-text').innerText = currentLang.toUpperCase(); }
+    const translations = { th: { unspecified: "ไม่ระบุ", unspecified_any: "ไม่ระบุ (ใครก็ได้)" }, en: { unspecified: "Unspecified", unspecified_any: "Any Provider" } };
+    function t(key) { return translations[currentLang][key] || key; }
+    function toggleLanguage() { currentLang = (currentLang === 'th') ? 'en' : 'th'; document.getElementById('lang-text').innerText = currentLang.toUpperCase(); }
 
+    // --- MAIN NAVIGATION ---
     function openApp(type) {
-      if (!APP_CONFIG[type]) return;
       currentApp = type;
       document.getElementById('view-home').classList.add('hidden');
       document.getElementById('view-dashboard').classList.remove('hidden');
-      
       let conf = APP_CONFIG[type];
       document.documentElement.style.setProperty('--primary', conf.color);
-      document.getElementById('app-title').innerText = conf.title;
-      document.getElementById('contentArea').innerHTML = '<div style="text-align:center; padding:50px;"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
-      
-      fetch(`${API_ENDPOINT}?action=${conf.func}`)
-        .then(r => r.json())
-        .then(data => { globalData = data; renderScroller(); renderSlots(0); })
-        .catch(e => alert("Connection Error"));
+      document.documentElement.style.setProperty('--primary-dark', conf.dark);
+      document.getElementById('app-title').innerText = (currentLang === 'en') ? conf.titleEn : conf.title;
+      document.getElementById('app-logo').src = conf.logo;
+      selectedIndex = 0;
+      fetchData();
     }
 
     function goHome() {
       document.getElementById('view-dashboard').classList.add('hidden');
       document.getElementById('view-imc-setup').classList.add('hidden');
       document.getElementById('view-home').classList.remove('hidden');
+      currentApp = '';
+    }
+
+    // --- FETCH & RENDER (Original Logic) ---
+    function fetchData() {
+        document.getElementById('loadingIndicator').style.display = 'inline-block';
+        fetch(`${API_ENDPOINT}?action=${APP_CONFIG[currentApp].func}`)
+            .then(res => res.json())
+            .then(data => { globalData = data; renderScroller(); renderSlots(selectedIndex); document.getElementById('loadingIndicator').style.display = 'none'; })
+            .catch(e => { alert("Error"); });
     }
 
     function renderScroller() {
-       let html = '';
-       let days = ["อา.","จ.","อ.","พ.","พฤ.","ศ.","ส."];
-       globalData.forEach((d, i) => {
-          html += `<div class="date-chip ${i===0?'active':''}" onclick="renderSlots(${i}); document.querySelectorAll('.date-chip').forEach(c=>c.classList.remove('active')); this.classList.add('active');">${days[d.dayOfWeek]} ${d.displayDate.split(" ")[0]}</div>`;
-       });
-       document.getElementById('dateScroller').innerHTML = html;
+        let html = '';
+        let days = ["อา.","จ.","อ.","พ.","พฤ.","ศ.","ส."];
+        globalData.forEach((d, i) => {
+            let active = (i === selectedIndex) ? 'active' : '';
+            html += `<div class="date-chip ${active}" onclick="selectedIndex=${i}; renderScroller(); renderSlots(${i});"><small>${days[d.dayOfWeek]}</small><span>${d.displayDate.split(" ")[0]}</span></div>`;
+        });
+        document.getElementById('dateScroller').innerHTML = html;
     }
 
     function renderSlots(idx) {
-       let day = globalData[idx];
-       let html = '';
-       if(day.status === 'no_data') html = "<div style='text-align:center; margin-top:20px; color:#999'>ไม่มีรอบว่าง</div>";
-       else {
-          day.slots.forEach((s, i) => {
-             let isFull = s.val.includes("เต็ม") || s.val.includes("งด");
-             let cls = isFull ? 'is-full' : 'is-available';
-             let action = isFull ? '' : `onclick='openBooking(${JSON.stringify(s)}, "${day.displayDate}", ${idx})'`;
-             html += `<div class="slot-card ${cls}" ${action}>
-                <div><div style="font-size:1.2rem; font-weight:700;">${s.time} น.</div></div>
-                <div style="font-weight:600; color:${isFull?'red':'green'}">${s.val}</div>
-             </div>`;
-          });
-       }
-       document.getElementById('contentArea').innerHTML = html;
-    }
-
-    function openBooking(slot, dateStr, idx) {
-       bookingData = { date: dateStr, time: slot.time };
-       document.getElementById('bookingModal').classList.add('show');
-       document.getElementById('normal-fields').classList.remove('hidden');
-       document.getElementById('postpartum-fields').classList.add('hidden');
-       document.getElementById('steam-fields').classList.add('hidden');
-       document.getElementById('imc-detail-box').classList.add('hidden');
-       
-       let sel = document.getElementById('inp-service');
-       sel.innerHTML = '';
-       
-       if(currentApp === 'ttm' || currentApp === 'tcm') {
-           SERVICE_OPTIONS[currentApp].forEach(s => { let o = document.createElement('option'); o.text = s; sel.add(o); });
-           // Staff Logic
-           if(currentApp === 'ttm') {
-               document.getElementById('group-staff').classList.remove('hidden');
-               let stSel = document.getElementById('inp-staff-val'); stSel.innerHTML = '';
-               if(slot.staff && slot.staff.length > 0) {
-                   slot.staff.forEach(st => {
-                       let name = (currentLang==='en' && STAFF_NAME_MAP_EN[st]) ? STAFF_NAME_MAP_EN[st] : st;
-                       let o = document.createElement('option'); o.text = name; stSel.add(o);
-                   });
-               } else {
-                   let o = document.createElement('option'); o.text = "ไม่ระบุ"; stSel.add(o);
-               }
-           } else {
-               document.getElementById('group-staff').classList.add('hidden');
-           }
-       } else if (currentApp === 'postpartum') {
-           document.getElementById('normal-fields').classList.add('hidden');
-           document.getElementById('postpartum-fields').classList.remove('hidden');
-           bookingData.service = "Postpartum Care";
-       } else if (currentApp === 'steam') {
-           document.getElementById('normal-fields').classList.add('hidden');
-           document.getElementById('steam-fields').classList.remove('hidden');
-           bookingData.service = "Herbal Steam";
-           currentSlotCapacity = slot.count;
-       } else if (currentApp === 'wellness') {
-           document.getElementById('group-staff').classList.add('hidden');
-           ["สครับเกลือ", "สปาผิว", "นวดอโรม่า"].forEach(s => { let o = document.createElement('option'); o.text = s; sel.add(o); });
-       }
+        let day = globalData[idx];
+        let container = document.getElementById('contentArea');
+        if(day.status === 'no_data') { container.innerHTML = "<div style='text-align:center; padding:40px; color:#ccc'>ไม่มีข้อมูล</div>"; return; }
+        
+        let html = '<div class="grid-container">';
+        day.slots.forEach((slot, i) => {
+            if(slot.val === 'งด') return;
+            let isFull = (slot.val.includes('เต็ม') || slot.val.includes('งด'));
+            let staffJson = JSON.stringify(slot.staff || []).replace(/"/g, "&quot;");
+            let action = isFull ? '' : `onclick="openBooking('${slot.time}', '${day.displayDate}', ${staffJson}, ${slot.count}, '${slot.gender || ''}')"`;
+            let statusBadge = isFull ? `<div class="status-badge bg-full">เต็ม</div>` : `<div class="status-badge bg-av">ว่าง ${slot.count}</div>`;
+            let icon = isFull ? '<i class="fas fa-lock"></i>' : '<i class="fas fa-leaf"></i>';
+            
+            html += `<div class="slot-card ${isFull?'is-full':'is-available'}" ${action} style="animation-delay:${i*0.05}s">
+                <div class="time-wrap"><div class="icon-status">${icon}</div><div class="time-text">${slot.time} น.</div></div>
+                ${statusBadge}
+            </div>`;
+        });
+        container.innerHTML = html + '</div>';
     }
 
     // --- IMC LOGIC ---
@@ -401,26 +493,27 @@
         document.getElementById('view-home').classList.remove('hidden');
     }
     function renderIMCDates() {
-       let html = '';
-       let days = ["อา.","จ.","อ.","พ.","พฤ.","ศ.","ส."];
-       let today = new Date();
-       for(let i=0; i<14; i++) {
-           let d = new Date(); d.setDate(today.getDate()+i);
-           let val = d.toISOString().split('T')[0];
-           html += `<div class="date-chip ${i===0?'active':''}" onclick="selectIMCDate('${val}', this)">${days[d.getDay()]} ${d.getDate()}</div>`;
-           if(i===0) selectedDateStr = val;
-       }
-       document.getElementById('imc-date-scroller').innerHTML = html;
+        let html = '';
+        let days = ["อา.","จ.","อ.","พ.","พฤ.","ศ.","ส."];
+        let today = new Date();
+        for(let i=0; i<14; i++) {
+            let d = new Date(); d.setDate(today.getDate()+i);
+            let val = d.toISOString().split('T')[0];
+            html += `<div class="date-chip ${i===0?'active':''}" onclick="selectIMCDate('${val}', this, '${d.getDate()} ${days[d.getDay()]}')"><small>${days[d.getDay()]}</small><span>${d.getDate()}</span></div>`;
+            if(i===0) { selectedDateStr = val; document.getElementById('selected-date-display').innerText = `${d.getDate()} ${days[d.getDay()]}`; }
+        }
+        document.getElementById('imc-date-scroller').innerHTML = html;
     }
-    function selectIMCDate(val, el) {
+    function selectIMCDate(val, el, txt) {
         selectedDateStr = val;
-        document.querySelectorAll('#imc-date-scroller .date-chip').forEach(c=>c.classList.remove('active'));
+        document.getElementById('selected-date-display').innerText = txt;
+        document.querySelectorAll('#imc-date-scroller .date-chip').forEach(c => c.classList.remove('active'));
         el.classList.add('active');
         searchIMCSlots();
     }
     function changePT(v) {
         currentPT = v;
-        document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active'));
+        document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
         document.getElementById('pt-'+v).classList.add('active');
         searchIMCSlots();
     }
@@ -431,62 +524,184 @@
         let thM = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
         let dateThai = `${dObj.getDate()} ${thM[dObj.getMonth()]}`;
         
-        document.getElementById('imc-results').innerHTML = 'Loading...';
+        document.getElementById('imc-results').innerHTML = '<div style="text-align:center;padding:20px;color:#999"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+        
         fetch(API_ENDPOINT, { method:'POST', body:JSON.stringify({ action:'checkIMC', date:dateThai, ptDuration:currentPT, needTTM:needTTM, needTCM:needTCM }) })
-        .then(r=>r.json())
+        .then(r => r.json())
         .then(d => {
             let h = '';
-            d.slots.forEach(s => {
-                let isAvail = s.status === 'available';
-                let btn = isAvail ? `<div class="slot-btn btn-book">จอง</div>` : `<div class="slot-btn btn-full">เต็ม</div>`;
-                let click = isAvail ? `onclick='openIMCBooking(${JSON.stringify(s)})'` : '';
-                h += `<div class="imc-slot-card ${s.status}" ${click}>
-                   <div><div class="slot-time">${s.time}</div><div class="slot-flow">${s.plan ? s.plan.flowType : ''}</div></div>
-                   ${btn}
-                </div>`;
-            });
-            document.getElementById('imc-results').innerHTML = h || "ไม่พบรอบว่าง";
+            if(!d.slots || d.slots.length===0) h = "<div style='text-align:center;color:#999'>ไม่พบรอบว่าง</div>";
+            else {
+                d.slots.forEach(s => {
+                    let isAvail = s.status === 'available';
+                    let btn = isAvail ? `<div class="imc-btn imc-btn-book">จอง</div>` : `<div class="imc-btn imc-btn-full">เต็ม</div>`;
+                    let click = isAvail ? `onclick='prepareIMCBooking(${JSON.stringify(s)})'` : '';
+                    h += `<div class="imc-slot-card ${s.status}" ${click}>
+                        <div><div class="imc-time">${s.time}</div><div class="imc-flow">${s.plan ? s.plan.flowType : ''}</div></div>
+                        ${btn}
+                    </div>`;
+                });
+            }
+            document.getElementById('imc-results').innerHTML = h;
         });
     }
-    function openIMCBooking(s) {
-        bookingData = { date: selectedDateStr, time: s.time, detail: s.plan.flowType + " (จบ " + s.plan.endTimeStr + ")" };
+
+    // --- BOOKING LOGIC (MERGED) ---
+    function openBooking(time, dateStr, staffList, count, gender) {
+       bookingData = { date: dateStr, time: time, is2Hr: false };
+       currentSlotCapacity = count;
+       nextSlotStaffList = []; // Reset logic logic of 2hr
+       
+       document.getElementById('bookingModal').classList.add('show');
+       document.getElementById('normal-fields').classList.remove('hidden');
+       document.getElementById('postpartum-fields').classList.add('hidden');
+       document.getElementById('steam-fields').classList.add('hidden');
+       document.getElementById('imc-fields').classList.add('hidden');
+       document.getElementById('box-option-2hr').style.display = 'none';
+       document.getElementById('inp-2hr').checked = false;
+
+       // Populate Service Dropdown
+       let sel = document.getElementById('inp-service'); sel.innerHTML = '';
+       if(currentApp === 'ttm' || currentApp === 'tcm') {
+           SERVICE_OPTIONS[currentApp].forEach(s => { let o = document.createElement('option'); o.text = s; sel.add(o); });
+           if(currentApp === 'ttm') {
+               document.getElementById('group-staff').classList.remove('hidden');
+               renderStaffList(staffList);
+           } else {
+               document.getElementById('group-staff').classList.add('hidden');
+           }
+       } else if (currentApp === 'postpartum') {
+           document.getElementById('normal-fields').classList.add('hidden');
+           document.getElementById('postpartum-fields').classList.remove('hidden');
+           bookingData.service = "Postpartum Care";
+       } else if (currentApp === 'steam') {
+           document.getElementById('normal-fields').classList.add('hidden');
+           document.getElementById('steam-fields').classList.remove('hidden');
+           bookingData.service = "Herbal Steam";
+           // Handle gender logic if needed
+       } else if (currentApp === 'wellness') {
+           document.getElementById('group-staff').classList.add('hidden');
+           ["สครับเกลือ", "สปาผิว", "นวดน้ำมันอโรม่า"].forEach(s => { let o = document.createElement('option'); o.text = s; sel.add(o); });
+       }
+       updatePriceDisplay();
+    }
+
+    function prepareIMCBooking(s) {
+        bookingData = { date: document.getElementById('selected-date-display').innerText, time: s.time, service: "IMC Program" };
+        bookingData.detail = s.plan.flowType + " (จบ " + s.plan.endTimeStr + " น.)";
+        
         document.getElementById('bookingModal').classList.add('show');
         document.getElementById('normal-fields').classList.add('hidden');
         document.getElementById('postpartum-fields').classList.add('hidden');
         document.getElementById('steam-fields').classList.add('hidden');
-        
-        let box = document.getElementById('imc-detail-box');
-        box.classList.remove('hidden');
-        box.innerText = `วันที่: ${selectedDateStr}\nเวลา: ${s.time} น.\nแผน: ${bookingData.detail}`;
+        document.getElementById('imc-fields').classList.remove('hidden');
+        document.getElementById('imc-plan-detail').innerText = bookingData.detail;
     }
 
-    function closeModal() { document.getElementById('bookingModal').classList.remove('show'); }
+    function renderStaffList(staffList) {
+        let sel = document.getElementById('staff-options'); sel.innerHTML = '';
+        let html = `<div class="select-item" onclick="selectStaff('${t('unspecified')}', '${DEFAULT_IMG}')"><img src="${DEFAULT_IMG}" class="item-img"><div class="item-text">${t('unspecified_any')}</div></div>`;
+        if(staffList) {
+            staffList.forEach(st => {
+                let name = (currentLang === 'en' && STAFF_NAME_MAP_EN[st]) ? STAFF_NAME_MAP_EN[st] : st;
+                let img = STAFF_IMAGES[st] || DEFAULT_IMG;
+                html += `<div class="select-item" onclick="selectStaff('${name}', '${img}')"><img src="${img}" class="item-img"><div class="item-text">${name}</div></div>`;
+            });
+        }
+        sel.innerHTML = html;
+        selectStaff(t('unspecified'), DEFAULT_IMG);
+    }
 
-    // --- SUBMIT ---
+    function selectStaff(name, img) {
+        document.getElementById('staff-display-name').innerText = name;
+        document.getElementById('staff-display-img').src = img;
+        document.getElementById('inp-staff-val').value = name;
+        document.getElementById('staff-trigger').classList.remove('open');
+    }
+    function toggleStaffDropdown() { document.getElementById('staff-trigger').classList.toggle('open'); }
+    window.onclick = function(e) { if(!e.target.closest('.custom-select-wrapper')) document.getElementById('staff-trigger').classList.remove('open'); }
+
+    function updatePriceDisplay() {
+        // Simple Logic for demo
+        let svc = document.getElementById('inp-service').value;
+        let p = "";
+        if(currentApp === 'wellness') {
+            if(svc.includes("สครับ")) p = "500.-";
+            if(svc.includes("สปา")) p = "650.-";
+            if(svc.includes("อโรม่า")) p = "550.-";
+        } else if(currentApp === 'ttm' || currentApp === 'tcm') { p = "เบิกได้ตามสิทธิ"; }
+        
+        let tag = document.getElementById('price-tag');
+        if(p) { tag.style.display='block'; document.getElementById('price-val').innerText = p; } 
+        else tag.style.display='none';
+    }
+
     function goToSummary() {
         let name = document.getElementById('inp-name').value;
         let tel = document.getElementById('inp-tel').value;
-        
-        if(!name) { Swal.fire('Error', 'กรุณากรอกชื่อ', 'warning'); return; }
-        if(!tel || !/^0\d{9}$/.test(tel)) { Swal.fire('Error', 'เบอร์โทรไม่ถูกต้อง (10 หลัก)', 'warning'); return; }
+        if(!name) { Swal.fire('ข้อมูลไม่ครบ', 'กรุณากรอกชื่อ', 'warning'); return; }
+        if(!tel || !/^0\d{9}$/.test(tel)) { Swal.fire('เบอร์โทรผิด', 'ต้องมี 10 หลัก', 'warning'); return; }
 
         let msg = `จองคิว: ${currentApp.toUpperCase()}\nชื่อ: ${name}\nเบอร์: ${tel}\nวันที่: ${bookingData.date}\nเวลา: ${bookingData.time}`;
+        
         if(currentApp === 'imc') msg += `\nรายละเอียด: ${bookingData.detail}`;
+        else if(currentApp === 'postpartum') msg += `\nบริการ: หลังคลอด`;
+        else if(currentApp === 'steam') msg += `\nบริการ: อบไอน้ำ`;
         else msg += `\nบริการ: ${document.getElementById('inp-service').value}`;
         
-        Swal.fire({ icon:'success', title:'คัดลอกแล้ว', text:'กำลังไปที่ LINE', timer:1500, showConfirmButton:false }).then(() => {
+        if(currentApp === 'ttm' && document.getElementById('inp-staff-val').value !== 'ไม่ระบุ') {
+            msg += `\nผู้ให้บริการ: ${document.getElementById('inp-staff-val').value}`;
+        }
+
+        Swal.fire({ icon:'success', title:'คัดลอกข้อมูลแล้ว', text:'กำลังเปิดไลน์...', timer:2000, showConfirmButton:false }).then(() => {
             let dummy = document.createElement("textarea");
             document.body.appendChild(dummy); dummy.value = msg; dummy.select(); document.execCommand("copy"); document.body.removeChild(dummy);
             window.location.href = `https://line.me/R/oaMessage/${LINE_OA_ID}/?${encodeURIComponent(msg)}`;
         });
     }
-    
+
+    function closeModal() { document.getElementById('bookingModal').classList.remove('show'); }
     function addPatient() {
-        if(patientCount >= currentSlotCapacity) { Swal.fire('เต็มแล้ว', 'เพิ่มไม่ได้แล้ว', 'warning'); return; }
         patientCount++;
         let d = document.createElement('div');
-        d.innerHTML = `<input class="form-control inp-extra-name" placeholder="ชื่อคนที่ ${patientCount}">`;
+        d.innerHTML = `<input class="form-control" placeholder="ชื่อคนที่ ${patientCount}">`;
         document.getElementById('extra-patients-container').appendChild(d);
+    }
+    
+    // Auto-load setup
+    document.addEventListener('DOMContentLoaded', () => {
+        setupAutocomplete('inp-name', 'list-name', 'ttm_booking_history', 'name');
+        setupAutocomplete('inp-tel', 'list-tel', 'ttm_booking_history', 'tel');
+    });
+    
+    function setupAutocomplete(inputId, listId, storageKey, keyName) {
+        const input = document.getElementById(inputId);
+        const list = document.getElementById(listId);
+        input.addEventListener('input', function() {
+            const val = this.value.trim().toLowerCase();
+            list.innerHTML = '';
+            if (val.length === 0) { list.style.display = 'none'; return; }
+            let history = JSON.parse(localStorage.getItem(storageKey)) || [];
+            let matches = history.filter(item => item[keyName] && item[keyName].toLowerCase().includes(val));
+            if (matches.length > 0) {
+                matches.forEach(m => {
+                    const div = document.createElement('div');
+                    div.className = 'autocomplete-item';
+                    div.innerHTML = `<span><i class="fas fa-clock-rotate-left"></i></span> ${m[keyName]}`;
+                    div.addEventListener('click', function() { input.value = m[keyName]; list.style.display = 'none'; });
+                    list.appendChild(div);
+                });
+                list.style.display = 'block';
+            } else { list.style.display = 'none'; }
+        });
+        document.addEventListener('click', function(e) { if (e.target !== input && e.target !== list) list.style.display = 'none'; });
+    }
+    function fillUserData() {
+        let history = JSON.parse(localStorage.getItem('ttm_booking_history')) || [];
+        if (history.length > 0) {
+            document.getElementById('inp-name').value = history[0].name;
+            document.getElementById('inp-tel').value = history[0].tel;
+        }
     }
   </script>
 </body>
