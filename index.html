@@ -19,51 +19,40 @@
     /* Layout */
     .home-container { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 40px; }
     
-    /* Hero Banner */
-    .hero-banner { width: 100%; height: 250px; position: relative; border-radius: 0 0 30px 30px; overflow: hidden; margin-bottom: -40px; background: #2e7d32; }
-    .hero-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; background: linear-gradient(to bottom, rgba(46,125,50,0.3), rgba(27,94,32,0.9)); padding: 20px; text-align:center; }
+    /* Banner */
+    .hero-banner { width: 100%; height: 250px; position: relative; border-radius: 0 0 30px 30px; overflow: hidden; margin-bottom: -40px; background:#2e7d32; }
+    .hero-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; background: linear-gradient(to bottom, rgba(46,125,50,0.3), rgba(27,94,32,0.9)); padding: 20px; }
     .main-logo { width: 80px; height: 80px; background: white; border-radius: 50%; padding: 2px; margin-bottom: 10px; object-fit: contain; }
     
     /* Menu */
     .menu-container { width: 100%; padding: 0 20px; z-index: 2; margin-top: 20px; }
     .dept-card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 6px solid #ccc; transition: 0.2s; }
     .dept-card:active { transform: scale(0.98); }
-    
     .card-ttm { border-left-color: #2e7d32; }
     .card-tcm { border-left-color: #e53935; }
-    .card-pp { border-left-color: #ec4899; }
-    .card-steam { border-left-color: #0288d1; }
-    .card-well { border-left-color: #D4AF37; }
     .card-imc { border-left-color: #9c27b0; background: linear-gradient(to right, #fff, #fdf4ff); }
-    
     .dept-icon { width: 50px; height: 50px; border-radius: 50%; margin-right: 15px; object-fit: cover; }
 
-    /* Dashboard Header (FIXED STYLE) */
-    .top-section { 
-        background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
-        color: white; padding: 15px; 
-        position: sticky; top: 0; z-index: 100; 
-        border-radius: 0 0 25px 25px; 
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
-    }
+    /* Dashboard Header */
+    .top-section { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 15px; position: sticky; top: 0; z-index: 100; border-radius: 0 0 25px 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
     .header-grid { display: grid; grid-template-columns: 40px 1fr 40px; align-items: center; }
-    .back-btn { background: rgba(255,255,255,0.2); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(4px); }
-    .app-logo { width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.9); background: white; object-fit: contain; margin-bottom: 5px; }
+    .back-btn { background: rgba(255,255,255,0.2); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
     
-    .date-scroller { display: flex; overflow-x: auto; padding: 10px 0 5px; gap: 8px; }
-    .date-chip { background: rgba(255,255,255,0.2); color: white; border-radius: 15px; padding: 8px 15px; white-space: nowrap; cursor: pointer; font-size: 0.9rem; }
-    .date-chip.active { background: white; color: #333; font-weight: bold; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+    /* IMC Dashboard Style */
+    .toggle-btn { flex:1; text-align:center; padding:8px; border-radius:8px; cursor:pointer; font-size:0.9rem; transition:0.2s; color:#888; }
+    .toggle-btn.active { background:white; color:#9c27b0; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
+    
+    .imc-slot-card { background:white; border-radius:16px; padding:15px; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; border-left:6px solid #ccc; box-shadow:0 2px 6px rgba(0,0,0,0.03); transition:0.2s; }
+    .imc-slot-card.available { border-left-color:#4caf50; }
+    .imc-slot-card.unavailable { border-left-color:#ef4444; opacity:0.7; background:#fcfcfc; }
+    .imc-slot-card.full { border-left-color:#ff9800; }
+    
+    .slot-time { font-size:1.4rem; font-weight:bold; color:#333; line-height:1; }
+    .slot-info { font-size:0.85rem; color:#666; margin-top:4px; }
+    .slot-btn { padding:6px 15px; border-radius:20px; font-size:0.85rem; font-weight:600; }
+    .btn-book { background:#f3e5f5; color:#9c27b0; }
+    .btn-disabled { background:#eee; color:#999; }
 
-    /* Slot Card */
-    .slot-card { background: white; border-radius: 15px; padding: 15px 20px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #ccc; }
-    .is-available { border-left-color: #4caf50; }
-    .is-full { border-left-color: #ef4444; opacity: 0.8; }
-    
-    /* IMC Styles */
-    .radio-box { flex:1; border:2px solid #eee; border-radius:12px; padding:15px; text-align:center; cursor:pointer; background:white; }
-    .radio-box.active { border-color: #9c27b0; background: #f3e5f5; color: #7b1fa2; font-weight:bold; }
-    .time-slot-btn { background:white; padding:15px; border-radius:12px; border:1px solid #eee; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
-    
     /* Modal */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; display: none; }
     .modal-overlay.show { display: flex; }
@@ -95,27 +84,11 @@
            <img src="https://img2.pic.in.th/pic/--06d2d95efaba2074.md.png" class="dept-icon">
            <div><h3>แพทย์แผนจีน</h3><p>ฝังเข็ม</p></div>
         </div>
-        <div class="dept-card card-pp" onclick="openApp('postpartum')">
-           <img src="https://img2.pic.in.th/pic/eb06897c542c79b64690c8e794fa84a4.png" class="dept-icon">
-           <div><h3>หลังคลอด</h3><p>ดูแลมารดา</p></div>
-        </div>
-        <div class="dept-card card-steam" onclick="openApp('steam')">
-           <img src="https://img2.pic.in.th/pic/-3b445847427fcbfd.png" class="dept-icon">
-           <div><h3>อบไอน้ำ</h3><p>สมุนไพร</p></div>
-        </div>
-        <div class="dept-card card-well" onclick="openApp('wellness')">
-           <img src="https://img2.pic.in.th/pic/Wellness-logo.png" class="dept-icon" style="padding:3px; background:#fff;">
-           <div><h3>Wellness</h3><p>สปาเพื่อสุขภาพ</p></div>
-        </div>
-        
         <div class="dept-card card-imc" onclick="openIMCSetup()">
            <div style="width:50px; height:50px; background:#f3e5f5; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:15px; border:3px solid white;">
               <i class="fas fa-user-injured" style="font-size:1.5rem; color:#9c27b0;"></i>
            </div>
-           <div>
-              <h3 style="color:#7b1fa2;">กลุ่มคนไข้ IMC</h3>
-              <p style="color:#9c27b0;">กายภาพ + แผนไทย/จีน</p>
-           </div>
+           <div><h3>กลุ่มคนไข้ IMC</h3><p style="color:#9c27b0;">กายภาพ + แผนไทย/จีน</p></div>
         </div>
     </div>
   </div>
@@ -124,71 +97,54 @@
     <div class="top-section">
       <div class="header-grid">
           <div class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i></div>
-          <div style="display:flex; flex-direction:column; align-items:center;">
-              <img id="app-logo" src="" class="app-logo">
+          <div style="text-align:center;">
               <h2 id="app-title" style="margin:0; font-size:1.1rem;"></h2>
           </div>
-          <div></div> </div>
-      <div id="dateScroller" class="date-scroller"></div>
+          <div></div>
+      </div>
     </div>
-
     <div class="container" id="contentArea" style="padding:20px;"></div>
   </div>
 
   <div id="view-imc-setup" class="hidden home-container" style="background:#f9f9f9; align-items:stretch;">
-      <div style="background:#9c27b0; padding:20px; color:white; border-radius:0 0 25px 25px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-         <div onclick="closeIMC()" style="cursor:pointer; display:inline-flex; align-items:center; gap:5px; background:rgba(255,255,255,0.2); padding:5px 15px; border-radius:20px;">
-             <i class="fas fa-arrow-left"></i> ย้อนกลับ
+      <div style="background:#9c27b0; padding:20px 20px 30px; color:white; border-radius:0 0 25px 25px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+         <div style="display:flex; justify-content:space-between; align-items:center;">
+             <div onclick="closeIMC()" style="cursor:pointer; display:inline-flex; align-items:center; gap:5px; background:rgba(255,255,255,0.2); padding:5px 12px; border-radius:20px; font-size:0.9rem;">
+                 <i class="fas fa-arrow-left"></i> หน้าหลัก
+             </div>
+             <div style="font-weight:bold; font-size:1.1rem;">ตารางคิว IMC</div>
+             <div style="width:70px;"></div>
          </div>
-         <h2 style="margin:15px 0 5px; text-align:center;">จัดตาราง IMC</h2>
-         <p style="text-align:center; opacity:0.9; font-size:0.9rem; margin:0;">คำนวณคิวต่อเนื่องอัตโนมัติ</p>
+         
+         <div style="margin-top:20px; display:flex; justify-content:center;">
+             <input type="date" id="imc-date" class="form-control" style="background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.4); color:white; text-align:center; width:auto; font-weight:bold; margin:0;" onchange="searchIMCSlots()">
+         </div>
       </div>
       
-      <div style="padding:20px;">
-         <label style="font-weight:bold; display:block; margin-bottom:10px;">ระยะเวลากายภาพ (PT)</label>
-         <div style="display:flex; gap:10px; margin-bottom:20px;">
-            <label class="radio-box active" onclick="selectPT(1.5, this)">
-               <input type="radio" name="pt_dur" value="1.5" checked hidden> <span style="font-size:1.2rem; font-weight:bold;">1.5</span> ชม.
-            </label>
-            <label class="radio-box" onclick="selectPT(1, this)">
-               <input type="radio" name="pt_dur" value="1" hidden> <span style="font-size:1.2rem; font-weight:bold;">1.0</span> ชม.
-            </label>
-         </div>
-
-         <label style="font-weight:bold; display:block; margin-bottom:10px;">บริการต่อเนื่อง</label>
-         <div style="background:white; padding:15px; border-radius:12px; border:1px solid #eee; margin-bottom:20px;">
-             <label style="display:flex; align-items:center; margin-bottom:10px; cursor:pointer;">
-                <input type="checkbox" id="chk_ttm" checked style="transform:scale(1.3); margin-right:10px; accent-color:#9c27b0;"> 
-                <div>นวดแผนไทย <span style="color:#666; font-size:0.8rem;">(+1 ชม.)</span></div>
-             </label>
-             <label style="display:flex; align-items:center; cursor:pointer;">
-                <input type="checkbox" id="chk_tcm" checked style="transform:scale(1.3); margin-right:10px; accent-color:#9c27b0;"> 
-                <div>ฝังเข็ม <span style="color:#666; font-size:0.8rem;">(+30 นาที)</span></div>
-             </label>
-         </div>
-         
-         <label style="font-weight:bold; display:block; margin-bottom:10px;">วันที่นัดหมาย</label>
-         <input type="date" id="imc-date" class="form-control">
-
-         <button class="btn btn-confirm" onclick="searchIMCSlots()" style="background:#9c27b0; box-shadow:0 4px 12px rgba(156, 39, 176, 0.4);">
-            <i class="fas fa-search"></i> ค้นหาคิวว่าง
-         </button>
-         
-         <div id="imc-results" style="margin-top:30px;"></div>
+      <div style="margin:-25px 20px 10px; background:white; border-radius:15px; padding:15px; box-shadow:0 4px 15px rgba(0,0,0,0.05); display:flex; flex-direction:column; gap:10px;">
+          <div style="display:flex; background:#f5f5f5; border-radius:10px; padding:4px;">
+              <div id="pt-1.5" class="toggle-btn active" onclick="changePT(1.5)">PT 1.5 ชม.</div>
+              <div id="pt-1" class="toggle-btn" onclick="changePT(1)">PT 1.0 ชม.</div>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#666; padding:0 5px;">
+              <label style="display:flex; align-items:center; gap:5px;">
+                  <input type="checkbox" id="chk_ttm" checked onchange="searchIMCSlots()" style="accent-color:#9c27b0;"> +นวดไทย
+              </label>
+              <label style="display:flex; align-items:center; gap:5px;">
+                  <input type="checkbox" id="chk_tcm" checked onchange="searchIMCSlots()" style="accent-color:#9c27b0;"> +ฝังเข็ม
+              </label>
+          </div>
       </div>
+      
+      <div id="imc-results" style="padding:10px 20px 40px;"></div>
   </div>
 
   <div id="bookingModal" class="modal-overlay">
     <div class="modal-card">
        <h3 style="margin-top:0; color:var(--primary);">ยืนยันการจอง</h3>
        <div id="modal-content" style="background:#f0fdf4; padding:15px; border-radius:10px; border:1px solid #bbf7d0; margin-bottom:15px; font-size:0.9rem; white-space:pre-line;"></div>
-       
-       <label style="font-size:0.9rem; font-weight:600;">ชื่อผู้ป่วย</label>
-       <input type="text" id="inp-name" class="form-control" placeholder="ระบุชื่อ-สกุล">
-       
-       <label style="font-size:0.9rem; font-weight:600;">เบอร์โทรศัพท์</label>
-       <input type="tel" id="inp-tel" class="form-control" placeholder="08x-xxx-xxxx">
-       
+       <input type="text" id="inp-name" class="form-control" placeholder="ชื่อ-สกุล">
+       <input type="tel" id="inp-tel" class="form-control" placeholder="เบอร์โทร">
        <button class="btn btn-confirm" onclick="confirmBooking()">ยืนยันและส่งไลน์</button>
        <button class="btn" style="background:#f1f5f9; color:#64748b;" onclick="document.getElementById('bookingModal').classList.remove('show')">ปิดหน้าต่าง</button>
     </div>
@@ -196,149 +152,74 @@
 
   <script>
     // **********************************************************
-    // ⚠️ แก้ลิงก์นี้ให้เป็นอันใหม่ที่คุณ Deploy ล่าสุด
+    // ⚠️ ใส่ URL Web App อันใหม่ที่ Deploy แล้วตรงนี้
     const API_ENDPOINT = "https://script.google.com/macros/s/AKfycbxMVqlYGeuj75wQm41kZCD4wf2weZajj27b0omuC6HlHzWja4sJYz6HF6m5b5nlmSUMtw/exec";
     const LINE_OA_ID = "@649dqeft";
     // **********************************************************
 
     const APP_CONFIG = {
       ttm: { title: "แพทย์แผนไทย", color: "#2e7d32", func: "getTTMData" },
-      tcm: { title: "แพทย์แผนจีน", color: "#e53935", func: "getTCMData" },
-      postpartum: { title: "บริการหลังคลอด", color: "#ec4899", func: "getPostpartumData" },
-      steam: { title: "อบไอน้ำสมุนไพร", color: "#0288d1", func: "getSteamData" },
-      wellness: { title: "Wellness Clinic", color: "#D4AF37", func: "getWellnessData" }
+      tcm: { title: "แพทย์แผนจีน", color: "#e53935", func: "getTCMData" }
     };
 
-    let currentApp = '';
-    let bookingData = {};
+    let currentApp = '', bookingData = {};
+    let currentPT = 1.5;
 
-    // --- STANDARD APP FUNCTIONS ---
+    // --- STANDARD APP ---
     function openApp(type) {
         currentApp = type;
         document.getElementById('view-home').classList.add('hidden');
         document.getElementById('view-dashboard').classList.remove('hidden');
-        
         let conf = APP_CONFIG[type];
         document.documentElement.style.setProperty('--primary', conf.color);
-        document.documentElement.style.setProperty('--primary-dark', conf.color); // Simplified
         document.getElementById('app-title').innerText = conf.title;
-        document.getElementById('app-logo').src = document.querySelector(`.card-${type === 'wellness' ? 'well' : type === 'postpartum' ? 'pp' : type} img`).src;
-        
-        fetchData();
+        document.getElementById('contentArea').innerHTML = 'กำลังโหลด...';
+        // Mock fetch for standard app
+        setTimeout(() => document.getElementById('contentArea').innerHTML = 'เชื่อมต่อ Database...', 500);
     }
-    
     function goHome() {
         document.getElementById('view-dashboard').classList.add('hidden');
         document.getElementById('view-home').classList.remove('hidden');
-    }
-
-    function fetchData() {
-        let container = document.getElementById('contentArea');
-        let scroller = document.getElementById('dateScroller');
-        container.innerHTML = '<div style="text-align:center; padding:40px;"><i class="fas fa-circle-notch fa-spin"></i> กำลังโหลดข้อมูล...</div>';
-        scroller.innerHTML = '';
-
-        fetch(`${API_ENDPOINT}?action=${APP_CONFIG[currentApp].func}`)
-            .then(res => res.json())
-            .then(data => {
-                renderData(data);
-            })
-            .catch(err => {
-                container.innerHTML = `<div style="text-align:center; color:red;">โหลดข้อมูลไม่สำเร็จ<br>${err}</div>`;
-            });
-    }
-
-    function renderData(data) {
-        let container = document.getElementById('contentArea');
-        let scroller = document.getElementById('dateScroller');
-        container.innerHTML = '';
-        
-        if(data.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:20px;">ไม่พบข้อมูลรอบว่าง</div>';
-            return;
-        }
-
-        // Render Tabs
-        data.forEach((day, index) => {
-            let chip = document.createElement('div');
-            chip.className = `date-chip ${index === 0 ? 'active' : ''}`;
-            chip.innerText = day.displayDate;
-            chip.onclick = () => {
-                document.querySelectorAll('.date-chip').forEach(c => c.classList.remove('active'));
-                chip.classList.add('active');
-                renderSlots(day.slots);
-            };
-            scroller.appendChild(chip);
-        });
-
-        // Render First Day
-        renderSlots(data[0].slots);
-    }
-
-    function renderSlots(slots) {
-        let container = document.getElementById('contentArea');
-        container.innerHTML = '';
-        
-        slots.forEach(slot => {
-            let colorClass = slot.isFull ? 'is-full' : 'is-available';
-            let icon = slot.isFull ? '<i class="fas fa-lock"></i>' : '<i class="fas fa-check-circle" style="color:#4caf50;"></i>';
-            let action = slot.isFull ? '' : `onclick="prepareStandardBooking('${slot.time}')"`;
-            
-            let html = `<div class="slot-card ${colorClass}" ${action}>
-                          <div>
-                             <div style="font-weight:bold; font-size:1.1rem;">${slot.time} น.</div>
-                             <div style="font-size:0.9rem; color:#666;">${slot.val}</div>
-                          </div>
-                          <div style="font-size:1.2rem;">${icon}</div>
-                        </div>`;
-            container.innerHTML += html;
-        });
-    }
-
-    function prepareStandardBooking(time) {
-        // สำหรับการจองปกติ (Demo)
-        bookingData = { time: time, dept: APP_CONFIG[currentApp].title };
-        document.getElementById('modal-content').innerText = `บริการ: ${bookingData.dept}\nเวลา: ${bookingData.time}`;
-        document.getElementById('bookingModal').classList.add('show');
     }
 
     // --- IMC LOGIC ---
     function openIMCSetup() {
        document.getElementById('view-home').classList.add('hidden');
        document.getElementById('view-imc-setup').classList.remove('hidden');
-       document.getElementById('imc-date').value = new Date().toISOString().split('T')[0];
-       document.getElementById('imc-results').innerHTML = '';
+       
+       let today = new Date().toISOString().split('T')[0];
+       document.getElementById('imc-date').value = today;
+       changePT(1.5);
     }
     function closeIMC() {
        document.getElementById('view-imc-setup').classList.add('hidden');
        document.getElementById('view-home').classList.remove('hidden');
     }
-    function selectPT(val, el) {
-       document.querySelectorAll('.radio-box').forEach(b => b.classList.remove('active'));
-       el.classList.add('active');
+    function changePT(val) {
+        currentPT = val;
+        document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`pt-${val}`).classList.add('active');
+        searchIMCSlots();
     }
+
     function searchIMCSlots() {
-       var ptDur = document.querySelector('input[name="pt_dur"]:checked').value;
        var needTTM = document.getElementById('chk_ttm').checked;
        var needTCM = document.getElementById('chk_tcm').checked;
        var dateVal = document.getElementById('imc-date').value; 
        
-       if(!dateVal) { alert('กรุณาเลือกวันที่'); return; }
-       
-       // แปลงวันที่ส่งไป Backend
        var dObj = new Date(dateVal);
        var thMonth = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
-       var dateThai = `${dObj.getDate()} ${thMonth[dObj.getMonth()]}`; // ส่งแค่ "5 มกราคม" ให้ตรงกับ CSV
+       var dateThai = `${dObj.getDate()} ${thMonth[dObj.getMonth()]}`;
 
        var resDiv = document.getElementById('imc-results');
-       resDiv.innerHTML = '<div style="text-align:center; color:#9c27b0;"><i class="fas fa-circle-notch fa-spin"></i> กำลังประมวลผล...</div>';
+       resDiv.innerHTML = '<div style="text-align:center; padding:30px; color:#9c27b0;"><i class="fas fa-circle-notch fa-spin"></i> กำลังโหลดคิว...</div>';
 
        fetch(API_ENDPOINT, {
           method: 'POST',
           body: JSON.stringify({
              action: 'checkIMC',
              date: dateThai,
-             ptDuration: ptDur,
+             ptDuration: currentPT,
              needTTM: needTTM,
              needTCM: needTCM
           })
@@ -347,41 +228,53 @@
        .then(data => {
            if(data.status === 'error') {
                resDiv.innerHTML = `<div style="color:red; text-align:center;">${data.message}</div>`;
-           } else if(data.slots.length === 0) {
-               resDiv.innerHTML = `<div style="text-align:center; color:#999; padding:20px;">
-                                     <i class="far fa-calendar-times fa-3x"></i><br><br>
-                                     ไม่พบรอบเวลาที่ลงตัวในวันนี้
-                                   </div>`;
            } else {
-               let html = '';
-               data.slots.forEach(s => {
-                   let flow = s.plan.flowType ? `<br><small style="color:#666">(${s.plan.flowType})</small>` : '';
-                   html += `<div class="time-slot-btn" onclick='prepareIMCBooking(${JSON.stringify(s)})'>
-                              <div>
-                                 <div style="font-weight:bold; font-size:1.2rem; color:#333;">เริ่ม ${s.time} น.</div>
-                                 <div style="font-size:0.9rem; color:#7b1fa2;">เสร็จสิ้นประมาณ ${s.plan.endTimeStr} น.${flow}</div>
-                              </div>
-                              <i class="fas fa-chevron-right" style="color:#9c27b0;"></i>
-                            </div>`;
-               });
-               resDiv.innerHTML = html;
+               renderIMCDashboard(data.slots);
            }
        })
-       .catch(err => {
-           resDiv.innerHTML = `<div style="color:red; text-align:center;">เชื่อมต่อไม่ได้: ${err}</div>`;
-       });
+       .catch(e => resDiv.innerHTML = `<div style="color:red; text-align:center;">Error: ${e}</div>`);
+    }
+
+    function renderIMCDashboard(slots) {
+        var container = document.getElementById('imc-results');
+        container.innerHTML = '';
+        
+        if(!slots || slots.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">ไม่พบข้อมูล</div>';
+            return;
+        }
+
+        slots.forEach(slot => {
+            let statusClass = slot.status; // available, full, unavailable
+            let isClickable = (slot.status === 'available');
+            
+            let infoText = slot.status === 'available' 
+                           ? `เสร็จสิ้นประมาณ ${slot.plan.endTimeStr} น.` 
+                           : slot.label; 
+
+            let btnHtml = isClickable 
+                          ? `<div class="slot-btn btn-book">จอง <i class="fas fa-chevron-right"></i></div>`
+                          : `<div class="slot-btn btn-disabled"><i class="fas fa-times"></i></div>`;
+
+            let html = `
+            <div class="imc-slot-card ${statusClass}" onclick="${isClickable ? `prepareIMCBooking(${JSON.stringify(slot).replace(/"/g, '&quot;')})` : ''}">
+                <div>
+                    <div class="slot-time">${slot.time}</div>
+                    <div class="slot-info">${infoText}</div>
+                </div>
+                ${btnHtml}
+            </div>`;
+            container.innerHTML += html;
+        });
     }
 
     function prepareIMCBooking(slot) {
         currentApp = 'imc';
-        let ptDur = document.querySelector('input[name="pt_dur"]:checked').value;
-        let dateVal = document.getElementById('imc-date').value;
-        
-        let detail = `PT (${ptDur} ชม.) เริ่ม ${slot.time}`;
+        let detail = `PT (${currentPT} ชม.) เริ่ม ${slot.time}`;
         if(slot.plan.tcmTime) detail += `\n- จีน: ${slot.plan.tcmTime}`;
         if(slot.plan.ttmTime) detail += `\n- ไทย: ${slot.plan.ttmTime}`;
         
-        bookingData = { detail: detail, date: dateVal, time: slot.time };
+        bookingData = { detail: detail, date: document.getElementById('imc-date').value, time: slot.time };
         document.getElementById('modal-content').innerText = detail;
         document.getElementById('bookingModal').classList.add('show');
     }
@@ -391,12 +284,7 @@
         let tel = document.getElementById('inp-tel').value;
         if(!name) { alert('กรุณากรอกชื่อ'); return; }
         
-        let msg = '';
-        if (currentApp === 'imc') {
-            msg = `จองคิว IMC\nชื่อ: ${name}\nเบอร์: ${tel}\nวันที่: ${bookingData.date}\n\nแผนการรักษา:\n${bookingData.detail}`;
-        } else {
-            msg = `จองคิว${bookingData.dept}\nชื่อ: ${name}\nเบอร์: ${tel}\nรอบเวลา: ${bookingData.time}`;
-        }
+        let msg = `จองคิว IMC\nชื่อ: ${name}\nเบอร์: ${tel}\nวันที่: ${bookingData.date}\n\nแผนการรักษา:\n${bookingData.detail}`;
         
         let dummy = document.createElement("textarea");
         document.body.appendChild(dummy); dummy.value = msg; dummy.select(); document.execCommand("copy"); document.body.removeChild(dummy);
