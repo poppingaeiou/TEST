@@ -20,7 +20,6 @@
         --wellness-primary: #D4AF37; 
         --wellness-dark: #AA8C2C;
         --wellness-text: #423818;
-        /* เพิ่มสี IMC เข้าไปใน Theme */
         --imc-primary: #9c27b0; 
         --imc-dark: #7b1fa2;
         --imc-bg: #f3e5f5;
@@ -66,7 +65,7 @@
     .card-wellness h3 { color: #AA8C2C !important; }
     .card-wellness:hover .arrow-btn { background: #D4AF37; }
 
-    /* New IMC Card Style */
+    /* IMC Card Style */
     .card-imc { border-left-color: var(--imc-primary); }
     .card-imc::after { background: var(--imc-primary); }
     .card-imc:hover .arrow-btn { background: var(--imc-primary); color:white; }
@@ -102,6 +101,12 @@
     .date-chip.active { background: white; color: var(--day-color); transform: scale(1.1); font-weight: bold; border: none; box-shadow: 0 8px 20px rgba(0,0,0,0.25); }
     .date-chip.active::after { content:''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: var(--day-color); }
 
+    /* --- FIX: IMC Date Scroller Style (แก้ไขให้ตัวอักษรไม่จม) --- */
+    /* เมื่ออยู่ในโหมด IMC ตัวหนังสือในกล่องที่เลือก (Active) ต้องเป็นสีม่วง */
+    #imc-date-scroller .date-chip.active {
+        color: var(--imc-primary) !important;
+    }
+    
     .container { max-width: 600px; margin: 0 auto; padding: 0 15px 80px; }
     .selected-date-header { font-size: 1.1rem; font-weight: 700; color: #334155; padding: 25px 5px 15px; display: flex; align-items: center; }
     .header-bar { width: 6px; height: 24px; border-radius: 4px; margin-right: 12px; background-color: var(--primary); }
@@ -113,7 +118,7 @@
     .is-available::before { background: #4caf50; }
     .is-full::before { background: #ef4444; }
 
-    /* IMC Specific UI (เพิ่มเข้ามาโดยไม่ลบของเดิม) */
+    /* IMC Specific UI */
     .imc-setup-box { margin: -20px 15px 15px 15px; background: white; border-radius: 20px; padding: 20px; box-shadow: var(--shadow-md); position: relative; z-index: 10; border: 1px solid #f3e5f5; }
     .imc-toggle-group { display: flex; gap: 8px; background: #f8fafc; padding: 5px; border-radius: 12px; margin-bottom: 15px; }
     .imc-toggle { flex: 1; text-align: center; padding: 10px 5px; border-radius: 10px; cursor: pointer; transition: 0.2s; border: 1px solid transparent; }
@@ -134,7 +139,6 @@
     .imc-btn { padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
     .imc-btn-book { background: var(--imc-bg); color: var(--imc-primary); }
     .imc-btn-full { background: #fff3e0; color: #ff9800; cursor: not-allowed; }
-    /* End IMC Specific UI */
 
     .gender-male { background: #e3f2fd !important; border-color: #90caf9 !important; }
     .gender-male::before { background: #1976d2 !important; }
@@ -242,6 +246,7 @@
     </div>
 
     <div class="menu-container">
+        
         <div class="dept-card card-ttm" onclick="openApp('ttm')">
           <img src="https://img2.pic.in.th/pic/619e72dc2124132ccf4620717d4fa58d.md.png" class="dept-icon">
           <div class="dept-info"><h3 data-i18n="ttm_title">แพทย์แผนไทย</h3><p data-i18n="ttm_desc">นวดรักษา, ประคบ, นวดส่งเสริมฯ</p></div>
@@ -259,8 +264,8 @@
               <i class="fas fa-wheelchair"></i>
            </div>
            <div class="dept-info">
-              <h3>กลุ่มผู้ป่วย IMC</h3>
-              <p style="color:var(--imc-primary);">กายภาพ + แผนไทย/จีน</p>
+              <h3 data-i18n="imc_title">กลุ่มผู้ป่วย IMC</h3>
+              <p style="color:var(--imc-primary);" data-i18n="imc_desc">กายภาพ + แผนไทย/จีน</p>
            </div>
            <div class="arrow-btn"><i class="fas fa-chevron-right"></i></div>
         </div>
@@ -334,8 +339,8 @@
                  <i class="fas fa-wheelchair"></i>
              </div>
              <div class="header-titles">
-                 <h1 style="font-size:1.3rem;">กลุ่มผู้ป่วย IMC</h1>
-                 <p>ตารางนัดแบบบูรณาการ</p>
+                 <h1 data-i18n="imc_title">กลุ่มผู้ป่วย IMC</h1>
+                 <p data-i18n="sched_realtime">ตารางนัดแบบบูรณาการ</p>
              </div>
           </div>
           <div id="imc-date-scroller" class="date-scroller" style="margin-top:15px;"></div>
@@ -453,8 +458,10 @@
                  <option value="ชาย" data-i18n="male">ชาย</option>
               </select>
            </div>
+           
            <label class="form-label" data-i18n="lbl_extra_patient">ผู้รับบริการเพิ่มเติม (ถ้ามี)</label>
            <div id="extra-patients-container"></div>
+           
            <button type="button" class="btn-add-patient" onclick="addPatient()">
              <i class="fas fa-user-plus"></i> <span data-i18n="btn_add_patient">เพิ่มผู้รับบริการ</span>
            </button>
@@ -562,7 +569,9 @@
             avail: "ว่าง", queue: "คิว", full: "เต็ม", closed: "งด", round_m: "รอบชาย", round_f: "รอบหญิง",
             loading: "กำลังโหลด...", no_service: "⛔ งดให้บริการ", no_slot: "ไม่มีรอบว่างในวันนี้",
             dept: "แผนก", service: "บริการ", datetime: "วันเวลา", details: "รายละเอียด", note: "หมายเหตุ",
-            warning_msg: "<strong>โปรดทราบ!</strong><br>คิวจะถูกจองสำเร็จ<br>ต่อเมื่อเจ้าหน้าที่ <u>ตอบรับทางไลน์</u> แล้วเท่านั้น"
+            warning_msg: "<strong>โปรดทราบ!</strong><br>คิวจะถูกจองสำเร็จ<br>ต่อเมื่อเจ้าหน้าที่ <u>ตอบรับทางไลน์</u> แล้วเท่านั้น",
+            // IMC Translations
+            imc_title: "กลุ่มผู้ป่วย IMC", imc_desc: "กายภาพ + แผนไทย/จีน"
         },
         en: {
             dept_ttm_alt: "Thai Traditional & Alternative Medicine", hospital_name: "Sadao Hospital", online_24: "Online System 24 hrs.",
@@ -592,7 +601,9 @@
             avail: "Avail", queue: "Q", full: "Full", closed: "Closed", round_m: "Male Round", round_f: "Female Round",
             loading: "Loading...", no_service: "⛔ Service Closed", no_slot: "No slots available today",
             dept: "Department", service: "Service", datetime: "Date/Time", details: "Details", note: "Note",
-            warning_msg: "<strong>Please Note!</strong><br>Booking is confirmed<br>only after staff <u>reply via LINE</u>."
+            warning_msg: "<strong>Please Note!</strong><br>Booking is confirmed<br>only after staff <u>reply via LINE</u>.",
+            // IMC Translations
+            imc_title: "IMC Patient", imc_desc: "Physical Therapy + TTM/TCM"
         }
     };
 
@@ -817,7 +828,8 @@
         currentApp = 'imc';
         document.getElementById('view-home').classList.add('hidden');
         document.getElementById('view-imc-setup').classList.remove('hidden');
-        renderIMCDates(); changePT(1.5);
+        renderIMCDates(); 
+        changePT(1.5);
     }
     function closeIMC() {
         document.getElementById('view-imc-setup').classList.add('hidden');
@@ -1152,7 +1164,6 @@
       switchStep('step-summary');
     }
 
-    function backToForm() { switchStep('step-form'); }
     function confirmBooking() { saveUserData(bookingData.name, bookingData.tel); switchStep('step-warning'); }
 
     function sendToLine() {
