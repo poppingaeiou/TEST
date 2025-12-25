@@ -34,7 +34,7 @@
     .header-grid { display: grid; grid-template-columns: 40px 1fr 40px; align-items: center; }
     .back-btn { background: rgba(255,255,255,0.2); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
     
-    /* IMC Dashboard Buttons (2 Lines) */
+    /* IMC Buttons (Updated Text) */
     .toggle-btn { 
         flex: 1; 
         text-align: center; 
@@ -46,9 +46,9 @@
         color: #888; 
         border: 1px solid transparent;
         display: flex; flex-direction: column; justify-content: center; align-items: center;
-        line-height: 1.25; min-height: 48px;
+        line-height: 1.3; min-height: 50px;
     }
-    .toggle-btn span { font-weight: 600; font-size: 0.85rem; display:block; }
+    .toggle-btn span { font-weight: 600; font-size: 0.8rem; display:block; }
     .toggle-btn small { font-size: 0.75rem; font-weight: normal; opacity:0.8; }
     .toggle-btn.active { background:white; color:#9c27b0; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
     
@@ -336,12 +336,12 @@
 
     function prepareIMCBooking(slot) {
         currentApp = 'imc';
-        // อัปเดตข้อความสรุป
+        // อัปเดตข้อความสรุป (ใช้คำเต็ม)
         let ptText = (currentPT > 0) ? `ทำกายภาพบำบัด (${currentPT} ชม.)` : `ไม่ทำกายภาพบำบัด`;
         let detail = `${ptText}\nเริ่มเวลา ${slot.time}`;
         
-        if(slot.plan.tcmTime) detail += `\n- แพทย์จีน: ${slot.plan.tcmTime}`;
-        if(slot.plan.ttmTime) detail += `\n- แพทย์ไทย: ${slot.plan.ttmTime}`;
+        if(slot.plan.tcmTime) detail += `\n- จีน: ${slot.plan.tcmTime}`;
+        if(slot.plan.ttmTime) detail += `\n- ไทย: ${slot.plan.ttmTime}`;
         
         bookingData = { detail: detail, date: document.getElementById('selected-date-display').innerText, time: slot.time };
         document.getElementById('modal-content').innerText = detail;
