@@ -155,7 +155,7 @@
 
   <script>
     // **********************************************************
-    // ⚠️ 1. Deploy แล้วเอา URL มาใส่ตรงนี้
+    // ⚠️ 1. ใส่ URL Web App ของคุณ (ที่ Deploy เป็น 'Execute as me' / 'Anyone')
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxMVqlYGeuj75wQm41kZCD4wf2weZajj27b0omuC6HlHzWja4sJYz6HF6m5b5nlmSUMtw/exec";
     
     // ⚠️ 2. ใส่ Line ID
@@ -182,13 +182,12 @@
         
         fetch(`${SCRIPT_URL}?action=${conf.func}`)
             .then(res=>res.json()).then(d=> {
-                 // Sample render for TTM/TCM (can be customized)
                  let html = "";
                  d.forEach(g => {
                      html += `<h3>${g.displayDate}</h3>`;
                      g.slots.forEach(s => html += `<div>${s.time} - ${s.val}</div>`);
                  });
-                 document.getElementById('contentArea').innerHTML = html || "ไม่มีข้อมูล";
+                 document.getElementById('contentArea').innerHTML = html || "<div style='text-align:center;color:#999'>ไม่มีข้อมูล</div>";
             })
             .catch(e=>document.getElementById('contentArea').innerHTML='Error Connecting');
     }
@@ -217,7 +216,6 @@
        const today = new Date();
        for (let i = 0; i < 14; i++) {
            let d = new Date(); d.setDate(today.getDate() + i);
-           // สร้างวันที่สำหรับ Code ใช้เทียบ (Format: YYYY-MM-DD)
            let dateVal = d.toISOString().split('T')[0];
            
            let box = document.createElement('div');
@@ -257,7 +255,7 @@
        if(!selectedDateStr) return;
        var dObj = new Date(selectedDateStr);
        var thMonthFull = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
-       // ส่งไปแค่ "7 มกราคม" ตาม Format ใน Sheet
+       // ส่งไปแค่ "7 มกราคม"
        var dateThai = `${dObj.getDate()} ${thMonthFull[dObj.getMonth()]}`;
 
        var resDiv = document.getElementById('imc-results');
@@ -354,7 +352,6 @@
         
         let msg = `ขอจองคิว IMC (รพ.สะเดา)\nชื่อ: ${name}\nเบอร์: ${tel}\nวันที่: ${bookingData.date}\n\nแผนการรักษา:\n${bookingData.detail}`;
         
-        // Copy to clipboard trick
         let dummy = document.createElement("textarea");
         document.body.appendChild(dummy); dummy.value = msg; dummy.select(); document.execCommand("copy"); document.body.removeChild(dummy);
         
