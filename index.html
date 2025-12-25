@@ -18,13 +18,9 @@
     
     /* Layout */
     .home-container { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 40px; }
-    
-    /* Banner */
     .hero-banner { width: 100%; height: 250px; position: relative; border-radius: 0 0 30px 30px; overflow: hidden; margin-bottom: -40px; background:#2e7d32; }
     .hero-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; background: linear-gradient(to bottom, rgba(46,125,50,0.3), rgba(27,94,32,0.9)); padding: 20px; }
     .main-logo { width: 80px; height: 80px; background: white; border-radius: 50%; padding: 2px; margin-bottom: 10px; object-fit: contain; }
-    
-    /* Menu */
     .menu-container { width: 100%; padding: 0 20px; z-index: 2; margin-top: 20px; }
     .dept-card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 6px solid #ccc; transition: 0.2s; }
     .dept-card:active { transform: scale(0.98); }
@@ -38,21 +34,27 @@
     .header-grid { display: grid; grid-template-columns: 40px 1fr 40px; align-items: center; }
     .back-btn { background: rgba(255,255,255,0.2); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
     
-    /* IMC Dashboard Style */
+    /* IMC Dashboard Style (Fixed Buttons) */
     .toggle-btn { 
         flex: 1; 
         text-align: center; 
-        padding: 8px 4px; /* ลด padding ข้าง */
+        padding: 8px 4px;
         border-radius: 8px; 
         cursor: pointer; 
-        font-size: 0.8rem; /* ลดขนาดฟอนต์ลงเล็กน้อย */
+        font-size: 0.8rem; 
         transition: 0.2s; 
         color: #888; 
         border: 1px solid transparent;
-        white-space: nowrap; /* ห้ามขึ้นบรรทัดใหม่ */
-        overflow: hidden;
-        text-overflow: ellipsis; 
+        /* ทำให้เป็น 2 บรรทัด */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        line-height: 1.2;
+        min-height: 45px;
     }
+    .toggle-btn span { font-weight: 600; font-size: 0.8rem; }
+    .toggle-btn small { font-size: 0.7rem; font-weight: normal; }
     .toggle-btn.active { background:white; color:#9c27b0; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
     
     .imc-slot-card { background:white; border-radius:16px; padding:15px; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; border-left:6px solid #ccc; box-shadow:0 2px 6px rgba(0,0,0,0.03); transition:0.2s; }
@@ -66,34 +68,20 @@
     .btn-book { background:#f3e5f5; color:#9c27b0; }
     .btn-disabled { background:#eee; color:#999; }
 
-    /* Date Scroller (PC Support) */
+    /* Date Scroller */
     .date-scroller-wrapper { 
-        display: flex; 
-        overflow-x: auto; 
-        padding: 10px 0 15px; 
-        gap: 10px; 
-        scrollbar-width: thin;
-        scrollbar-color: rgba(255,255,255,0.5) rgba(255,255,255,0.1);
-        cursor: grab;
+        display: flex; overflow-x: auto; padding: 10px 0 15px; gap: 10px; 
+        scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.5) rgba(255,255,255,0.1); cursor: grab; 
     }
     .date-scroller-wrapper::-webkit-scrollbar { height: 6px; display: block; }
     .date-scroller-wrapper::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); border-radius: 3px; }
     .date-scroller-wrapper::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.4); border-radius: 3px; }
-    .date-scroller-wrapper:active { cursor: grabbing; }
-    
     .date-box { 
-        min-width: 65px; 
-        height: 75px; 
-        background: rgba(255,255,255,0.2); 
-        border: 1px solid rgba(255,255,255,0.3);
-        border-radius: 14px; 
-        display: flex; flex-direction: column; align-items: center; justify-content: center; 
+        min-width: 65px; height: 75px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
+        border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; 
         color: white; cursor: pointer; transition: 0.2s; flex-shrink: 0; user-select: none; 
     }
-    .date-box.active { 
-        background: white; color: #9c27b0; transform: scale(1.05); 
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2); font-weight: bold; border: none; 
-    }
+    .date-box.active { background: white; color: #9c27b0; transform: scale(1.05); box-shadow: 0 5px 15px rgba(0,0,0,0.2); font-weight: bold; border: none; }
     .date-day-text { font-size: 0.8rem; opacity: 0.9; }
     .date-num-text { font-size: 1.6rem; font-weight: 700; line-height: 1; margin-top: 2px; }
 
@@ -166,9 +154,15 @@
       
       <div style="margin:-15px 20px 10px; background:white; border-radius:15px; padding:10px; box-shadow:0 4px 15px rgba(0,0,0,0.05); display:flex; flex-direction:column; gap:8px;">
           <div style="display:flex; gap:5px; background:#f5f5f5; border-radius:10px; padding:4px;">
-              <div id="pt-1.5" class="toggle-btn active" onclick="changePT(1.5)">ทำกายภาพบำบัด 1.5 ชม.</div>
-              <div id="pt-1" class="toggle-btn" onclick="changePT(1)">ทำกายภาพบำบัด 1.0 ชม.</div>
-              <div id="pt-0" class="toggle-btn" onclick="changePT(0)">ไม่ทำกายภาพบำบัด</div>
+              <div id="pt-1.5" class="toggle-btn active" onclick="changePT(1.5)">
+                  <span>ทำกายภาพบำบัด</span><small>1.5 ชม.</small>
+              </div>
+              <div id="pt-1" class="toggle-btn" onclick="changePT(1)">
+                  <span>ทำกายภาพบำบัด</span><small>1.0 ชม.</small>
+              </div>
+              <div id="pt-0" class="toggle-btn" onclick="changePT(0)">
+                  <span>ไม่ทำ</span><small>กายภาพบำบัด</small>
+              </div>
           </div>
           <div style="display:flex; justify-content:space-around; font-size:0.85rem; color:#666; padding:0 5px;">
               <label style="display:flex; align-items:center; gap:5px;">
@@ -210,7 +204,6 @@
     let currentPT = 1.5;
     let selectedDateStr = ""; 
 
-    // --- STANDARD APP ---
     function openApp(type) {
         currentApp = type;
         document.getElementById('view-home').classList.add('hidden');
@@ -232,52 +225,32 @@
     function openIMCSetup() {
        document.getElementById('view-home').classList.add('hidden');
        document.getElementById('view-imc-setup').classList.remove('hidden');
-       
        renderIMCDates(); 
        changePT(1.5);
     }
-    
     function closeIMC() {
        document.getElementById('view-imc-setup').classList.add('hidden');
        document.getElementById('view-home').classList.remove('hidden');
     }
-
-    // สร้างวันที่ล่วงหน้า 14 วัน
     function renderIMCDates() {
         const scroller = document.getElementById('imc-date-scroller');
         scroller.innerHTML = '';
-        
-        // Mouse Wheel Scroll (PC)
         scroller.addEventListener('wheel', (evt) => {
-            evt.preventDefault();
-            scroller.scrollLeft += evt.deltaY;
+            evt.preventDefault(); scroller.scrollLeft += evt.deltaY;
         });
         
         const thDays = ["อา.", "จ.", "อ.", "พ.", "พฤ.", "ศ.", "ส."];
-        const thMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
-        
         const today = new Date();
         
         for (let i = 0; i < 14; i++) {
-            let d = new Date();
-            d.setDate(today.getDate() + i);
-            
+            let d = new Date(); d.setDate(today.getDate() + i);
             let dateVal = d.toISOString().split('T')[0];
-            let dayName = thDays[d.getDay()];
-            let dateNum = d.getDate();
-            
             let box = document.createElement('div');
             box.className = `date-box ${i === 0 ? 'active' : ''}`; 
-            box.innerHTML = `<div class="date-day-text">${dayName}</div>
-                             <div class="date-num-text">${dateNum}</div>`;
+            box.innerHTML = `<div class="date-day-text">${thDays[d.getDay()]}</div><div class="date-num-text">${d.getDate()}</div>`;
             box.onclick = () => selectIMCDate(dateVal, box, d);
-            
             scroller.appendChild(box);
-            
-            if (i === 0) {
-                selectedDateStr = dateVal;
-                updateDateDisplay(d);
-            }
+            if (i === 0) { selectedDateStr = dateVal; updateDateDisplay(d); }
         }
     }
     
@@ -285,11 +258,9 @@
         selectedDateStr = dateVal;
         document.querySelectorAll('.date-box').forEach(b => b.classList.remove('active'));
         el.classList.add('active');
-        
         updateDateDisplay(dObj);
         searchIMCSlots(); 
     }
-    
     function updateDateDisplay(d) {
         const thMonthsFull = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
         const thDaysFull = ["วันอาทิตย์", "วันจันทร์", "วันอังคาร", "วันพุธ", "วันพฤหัสบดี", "วันศุกร์", "วันเสาร์"];
@@ -307,10 +278,7 @@
     function searchIMCSlots() {
        var needTTM = document.getElementById('chk_ttm').checked;
        var needTCM = document.getElementById('chk_tcm').checked;
-       
        if(!selectedDateStr) return;
-       
-       // แปลงวันที่ส่งไป Backend
        var dObj = new Date(selectedDateStr);
        var thMonthFull = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
        var dateThai = `${dObj.getDate()} ${thMonthFull[dObj.getMonth()]}`;
@@ -374,7 +342,6 @@
 
     function prepareIMCBooking(slot) {
         currentApp = 'imc';
-        // สร้างข้อความสรุป (แก้ไขให้ใช้คำเต็ม)
         let detail = (currentPT > 0) ? `ทำกายภาพบำบัด (${currentPT} ชม.) เริ่ม ${slot.time}` : `เริ่มรักษา ${slot.time}`;
         
         if(slot.plan.tcmTime) detail += `\n- จีน: ${slot.plan.tcmTime}`;
@@ -391,7 +358,6 @@
         if(!name) { alert('กรุณากรอกชื่อ'); return; }
         
         let msg = `จองคิว IMC\nชื่อ: ${name}\nเบอร์: ${tel}\nวันที่: ${bookingData.date}\n\nแผนการรักษา:\n${bookingData.detail}`;
-        
         let dummy = document.createElement("textarea");
         document.body.appendChild(dummy); dummy.value = msg; dummy.select(); document.execCommand("copy"); document.body.removeChild(dummy);
         window.location.href = `https://line.me/R/oaMessage/${LINE_OA_ID}/?${encodeURIComponent(msg)}`;
