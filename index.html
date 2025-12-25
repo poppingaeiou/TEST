@@ -20,7 +20,8 @@
         --wellness-primary: #D4AF37; 
         --wellness-dark: #AA8C2C;
         --wellness-text: #423818;
-        --imc-primary: #9c27b0; /* สีม่วงสำหรับ IMC */
+        /* เพิ่มสี IMC เข้าไปใน Theme */
+        --imc-primary: #9c27b0; 
         --imc-dark: #7b1fa2;
         --imc-bg: #f3e5f5;
     }
@@ -32,23 +33,11 @@
 
     /* --- Language Button --- */
     .lang-btn {
-        position: fixed;
-        top: 15px;
-        right: 15px;
-        z-index: 9999;
-        background: rgba(255, 255, 255, 0.9);
-        border: 2px solid var(--primary);
-        color: var(--primary);
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-weight: bold;
-        font-family: 'Prompt', sans-serif;
-        cursor: pointer;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        gap: 5px;
+        position: fixed; top: 15px; right: 15px; z-index: 9999;
+        background: rgba(255, 255, 255, 0.9); border: 2px solid var(--primary); color: var(--primary);
+        padding: 5px 12px; border-radius: 20px; font-weight: bold; font-family: 'Prompt', sans-serif;
+        cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: all 0.2s;
+        display: flex; align-items: center; gap: 5px;
     }
     .lang-btn:hover { background: var(--primary); color: white; }
     .lang-btn img { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; }
@@ -124,14 +113,13 @@
     .is-available::before { background: #4caf50; }
     .is-full::before { background: #ef4444; }
 
-    /* IMC Specific UI */
+    /* IMC Specific UI (เพิ่มเข้ามาโดยไม่ลบของเดิม) */
     .imc-setup-box { margin: -20px 15px 15px 15px; background: white; border-radius: 20px; padding: 20px; box-shadow: var(--shadow-md); position: relative; z-index: 10; border: 1px solid #f3e5f5; }
     .imc-toggle-group { display: flex; gap: 8px; background: #f8fafc; padding: 5px; border-radius: 12px; margin-bottom: 15px; }
     .imc-toggle { flex: 1; text-align: center; padding: 10px 5px; border-radius: 10px; cursor: pointer; transition: 0.2s; border: 1px solid transparent; }
     .imc-toggle span { display: block; font-weight: 700; font-size: 0.9rem; }
     .imc-toggle small { font-size: 0.75rem; color: #666; }
     .imc-toggle.active { background: white; color: var(--imc-primary); border-color: var(--imc-primary); box-shadow: var(--shadow-sm); }
-    
     .imc-options { display: flex; justify-content: space-around; padding-top: 5px; }
     .imc-checkbox { display: flex; align-items: center; gap: 8px; font-weight: 500; color: #555; cursor: pointer; }
     .imc-checkbox input { accent-color: var(--imc-primary); width: 18px; height: 18px; }
@@ -146,7 +134,6 @@
     .imc-btn { padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
     .imc-btn-book { background: var(--imc-bg); color: var(--imc-primary); }
     .imc-btn-full { background: #fff3e0; color: #ff9800; cursor: not-allowed; }
-
     /* End IMC Specific UI */
 
     .gender-male { background: #e3f2fd !important; border-color: #90caf9 !important; }
@@ -255,7 +242,6 @@
     </div>
 
     <div class="menu-container">
-        
         <div class="dept-card card-ttm" onclick="openApp('ttm')">
           <img src="https://img2.pic.in.th/pic/619e72dc2124132ccf4620717d4fa58d.md.png" class="dept-icon">
           <div class="dept-info"><h3 data-i18n="ttm_title">แพทย์แผนไทย</h3><p data-i18n="ttm_desc">นวดรักษา, ประคบ, นวดส่งเสริมฯ</p></div>
@@ -467,10 +453,8 @@
                  <option value="ชาย" data-i18n="male">ชาย</option>
               </select>
            </div>
-           
            <label class="form-label" data-i18n="lbl_extra_patient">ผู้รับบริการเพิ่มเติม (ถ้ามี)</label>
            <div id="extra-patients-container"></div>
-           
            <button type="button" class="btn-add-patient" onclick="addPatient()">
              <i class="fas fa-user-plus"></i> <span data-i18n="btn_add_patient">เพิ่มผู้รับบริการ</span>
            </button>
@@ -524,11 +508,13 @@
     // **********************************************************
     // ⚠️ 1. ใส่ URL Web App ของคุณ (ที่ Deploy เป็น 'Execute as me' / 'Anyone')
     const API_ENDPOINT = "https://script.google.com/macros/s/AKfycbxMVqlYGeuj75wQm41kZCD4wf2weZajj27b0omuC6HlHzWja4sJYz6HF6m5b5nlmSUMtw/exec";
+    
+    // ⚠️ 2. ใส่ Line ID
     const LINE_OA_ID = "@649dqeft";
     // **********************************************************
 
-    let currentLang = 'th';
-    let currentApp = '';
+    let currentLang = 'th'; // Default language
+    let currentApp = ''; 
     let globalData = [];
     let bookingData = {};
     let refreshInterval;
@@ -611,13 +597,27 @@
     };
 
     function t(key) { return translations[currentLang][key] || key; }
+
     function toggleLanguage() {
         currentLang = (currentLang === 'th') ? 'en' : 'th';
         document.getElementById('lang-text').innerText = currentLang.toUpperCase();
+        
+        // Update Static Text
         document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t(el.getAttribute('data-i18n')); });
         document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.getAttribute('data-i18n-ph')); });
-        if (currentApp && APP_CONFIG[currentApp]) { document.getElementById('app-title').innerText = (currentLang === 'en') ? APP_CONFIG[currentApp].titleEn : APP_CONFIG[currentApp].title; }
-        if (!document.getElementById('view-dashboard').classList.contains('hidden') && globalData.length > 0) { renderScroller(); renderSlots(selectedIndex); updatePriceDisplay(); }
+
+        // Update Dynamic Content
+        if (currentApp && APP_CONFIG[currentApp]) {
+             let conf = APP_CONFIG[currentApp];
+             document.getElementById('app-title').innerText = (currentLang === 'en') ? conf.titleEn : conf.title;
+        }
+
+        // Re-render Slots if view is dashboard
+        if (!document.getElementById('view-dashboard').classList.contains('hidden') && globalData.length > 0) {
+            renderScroller();
+            renderSlots(selectedIndex);
+            updatePriceDisplay();
+        }
     }
 
     const APP_CONFIG = {
@@ -626,7 +626,7 @@
       postpartum: { title: "บริการหลังคลอด", titleEn: "Postpartum Care", logo: "https://img2.pic.in.th/pic/eb06897c542c79b64690c8e794fa84a4.png", color: "#ec4899", dark: "#be185d", func: "getPostpartumData" },
       steam: { title: "อบไอน้ำสมุนไพร", titleEn: "Herbal Steam", logo: "https://img2.pic.in.th/pic/-3b445847427fcbfd.png", color: "#0288d1", dark: "#01579b", func: "getSteamData" },
       wellness: { title: "Wellness Clinic", titleEn: "Wellness Clinic", logo: "https://img2.pic.in.th/pic/Wellness-logo.png", color: "#D4AF37", dark: "#AA8C2C", func: "getWellnessData" },
-      // IMC Config
+      // IMC Added
       imc: { title: "กลุ่มผู้ป่วย IMC", titleEn: "IMC Patient", logo: "https://img2.pic.in.th/pic/6f7b352408393a1295f3000e7d9e6754.md.png", color: "#9c27b0", dark: "#7b1fa2", func: "" }
     };
 
@@ -634,14 +634,31 @@
       ttm: ["นวดและประคบเพื่อการรักษา", "นวดตัวส่งเสริมสุขภาพ(ชำระเงินเอง)", "นวดเท้าส่งเสริมสุขภาพ(ชำระเงินเอง)"],
       tcm: ["ฝังเข็มเพื่อการรักษา", "ครอบแก้ว", "ฝังเข็มใบหน้า", "ปรึกษาแพทย์แผนจีน"]
     };
+    
+    // Mapped for English Display in Dropdown
     const SERVICE_OPTIONS_EN = {
       ttm: ["Treatment Massage", "Health Massage", "Foot Massage"],
       tcm: ["Acupuncture", "Cupping", "Facial Acupuncture", "Consultation"]
     };
+
     const WELLNESS_PRICES = { "สครับเกลือ": "500.-", "สปาผิว": "650.-", "นวดน้ำมันอโรม่า": "550.-" };
     const WELLNESS_PRICES_EN = { "Salt Scrub": "500.-", "Skin Spa": "650.-", "Aroma Massage": "550.-" };
-    const SERVICE_PRICES = { ttm: {}, tcm: {}, postpartum: {}, steam: {}, wellness: WELLNESS_PRICES };
-    const SERVICE_PRICES_EN = { ttm: {}, tcm: {}, postpartum: {}, steam: {}, wellness: WELLNESS_PRICES_EN };
+    
+    // Price Maps
+    const SERVICE_PRICES = {
+        ttm: { "นวดและประคบเพื่อการรักษา": "เบิกได้ตามสิทธิ (ยกเว้นประกันสังคม ชำระเงินเอง 250 บาท)", "นวดตัวส่งเสริมสุขภาพ(ชำระเงินเอง)": "200 บาท (เพิ่มประคบสมุนไพร +50 บาท)", "นวดเท้าส่งเสริมสุขภาพ(ชำระเงินเอง)": "200 บาท" },
+        tcm: { "ฝังเข็มเพื่อการรักษา": "สิทธิข้าราชการเบิกได้ / สิทธิอื่นชำระเงินเอง 150-200 บาท<br><small style='color:#666'>(สิทธิบัตรทองในกลุ่มIMC เบิกได้)</small>", "ครอบแก้ว": "150 บาท", "ฝังเข็มใบหน้า": "300 บาท", "ปรึกษาแพทย์แผนจีน": "ฟรี" },
+        postpartum: { "บริการมารดาหลังคลอด": "เบิกได้ตามสิทธิ (ยกเว้นประกันสังคม ชำระเงินเอง 500 บาท)" },
+        steam: { "อบไอน้ำสมุนไพร": "เบิกได้ตามสิทธิ (ยกเว้นประกันสังคม ชำระเงินเอง 100 บาท)" },
+        wellness: WELLNESS_PRICES
+    };
+    const SERVICE_PRICES_EN = {
+        ttm: { "Treatment Massage": "Reimbursable (SSO self-pay 250 THB)", "Health Massage": "200 THB (+Herbal Compress +50 THB)", "Foot Massage": "200 THB" },
+        tcm: { "Acupuncture": "Gov Reimbursable / Others 150-200 THB", "Cupping": "150 THB", "Facial Acupuncture": "300 THB", "Consultation": "Free" },
+        postpartum: { "Postpartum Care": "Reimbursable (SSO self-pay 500 THB)" },
+        steam: { "Herbal Steam": "Reimbursable (SSO self-pay 100 THB)" },
+        wellness: WELLNESS_PRICES_EN
+    };
 
     const STAFF_IMAGES = {
         "รจนา M": "https://img2.pic.in.th/pic/-b38b682db8ac596b.png", "อรรถพล B": "https://img5.pic.in.th/file/secure-sv1/6b74e1ebb096c81368605ff43948dab4.png",
@@ -649,8 +666,10 @@
         "รัตน์ชนก KW": "https://img2.pic.in.th/pic/-83673d6d528be12a.png", "นิกษ์นิภา T": "https://img5.pic.in.th/file/secure-sv1/-c4fe207fa6c04aa3.png",
         "ณิชาภัทร W": "https://img2.pic.in.th/pic/1ef0aa325ccac37724897c9f2c10e5f4.png", "จินดา J": "https://img2.pic.in.th/pic/93b060e9e4b3fc9a9070d5ac2768c879.png"
     };
+
     const STAFF_NAME_MAP = { "รจนา M": "รจนา (แหม่ม)", "อรรถพล B": "อรรถพล (บ่าว)", "ศินารัตน์ C": "ศินารัตน์ (ซี)", "จุฑามาศ F": "จุฑามาศ (ฝน)", "ณิชาภัทร W": "ณิชาภัทร (วาวา)", "นิกษ์นิภา T": "นิกษ์นิภา (ตูน)", "รัตน์ชนก KW": "รัตน์ชนก (กวาง)", "จินดา J": "จินดา (เจี๊ยบ)" };
     const STAFF_NAME_MAP_EN = { "รจนา M": "Rotjana (Maam)", "อรรถพล B": "Attapon (Bao)", "ศินารัตน์ C": "Sinarat (C)", "จุฑามาศ F": "Jutamat (Fon)", "ณิชาภัทร W": "Nichapat (Wawa)", "นิกษ์นิภา T": "Niknipha (Kartoon)", "รัตน์ชนก KW": "Ratchanok (Kwang)", "จินดา J": "Jinda (Jeab)" };
+    
     const DEFAULT_IMG = "https://img2.pic.in.th/pic/1c189d2a727f532d391a5ab0604ccd2f.png";
     const DAY_COLORS = [ "#FF5252", "#FFD740", "#E040FB", "#4CAF50", "#FF9800", "#2196F3", "#9C27B0" ];
     const TIME_PAIRS = { "08:30": "09:30", "09:30": "10:30", "13:00": "14:00", "14:00": "15:00", "17:00": "18:00", "8:30": "9:30", "9:30": "10:30" };
@@ -667,10 +686,12 @@
     }
     startClock();
 
+    // --- MAIN NAVIGATION ---
     function openApp(type) {
       if (!APP_CONFIG[type]) { alert("Error: Invalid Service Type (" + type + ")"); return; }
       currentApp = type;
       isFetching = false;
+      
       let conf = APP_CONFIG[type];
       document.documentElement.style.setProperty('--primary', conf.color);
       document.documentElement.style.setProperty('--primary-dark', conf.dark);
@@ -678,8 +699,10 @@
       document.getElementById('app-logo').src = conf.logo;
       document.getElementById('view-home').classList.add('hidden');
       document.getElementById('view-dashboard').classList.remove('hidden');
+      
       selectedIndex = 0;
       fetchData(true);
+      
       if(refreshInterval) clearInterval(refreshInterval);
       refreshInterval = setInterval(function() { fetchData(false); }, 10000);
     }
@@ -687,11 +710,12 @@
     function goHome() {
       if(refreshInterval) clearInterval(refreshInterval);
       document.getElementById('view-dashboard').classList.add('hidden');
-      document.getElementById('view-imc-setup').classList.add('hidden'); // ซ่อน IMC ถ้าเปิดอยู่
+      document.getElementById('view-imc-setup').classList.add('hidden'); // ซ่อน IMC setup ถ้าเปิดอยู่
       document.getElementById('view-home').classList.remove('hidden');
       currentApp = '';
     }
 
+    // --- FETCH & RENDER (Original Logic) ---
     function fetchData(isFirstLoad) {
       if (isFetching || (!isFirstLoad && document.hidden)) return;
       isFetching = true;
@@ -788,13 +812,12 @@
       container.innerHTML = html + '</div>';
     }
 
-    // --- IMC NEW LOGIC ---
+    // --- IMC NEW LOGIC (เพิ่มใหม่) ---
     function openIMCSetup() {
         currentApp = 'imc';
         document.getElementById('view-home').classList.add('hidden');
         document.getElementById('view-imc-setup').classList.remove('hidden');
-        renderIMCDates(); 
-        changePT(1.5);
+        renderIMCDates(); changePT(1.5);
     }
     function closeIMC() {
         document.getElementById('view-imc-setup').classList.add('hidden');
@@ -804,14 +827,17 @@
        const scroller = document.getElementById('imc-date-scroller');
        scroller.innerHTML = '';
        const thDays = ["อา.", "จ.", "อ.", "พ.", "พฤ.", "ศ.", "ส."];
+       const enDays = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+       let days = (currentLang === 'en') ? enDays : thDays;
        const today = new Date();
        for (let i = 0; i < 14; i++) {
            let d = new Date(); d.setDate(today.getDate() + i);
            let dateVal = d.toISOString().split('T')[0];
+           
            let box = document.createElement('div');
            box.className = `date-chip ${i === 0 ? 'active' : ''}`; 
-           box.style.setProperty('--day-color', '#fff'); // Override color for purple bg
-           box.innerHTML = `<small>${thDays[d.getDay()]}</small><span>${d.getDate()}</span>`;
+           box.style.setProperty('--day-color', '#fff'); // Override
+           box.innerHTML = `<small>${days[d.getDay()]}</small><span>${d.getDate()}</span>`;
            box.onclick = () => selectIMCDate(dateVal, box, d);
            scroller.appendChild(box);
            if (i === 0) { selectedDateStr = dateVal; updateDateDisplay(d); }
@@ -827,6 +853,7 @@
     function updateDateDisplay(d) {
        const thMonthsFull = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
        const thDaysFull = ["วันอาทิตย์", "วันจันทร์", "วันอังคาร", "วันพุธ", "วันพฤหัสบดี", "วันศุกร์", "วันเสาร์"];
+       // Basic display for now, can be improved with lang check
        let txt = `${thDaysFull[d.getDay()]}ที่ ${d.getDate()} ${thMonthsFull[d.getMonth()]} ${d.getFullYear() + 543}`;
        document.getElementById('selected-date-display').innerText = txt;
     }
@@ -960,6 +987,7 @@
         if (availableStaffList && availableStaffList.length > 0) {
             availableStaffList.forEach(sheetName => {
                 let displayName;
+                // English Name Mapping Logic
                 if (currentLang === 'en' && STAFF_NAME_MAP_EN[sheetName]) { displayName = STAFF_NAME_MAP_EN[sheetName]; } else { displayName = STAFF_NAME_MAP[sheetName] || sheetName; }
                 let img = STAFF_IMAGES[sheetName] || DEFAULT_IMG;
                 let is2HrAvailable = nextSlotStaffList.includes(sheetName);
@@ -1037,7 +1065,7 @@
     }
 
     function addPatient() {
-       if (patientCount >= currentSlotCapacity) { Swal.fire({ icon:'info', text: t('limit_patient') + " (" + currentSlotCapacity + ")", confirmButtonColor: 'var(--primary)' }); return; }
+       if (patientCount >= currentSlotCapacity) { Swal.fire({ icon:'info', title:t('full'), text: t('limit_patient') + " (" + currentSlotCapacity + ")", confirmButtonColor: 'var(--primary)' }); return; }
        patientCount++;
        const container = document.getElementById('extra-patients-container');
        const div = document.createElement('div');
@@ -1064,15 +1092,14 @@
       bookingData.note = document.getElementById('inp-note').value.trim() || "-";
       bookingData.extraInfo = "";
 
-      // Logic สร้างสรุปข้อมูล (Summary)
       if (currentApp === 'imc') {
-          // IMC Summary
-          bookingData.extraInfo = bookingData.detail; // Detail ถูกเซ็ตไว้ตอนเลือกสล็อต IMC
+          // IMC Special Summary
+          bookingData.extraInfo = bookingData.detail; // Already set in prepareIMCBooking
       } else if (currentApp === 'postpartum') {
           let birthDate = document.getElementById('inp-birth-date').value;
           let deliveryType = document.getElementById('inp-delivery-type').value;
           let hospital = document.getElementById('inp-hospital').value;
-          if(!birthDate || !hospital || !deliveryType) { Swal.fire({ icon:'warning', text:'กรุณากรอกข้อมูลให้ครบ', confirmButtonColor:'var(--primary)' }); return; }
+          if(!birthDate || !hospital || !deliveryType) { Swal.fire({ icon:'warning', text:(currentLang==='en'?'Please fill all fields':'กรุณากรอกข้อมูลให้ครบถ้วน'), confirmButtonColor:'var(--primary)' }); return; }
           bookingData.extraInfo = `\n${t('lbl_birthdate')}: ${birthDate}\n${t('lbl_delivery_type')}: ${deliveryType}\n${t('lbl_hospital')}: ${hospital}`;
       } else if (currentApp === 'steam') {
           let mainGender = document.getElementById('inp-gender').value;
@@ -1107,11 +1134,13 @@
           extraTimeHtml = `<div class="summary-row" style="margin-top:5px; background:#fffbeb; padding:8px; border-radius:12px; border:1px solid #f59e0b;"><div class="summary-val" style="color:#b45309; font-weight:700;"><i class="fas fa-clock"></i> ${t('book_2hr')}</div></div>`;
       }
 
+      let appName = (currentApp === 'imc') ? (currentLang==='en'?'IMC Patient':'กลุ่มผู้ป่วย IMC') : bookingData.dept;
+
       let html = `
         <div class="summary-row" style="margin-bottom:4px;"><div class="summary-val" style="font-size:1.1rem;">${bookingData.name}</div></div>
         <div class="summary-row"><div class="summary-val" style="color:#64748b;">${bookingData.tel}</div></div>
-        <div class="summary-row" style="margin-top:12px;"><div class="summary-label">${t('dept')}:</div><div class="summary-val">${bookingData.dept || (currentLang==='en'?'IMC':'IMC')}</div></div>
-        ${currentApp !== 'imc' ? `<div class="summary-row"><div class="summary-label">${t('service')}:</div><div class="summary-val">${bookingData.service}</div></div>` : ''}
+        <div class="summary-row" style="margin-top:12px;"><div class="summary-label">${t('dept')}:</div><div class="summary-val">${appName}</div></div>
+        ${(currentApp !== 'imc') ? `<div class="summary-row"><div class="summary-label">${t('service')}:</div><div class="summary-val">${bookingData.service}</div></div>` : ''}
         ${staffRowHtml}
         <div class="summary-row"><div class="summary-label">${t('datetime')}:</div><div class="summary-val">${bookingData.date} ${bookingData.time}</div></div>
         ${extraTimeHtml}
@@ -1123,12 +1152,14 @@
       switchStep('step-summary');
     }
 
+    function backToForm() { switchStep('step-form'); }
     function confirmBooking() { saveUserData(bookingData.name, bookingData.tel); switchStep('step-warning'); }
 
     function sendToLine() {
       let msgStaff = (currentApp === 'ttm' && bookingData.staff) ? `\nผู้ให้บริการ: ${bookingData.staff}` : '';
       let msgExtra = (bookingData.is2Hr && currentApp === 'ttm') ? `\n**นัดจอง 2 ชม.** (ชำระเพิ่ม 200บ.)` : '';
-      let appName = currentApp === 'imc' ? 'IMC Patient' : (bookingData.dept || currentApp.toUpperCase());
+      
+      let appName = (currentApp === 'imc') ? 'IMC Patient' : (bookingData.dept || currentApp.toUpperCase());
       
       let msg = `ขอจองคิว: ${appName}\n${bookingData.name}\n${bookingData.tel}\nวันที่: ${bookingData.date}\nเวลา: ${bookingData.time} น.`;
       
@@ -1142,7 +1173,7 @@
       let dummy = document.createElement("textarea");
       document.body.appendChild(dummy); dummy.value = msg; dummy.select(); document.execCommand("copy"); document.body.removeChild(dummy);
       
-      // SweetAlert Success
+      // SweetAlert Success & Redirect
       Swal.fire({
           icon: 'success',
           title: (currentLang === 'en') ? 'Copied!' : 'คัดลอกข้อมูลแล้ว',
@@ -1152,7 +1183,7 @@
       }).then(() => {
           let url = `https://line.me/R/oaMessage/${LINE_OA_ID}/?${encodeURIComponent(msg)}`;
           if (LINE_OA_ID && LINE_OA_ID.startsWith('@')) { window.location.href = url; } 
-          else { window.location.href = "https://lin.ee/Ip6j7HP"; }
+          else { alert("Copied! Paste in Line."); window.location.href = "https://lin.ee/Ip6j7HP"; }
           closeModal();
       });
     }
