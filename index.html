@@ -16,7 +16,6 @@
     .hidden { display: none !important; }
     .fade-in { animation: fadeIn 0.4s ease-in-out; }
     
-    /* Layout */
     .home-container { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 40px; }
     .hero-banner { width: 100%; height: 240px; position: relative; border-radius: 0 0 30px 30px; overflow: hidden; margin-bottom: -35px; background:#2e7d32; }
     .hero-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; background: linear-gradient(to bottom, rgba(46,125,50,0.3), rgba(27,94,32,0.95)); padding: 20px; }
@@ -30,34 +29,19 @@
     .card-imc { border-left-color: #9c27b0; background: linear-gradient(to right, #fff, #faf5ff); }
     .dept-icon { width: 50px; height: 50px; border-radius: 50%; margin-right: 15px; object-fit: cover; }
 
-    /* Dashboard Header */
     .top-section { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 15px; position: sticky; top: 0; z-index: 100; border-radius: 0 0 25px 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.15); }
     .header-grid { display: grid; grid-template-columns: 40px 1fr 40px; align-items: center; }
     .back-btn { background: rgba(255,255,255,0.2); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s; }
-    .back-btn:active { background: rgba(255,255,255,0.4); }
     
-    /* IMC Controls */
+    /* IMC UI */
     .toggle-group { display: flex; gap: 5px; background: #f1f5f9; border-radius: 12px; padding: 5px; margin-bottom: 10px; }
-    .toggle-btn { 
-        flex: 1; 
-        text-align: center; 
-        padding: 10px 4px; 
-        border-radius: 8px; 
-        cursor: pointer; 
-        font-size: 0.85rem; 
-        transition: all 0.2s; 
-        color: #64748b; 
-        display: flex; flex-direction: column; justify-content: center; align-items: center;
-        line-height: 1.3; min-height: 55px;
-    }
+    .toggle-btn { flex: 1; text-align: center; padding: 10px 4px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; color: #64748b; display: flex; flex-direction: column; justify-content: center; align-items: center; line-height: 1.3; min-height: 55px; }
     .toggle-btn span { font-weight: 600; font-size: 0.85rem; display:block; }
     .toggle-btn small { font-size: 0.75rem; font-weight: normal; opacity:0.8; }
     .toggle-btn.active { background: white; color: #9c27b0; font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
     
-    /* IMC Slots */
     .imc-slot-card { background: white; border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; border-left: 6px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.2s; position: relative; overflow: hidden; }
     .imc-slot-card.available { border-left-color: #4caf50; }
-    .imc-slot-card.unavailable { border-left-color: #ef4444; opacity: 0.6; background: #fcfcfc; filter: grayscale(0.8); pointer-events: none; }
     .imc-slot-card.full { border-left-color: #ff9800; background: #fffbf0; }
     
     .slot-time { font-size: 1.5rem; font-weight: 700; color: #333; line-height: 1; }
@@ -66,34 +50,21 @@
     
     .slot-btn { padding: 8px 18px; border-radius: 25px; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 5px; }
     .btn-book { background: #f3e5f5; color: #9c27b0; }
-    .btn-book:active { background: #e1bee7; }
     .btn-full { background: #fff3e0; color: #ff9800; cursor: not-allowed; }
-    .btn-disabled { background: #eee; color: #aaa; cursor: not-allowed; }
 
     /* Date Scroller */
-    .date-scroller-wrapper { 
-        display: flex; overflow-x: auto; padding: 10px 0 15px; gap: 10px; 
-        scrollbar-width: none; cursor: grab; 
-    }
+    .date-scroller-wrapper { display: flex; overflow-x: auto; padding: 10px 0 15px; gap: 10px; scrollbar-width: none; cursor: grab; }
     .date-scroller-wrapper::-webkit-scrollbar { display: none; }
-    .date-box { 
-        min-width: 65px; height: 75px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);
-        border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; 
-        color: white; cursor: pointer; transition: 0.2s; flex-shrink: 0; user-select: none; 
-    }
+    .date-box { min-width: 65px; height: 75px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; cursor: pointer; transition: 0.2s; flex-shrink: 0; user-select: none; }
     .date-box.active { background: white; color: #9c27b0; transform: scale(1.05); box-shadow: 0 5px 15px rgba(0,0,0,0.2); font-weight: bold; border: none; }
-    .date-day-text { font-size: 0.8rem; opacity: 0.9; }
-    .date-num-text { font-size: 1.6rem; font-weight: 700; line-height: 1; margin-top: 2px; }
-
+    
     /* Modal */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; display: none; backdrop-filter: blur(3px); }
     .modal-overlay.show { display: flex; animation: fadeIn 0.2s; }
     .modal-card { background: white; width: 90%; max-width: 380px; border-radius: 24px; padding: 25px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-    .form-control { width: 100%; padding: 14px; border: 1px solid #e2e8f0; border-radius: 12px; font-family: 'Prompt'; margin-bottom: 12px; font-size: 1rem; background: #f8fafc; transition: 0.2s; }
-    .form-control:focus { outline: none; border-color: var(--primary); background: white; }
-    .btn { width: 100%; padding: 14px; border-radius: 14px; border: none; font-size: 1rem; font-family: 'Prompt'; cursor: pointer; font-weight: 600; margin-top: 10px; transition: 0.2s; }
-    .btn-confirm { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(46,125,50,0.3); }
-    .btn-confirm:active { transform: scale(0.98); }
+    .form-control { width: 100%; padding: 14px; border: 1px solid #e2e8f0; border-radius: 12px; font-family: 'Prompt'; margin-bottom: 12px; font-size: 1rem; background: #f8fafc; }
+    .btn { width: 100%; padding: 14px; border-radius: 14px; border: none; font-size: 1rem; font-family: 'Prompt'; cursor: pointer; font-weight: 600; margin-top: 10px; }
+    .btn-confirm { background: var(--primary); color: white; }
 
     @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
   </style>
@@ -108,7 +79,6 @@
             <p style="margin:0; opacity:0.95; font-weight:300;">กลุ่มงานการแพทย์แผนไทยฯ</p>
         </div>
     </div>
-
     <div class="menu-container">
         <div class="dept-card card-ttm" onclick="openApp('ttm')">
            <img src="https://img2.pic.in.th/pic/619e72dc2124132ccf4620717d4fa58d.md.png" class="dept-icon">
@@ -131,9 +101,7 @@
     <div class="top-section">
       <div class="header-grid">
           <div class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i></div>
-          <div style="text-align:center;">
-              <h2 id="app-title" style="margin:0; font-size:1.1rem;"></h2>
-          </div>
+          <div style="text-align:center;"><h2 id="app-title" style="margin:0; font-size:1.1rem;"></h2></div>
           <div></div>
       </div>
     </div>
@@ -149,22 +117,15 @@
              <div style="font-weight:600; font-size:1.1rem;">ตารางคิว IMC</div>
              <div style="width:80px;"></div>
          </div>
-         
          <div id="imc-date-scroller" class="date-scroller-wrapper"></div>
          <div id="selected-date-display" style="text-align:center; font-size:0.9rem; opacity:0.95; margin-top:5px; font-weight:300;"></div>
       </div>
       
       <div style="margin:-20px 20px 10px; background:white; border-radius:20px; padding:15px; box-shadow:0 10px 25px rgba(0,0,0,0.05); z-index:10;">
           <div class="toggle-group">
-              <div id="pt-1.5" class="toggle-btn active" onclick="changePT(1.5)">
-                  <span>กายภาพ</span><small>1.5 ชม.</small>
-              </div>
-              <div id="pt-1" class="toggle-btn" onclick="changePT(1)">
-                  <span>กายภาพ</span><small>1.0 ชม.</small>
-              </div>
-              <div id="pt-0" class="toggle-btn" onclick="changePT(0)">
-                  <span>ไม่ทำ</span><small>กายภาพ</small>
-              </div>
+              <div id="pt-1.5" class="toggle-btn active" onclick="changePT(1.5)"><span>กายภาพ</span><small>1.5 ชม.</small></div>
+              <div id="pt-1" class="toggle-btn" onclick="changePT(1)"><span>กายภาพ</span><small>1.0 ชม.</small></div>
+              <div id="pt-0" class="toggle-btn" onclick="changePT(0)"><span>ไม่ทำ</span><small>กายภาพ</small></div>
           </div>
           <div style="display:flex; justify-content:space-around; font-size:0.9rem; color:#555; padding-top:5px;">
               <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
@@ -175,7 +136,6 @@
               </label>
           </div>
       </div>
-      
       <div id="imc-results" style="padding:10px 20px 60px; width:100%;"></div>
   </div>
 
@@ -185,25 +145,20 @@
            <i class="fas fa-calendar-check" style="font-size:3rem; color:var(--primary); margin-bottom:10px;"></i>
            <h3 style="margin:0; color:#333;">ยืนยันการจอง</h3>
        </div>
-       
        <div id="modal-content" style="background:#f0fdf4; padding:15px; border-radius:12px; border:1px solid #bbf7d0; margin-bottom:20px; font-size:0.9rem; white-space:pre-line; color:#14532d; line-height:1.6;"></div>
-       
        <input type="text" id="inp-name" class="form-control" placeholder="ชื่อ-นามสกุล ผู้ป่วย">
        <input type="tel" id="inp-tel" class="form-control" placeholder="เบอร์โทรศัพท์ติดต่อ">
-       
-       <button class="btn btn-confirm" onclick="confirmBooking()">
-           <i class="fab fa-line"></i> ยืนยันและส่งไลน์
-       </button>
-       <button class="btn" style="background:#f1f5f9; color:#64748b;" onclick="document.getElementById('bookingModal').classList.remove('show')">
-           ยกเลิก
-       </button>
+       <button class="btn btn-confirm" onclick="confirmBooking()"><i class="fab fa-line"></i> ยืนยันและส่งไลน์</button>
+       <button class="btn" style="background:#f1f5f9; color:#64748b;" onclick="document.getElementById('bookingModal').classList.remove('show')">ยกเลิก</button>
     </div>
   </div>
 
   <script>
     // **********************************************************
-    // ⚠️ อย่าลืมเปลี่ยน URL เป็นของ Web App ที่ Deploy ล่าสุดของคุณ
-    const API_ENDPOINT = "https://script.google.com/macros/s/AKfycbxMVqlYGeuj75wQm41kZCD4wf2weZajj27b0omuC6HlHzWja4sJYz6HF6m5b5nlmSUMtw/exec";
+    // ⚠️ 1. Deploy แล้วเอา URL มาใส่ตรงนี้
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxMVqlYGeuj75wQm41kZCD4wf2weZajj27b0omuC6HlHzWja4sJYz6HF6m5b5nlmSUMtw/exec";
+    
+    // ⚠️ 2. ใส่ Line ID
     const LINE_OA_ID = "@649dqeft"; 
     // **********************************************************
 
@@ -225,11 +180,15 @@
         document.getElementById('app-title').innerText = conf.title;
         document.getElementById('contentArea').innerHTML = '<div style="text-align:center; margin-top:50px; color:#999;"><i class="fas fa-spinner fa-spin"></i> กำลังโหลด...</div>';
         
-        fetch(`${API_ENDPOINT}?action=${conf.func}`)
+        fetch(`${SCRIPT_URL}?action=${conf.func}`)
             .then(res=>res.json()).then(d=> {
-                 // ส่วนนี้สำหรับแสดงผล TTM/TCM ปกติ (ถ้าคุณมี Logic แสดงผลอยู่แล้วใส่ตรงนี้)
-                 // ในตัวอย่างนี้ขอเน้นไปที่ IMC
-                 document.getElementById('contentArea').innerHTML = '<div style="text-align:center; padding:20px;">แสดงผลข้อมูลปกติ (ใส่ Code Render TTM/TCM ที่นี่)</div>';
+                 // Sample render for TTM/TCM (can be customized)
+                 let html = "";
+                 d.forEach(g => {
+                     html += `<h3>${g.displayDate}</h3>`;
+                     g.slots.forEach(s => html += `<div>${s.time} - ${s.val}</div>`);
+                 });
+                 document.getElementById('contentArea').innerHTML = html || "ไม่มีข้อมูล";
             })
             .catch(e=>document.getElementById('contentArea').innerHTML='Error Connecting');
     }
@@ -254,14 +213,13 @@
     function renderIMCDates() {
        const scroller = document.getElementById('imc-date-scroller');
        scroller.innerHTML = '';
-       scroller.addEventListener('wheel', (evt) => {
-           evt.preventDefault(); scroller.scrollLeft += evt.deltaY;
-       });
        const thDays = ["อา.", "จ.", "อ.", "พ.", "พฤ.", "ศ.", "ส."];
        const today = new Date();
        for (let i = 0; i < 14; i++) {
            let d = new Date(); d.setDate(today.getDate() + i);
+           // สร้างวันที่สำหรับ Code ใช้เทียบ (Format: YYYY-MM-DD)
            let dateVal = d.toISOString().split('T')[0];
+           
            let box = document.createElement('div');
            box.className = `date-box ${i === 0 ? 'active' : ''}`; 
            box.innerHTML = `<div class="date-day-text">${thDays[d.getDay()]}</div><div class="date-num-text">${d.getDate()}</div>`;
@@ -299,12 +257,13 @@
        if(!selectedDateStr) return;
        var dObj = new Date(selectedDateStr);
        var thMonthFull = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
+       // ส่งไปแค่ "7 มกราคม" ตาม Format ใน Sheet
        var dateThai = `${dObj.getDate()} ${thMonthFull[dObj.getMonth()]}`;
 
        var resDiv = document.getElementById('imc-results');
        resDiv.innerHTML = '<div style="text-align:center; padding:40px; color:#9c27b0; display:flex; flex-direction:column; align-items:center; gap:10px;"><i class="fas fa-circle-notch fa-spin fa-2x"></i><span>กำลังค้นหาคิวที่ดีที่สุด...</span></div>';
 
-       fetch(API_ENDPOINT, {
+       fetch(SCRIPT_URL, {
          method: 'POST',
          body: JSON.stringify({
              action: 'checkIMC',
@@ -338,10 +297,7 @@
             let statusClass = slot.status; 
             let isClickable = (slot.status === 'available');
             
-            let timeDisplay = slot.time;
-            let infoText = "";
-            let btnHtml = "";
-            let flowHtml = "";
+            let infoText = "", btnHtml = "", flowHtml = "";
 
             if(slot.status === 'available') {
                 infoText = `เสร็จสิ้นประมาณ ${slot.plan.endTimeStr} น.`;
@@ -359,7 +315,7 @@
             <div class="imc-slot-card ${statusClass}" onclick="${isClickable ? `prepareIMCBooking(${JSON.stringify(slot).replace(/"/g, '&quot;')})` : ''}">
                 <div>
                     <div style="display:flex; align-items:baseline; gap:8px;">
-                        <div class="slot-time">${timeDisplay}</div>
+                        <div class="slot-time">${slot.time}</div>
                         <div style="font-size:0.8rem; color:#888;">เริ่ม</div>
                     </div>
                     <div class="slot-info">${infoText}</div>
@@ -376,11 +332,10 @@
         let ptText = (currentPT > 0) ? `ทำกายภาพบำบัด (${currentPT} ชม.)` : `ไม่ทำกายภาพบำบัด`;
         let detail = `${ptText}\nเริ่มเวลา: ${slot.time} น.`;
         
-        // Construct detailed flow
-        if(slot.plan.tcmTime) detail += `\n- แพทย์แผนจีน: ${slot.plan.tcmTime} น.`;
-        if(slot.plan.ttmTime) detail += `\n- แพทย์แผนไทย: ${slot.plan.ttmTime} น.`;
+        if(slot.plan.tcmTime) detail += `\n- จีน: ${slot.plan.tcmTime} น.`;
+        if(slot.plan.ttmTime) detail += `\n- ไทย: ${slot.plan.ttmTime} น.`;
         
-        detail += `\n\n(เสร็จสิ้นภารกิจ: ${slot.plan.endTimeStr} น.)`;
+        detail += `\n(เสร็จสิ้น: ${slot.plan.endTimeStr} น.)`;
         
         bookingData = { 
             detail: detail, 
@@ -395,7 +350,6 @@
     function confirmBooking() {
         let name = document.getElementById('inp-name').value;
         let tel = document.getElementById('inp-tel').value;
-        
         if(!name) { alert('กรุณากรอกชื่อผู้ป่วย'); return; }
         
         let msg = `ขอจองคิว IMC (รพ.สะเดา)\nชื่อ: ${name}\nเบอร์: ${tel}\nวันที่: ${bookingData.date}\n\nแผนการรักษา:\n${bookingData.detail}`;
@@ -404,7 +358,6 @@
         let dummy = document.createElement("textarea");
         document.body.appendChild(dummy); dummy.value = msg; dummy.select(); document.execCommand("copy"); document.body.removeChild(dummy);
         
-        // Redirect to Line OA
         window.location.href = `https://line.me/R/oaMessage/${LINE_OA_ID}/?${encodeURIComponent(msg)}`;
     }
   </script>
