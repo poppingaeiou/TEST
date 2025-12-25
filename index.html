@@ -1,218 +1,407 @@
-// ==========================================
-// ⚙️ CONFIGURATION
-// ==========================================
-var IMC_SHEET_ID = '1AqjtqinfBfyfpMllN-jvGJw_8RkVPMVLVVB-RL5Y8SE'; // ID ไฟล์ IMC ของคุณ
-
-// ==========================================
-// 🚀 MAIN API (doPost)
-// ==========================================
-function doPost(e) {
-  var lock = LockService.getScriptLock();
-  try {
-    lock.waitLock(10000); // รอคิวสูงสุด 10 วิ
-    
-    var data = JSON.parse(e.postData.contents);
-    var result = {};
-
-    // แยกการทำงานตาม Action
-    if (data.action === 'checkIMC') {
-       result = checkIMCAvailability(data);
-    } else if (data.action === 'bookIMC') {
-       result = bookIMCQueue(data);
-    } else {
-       // กรณี Action อื่นๆ (ถ้ามี)
-       result = { status: 'error', message: 'Unknown Action' };
-    }
-
-    return ContentService.createTextOutput(JSON.stringify(result))
-      .setMimeType(ContentService.MimeType.JSON);
-
-  } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: err.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
-  } finally {
-    lock.releaseLock();
-  }
-}
-
-// ==========================================
-// 🧠 IMC LOGIC SYSTEM
-// ==========================================
-
-function checkIMCAvailability(data) {
-  var ss = SpreadsheetApp.openById(IMC_SHEET_ID);
-  var sheetTTM = ss.getSheetByName('TTM');
-  var sheetTCM = ss.getSheetByName('TCM');
-
-  if (!sheetTTM || !sheetTCM) {
-    return { status: 'error', message: 'ไม่พบชีต TTM หรือ TCM ในไฟล์ปลายทาง' };
-  }
-
-  // แปลงวันที่จาก "วัน..ที่ 5 มกราคม 2568" -> "5 มกราคม" (เพื่อให้ตรงกับใน Sheet)
-  var searchDate = convertToSheetDate(data.date); 
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>จองคิวออนไลน์ รพ.สะเดา</title>
   
-  var ptDuration = parseFloat(data.ptDuration);
-  var needTTM = data.needTTM;
-  var needTCM = data.needTCM;
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  var possibleStarts = ["08:30", "09:30", "13:00", "14:00"]; 
-  var availableSlots = [];
-
-  // ดึงข้อมูลทั้งหมดมารรอไว้ (เพื่อความเร็ว ไม่ต้องเรียก Sheet บ่อย)
-  var dataTTM = sheetTTM.getDataRange().getDisplayValues();
-  var dataTCM = sheetTCM.getDataRange().getDisplayValues();
-
-  for (var i = 0; i < possibleStarts.length; i++) {
-    var start = possibleStarts[i];
+  <style>
+    /* --- Styles --- */
+    :root { --primary: #2e7d32; --primary-dark: #1b5e20; --bg-color: #f8fafc; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Prompt', sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; min-height: 100vh; color: #333; }
+    .hidden { display: none !important; }
+    .fade-in { animation: fadeIn 0.5s; }
     
-    // 1. คำนวณเวลา Flow
-    var plan = calculateIMCPlan(start, ptDuration, needTTM, needTCM);
+    /* Layout */
+    .home-container { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 40px; }
     
-    if (!plan.error) {
-       var isAvailable = true;
+    /* Hero Banner */
+    .hero-banner { width: 100%; height: 250px; position: relative; border-radius: 0 0 30px 30px; overflow: hidden; margin-bottom: -40px; background: #2e7d32; }
+    .hero-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; background: linear-gradient(to bottom, rgba(46,125,50,0.3), rgba(27,94,32,0.9)); padding: 20px; text-align:center; }
+    .main-logo { width: 80px; height: 80px; background: white; border-radius: 50%; padding: 2px; margin-bottom: 10px; object-fit: contain; }
+    
+    /* Menu */
+    .menu-container { width: 100%; padding: 0 20px; z-index: 2; margin-top: 20px; }
+    .dept-card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 6px solid #ccc; transition: 0.2s; }
+    .dept-card:active { transform: scale(0.98); }
+    
+    .card-ttm { border-left-color: #2e7d32; }
+    .card-tcm { border-left-color: #e53935; }
+    .card-pp { border-left-color: #ec4899; }
+    .card-steam { border-left-color: #0288d1; }
+    .card-well { border-left-color: #D4AF37; }
+    .card-imc { border-left-color: #9c27b0; background: linear-gradient(to right, #fff, #fdf4ff); }
+    
+    .dept-icon { width: 50px; height: 50px; border-radius: 50%; margin-right: 15px; object-fit: cover; }
 
-       // 2. เช็คว่างใน TTM (ถ้าเลือก)
-       if (needTTM) {
-          // หาแถวที่ตรงกับ วันที่ และ เวลา
-          if (!checkSheetAvailability(dataTTM, searchDate, plan.ttmTime, 'TTM')) {
-             isAvailable = false;
-          }
-       }
-       
-       // 3. เช็คว่างใน TCM (ถ้าเลือก)
-       if (needTCM) {
-          if (!checkSheetAvailability(dataTCM, searchDate, plan.tcmTime, 'TCM')) {
-             isAvailable = false;
-          }
-       }
-
-       if (isAvailable) {
-         availableSlots.push({ time: start, plan: plan });
-       }
+    /* Dashboard Header (FIXED STYLE) */
+    .top-section { 
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
+        color: white; padding: 15px; 
+        position: sticky; top: 0; z-index: 100; 
+        border-radius: 0 0 25px 25px; 
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
     }
-  }
-
-  return { status: 'success', slots: availableSlots };
-}
-
-// ฟังก์ชันเช็คว่าว่างไหม จากข้อมูล Array ที่ดึงมา
-function checkSheetAvailability(dataRows, dateStr, timeStr, type) {
-  // dataRows[row][0] = วันที่, dataRows[row][1] = เวลา
-  for (var i = 0; i < dataRows.length; i++) {
-    var rowDate = dataRows[i][0].trim();
-    var rowTime = dataRows[i][1].trim(); // อาจต้องระวังเรื่อง format เวลา 08:30 vs 8:30
+    .header-grid { display: grid; grid-template-columns: 40px 1fr 40px; align-items: center; }
+    .back-btn { background: rgba(255,255,255,0.2); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(4px); }
+    .app-logo { width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.9); background: white; object-fit: contain; margin-bottom: 5px; }
     
-    // เปรียบเทียบ (ลบ 0 นำหน้าออกเพื่อให้ชัวร์)
-    if (cleanTime(rowTime) === cleanTime(timeStr) && rowDate === dateStr) {
+    .date-scroller { display: flex; overflow-x: auto; padding: 10px 0 5px; gap: 8px; }
+    .date-chip { background: rgba(255,255,255,0.2); color: white; border-radius: 15px; padding: 8px 15px; white-space: nowrap; cursor: pointer; font-size: 0.9rem; }
+    .date-chip.active { background: white; color: #333; font-weight: bold; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+
+    /* Slot Card */
+    .slot-card { background: white; border-radius: 15px; padding: 15px 20px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #ccc; }
+    .is-available { border-left-color: #4caf50; }
+    .is-full { border-left-color: #ef4444; opacity: 0.8; }
+    
+    /* IMC Styles */
+    .radio-box { flex:1; border:2px solid #eee; border-radius:12px; padding:15px; text-align:center; cursor:pointer; background:white; }
+    .radio-box.active { border-color: #9c27b0; background: #f3e5f5; color: #7b1fa2; font-weight:bold; }
+    .time-slot-btn { background:white; padding:15px; border-radius:12px; border:1px solid #eee; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
+    
+    /* Modal */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; display: none; }
+    .modal-overlay.show { display: flex; }
+    .modal-card { background: white; width: 90%; max-width: 380px; border-radius: 20px; padding: 25px; max-height: 90vh; overflow-y: auto; }
+    .form-control { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-family: 'Prompt'; margin-bottom: 15px; }
+    .btn { width: 100%; padding: 14px; border-radius: 14px; border: none; font-size: 1rem; font-family: 'Prompt'; cursor: pointer; font-weight: 600; margin-top: 10px; }
+    .btn-confirm { background: var(--primary); color: white; }
+
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+  </style>
+</head>
+<body>
+
+  <div id="view-home" class="home-container fade-in">
+    <div class="hero-banner">
+        <div class="hero-overlay">
+            <img src="https://img2.pic.in.th/pic/6f7b352408393a1295f3000e7d9e6754.md.png" class="main-logo">
+            <h1 style="margin:5px 0; font-size:1.4rem;">รพ.สะเดา</h1>
+            <p style="margin:0; opacity:0.9;">กลุ่มงานการแพทย์แผนไทยฯ</p>
+        </div>
+    </div>
+
+    <div class="menu-container">
+        <div class="dept-card card-ttm" onclick="openApp('ttm')">
+           <img src="https://img2.pic.in.th/pic/619e72dc2124132ccf4620717d4fa58d.md.png" class="dept-icon">
+           <div><h3>แพทย์แผนไทย</h3><p>นวดรักษา</p></div>
+        </div>
+        <div class="dept-card card-tcm" onclick="openApp('tcm')">
+           <img src="https://img2.pic.in.th/pic/--06d2d95efaba2074.md.png" class="dept-icon">
+           <div><h3>แพทย์แผนจีน</h3><p>ฝังเข็ม</p></div>
+        </div>
+        <div class="dept-card card-pp" onclick="openApp('postpartum')">
+           <img src="https://img2.pic.in.th/pic/eb06897c542c79b64690c8e794fa84a4.png" class="dept-icon">
+           <div><h3>หลังคลอด</h3><p>ดูแลมารดา</p></div>
+        </div>
+        <div class="dept-card card-steam" onclick="openApp('steam')">
+           <img src="https://img2.pic.in.th/pic/-3b445847427fcbfd.png" class="dept-icon">
+           <div><h3>อบไอน้ำ</h3><p>สมุนไพร</p></div>
+        </div>
+        <div class="dept-card card-well" onclick="openApp('wellness')">
+           <img src="https://img2.pic.in.th/pic/Wellness-logo.png" class="dept-icon" style="padding:3px; background:#fff;">
+           <div><h3>Wellness</h3><p>สปาเพื่อสุขภาพ</p></div>
+        </div>
         
-        // เจอแถวแล้ว! ตรวจสอบความว่าง
-        if (type === 'TCM') {
-           // TCM ดูคอลัมน์ C (index 2) : จำนวนคิวว่าง
-           var val = dataRows[i][2];
-           // ถ้าเป็นตัวเลข > 0 หรือไม่ไช่ "คิวเต็ม"/"งด"
-           if (!isNaN(val) && parseInt(val) > 0) return true;
-           return false;
-        } 
-        else if (type === 'TTM') {
-           // TTM ดูคอลัมน์ D ถึง J (รายชื่อหมอ) : index 3 เป็นต้นไป
-           // ถ้ามีเลข "1" โผล่มาสักช่อง ถือว่าว่าง
-           for (var c = 3; c < dataRows[i].length; c++) {
-              if (dataRows[i][c] == "1") return true;
-           }
-           return false;
-        }
+        <div class="dept-card card-imc" onclick="openIMCSetup()">
+           <div style="width:50px; height:50px; background:#f3e5f5; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:15px; border:3px solid white;">
+              <i class="fas fa-user-injured" style="font-size:1.5rem; color:#9c27b0;"></i>
+           </div>
+           <div>
+              <h3 style="color:#7b1fa2;">กลุ่มคนไข้ IMC</h3>
+              <p style="color:#9c27b0;">กายภาพ + แผนไทย/จีน</p>
+           </div>
+        </div>
+    </div>
+  </div>
+
+  <div id="view-dashboard" class="hidden">
+    <div class="top-section">
+      <div class="header-grid">
+          <div class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i></div>
+          <div style="display:flex; flex-direction:column; align-items:center;">
+              <img id="app-logo" src="" class="app-logo">
+              <h2 id="app-title" style="margin:0; font-size:1.1rem;"></h2>
+          </div>
+          <div></div> </div>
+      <div id="dateScroller" class="date-scroller"></div>
+    </div>
+
+    <div class="container" id="contentArea" style="padding:20px;"></div>
+  </div>
+
+  <div id="view-imc-setup" class="hidden home-container" style="background:#f9f9f9; align-items:stretch;">
+      <div style="background:#9c27b0; padding:20px; color:white; border-radius:0 0 25px 25px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+         <div onclick="closeIMC()" style="cursor:pointer; display:inline-flex; align-items:center; gap:5px; background:rgba(255,255,255,0.2); padding:5px 15px; border-radius:20px;">
+             <i class="fas fa-arrow-left"></i> ย้อนกลับ
+         </div>
+         <h2 style="margin:15px 0 5px; text-align:center;">จัดตาราง IMC</h2>
+         <p style="text-align:center; opacity:0.9; font-size:0.9rem; margin:0;">คำนวณคิวต่อเนื่องอัตโนมัติ</p>
+      </div>
+      
+      <div style="padding:20px;">
+         <label style="font-weight:bold; display:block; margin-bottom:10px;">ระยะเวลากายภาพ (PT)</label>
+         <div style="display:flex; gap:10px; margin-bottom:20px;">
+            <label class="radio-box active" onclick="selectPT(1.5, this)">
+               <input type="radio" name="pt_dur" value="1.5" checked hidden> <span style="font-size:1.2rem; font-weight:bold;">1.5</span> ชม.
+            </label>
+            <label class="radio-box" onclick="selectPT(1, this)">
+               <input type="radio" name="pt_dur" value="1" hidden> <span style="font-size:1.2rem; font-weight:bold;">1.0</span> ชม.
+            </label>
+         </div>
+
+         <label style="font-weight:bold; display:block; margin-bottom:10px;">บริการต่อเนื่อง</label>
+         <div style="background:white; padding:15px; border-radius:12px; border:1px solid #eee; margin-bottom:20px;">
+             <label style="display:flex; align-items:center; margin-bottom:10px; cursor:pointer;">
+                <input type="checkbox" id="chk_ttm" checked style="transform:scale(1.3); margin-right:10px; accent-color:#9c27b0;"> 
+                <div>นวดแผนไทย <span style="color:#666; font-size:0.8rem;">(+1 ชม.)</span></div>
+             </label>
+             <label style="display:flex; align-items:center; cursor:pointer;">
+                <input type="checkbox" id="chk_tcm" checked style="transform:scale(1.3); margin-right:10px; accent-color:#9c27b0;"> 
+                <div>ฝังเข็ม <span style="color:#666; font-size:0.8rem;">(+30 นาที)</span></div>
+             </label>
+         </div>
+         
+         <label style="font-weight:bold; display:block; margin-bottom:10px;">วันที่นัดหมาย</label>
+         <input type="date" id="imc-date" class="form-control">
+
+         <button class="btn btn-confirm" onclick="searchIMCSlots()" style="background:#9c27b0; box-shadow:0 4px 12px rgba(156, 39, 176, 0.4);">
+            <i class="fas fa-search"></i> ค้นหาคิวว่าง
+         </button>
+         
+         <div id="imc-results" style="margin-top:30px;"></div>
+      </div>
+  </div>
+
+  <div id="bookingModal" class="modal-overlay">
+    <div class="modal-card">
+       <h3 style="margin-top:0; color:var(--primary);">ยืนยันการจอง</h3>
+       <div id="modal-content" style="background:#f0fdf4; padding:15px; border-radius:10px; border:1px solid #bbf7d0; margin-bottom:15px; font-size:0.9rem; white-space:pre-line;"></div>
+       
+       <label style="font-size:0.9rem; font-weight:600;">ชื่อผู้ป่วย</label>
+       <input type="text" id="inp-name" class="form-control" placeholder="ระบุชื่อ-สกุล">
+       
+       <label style="font-size:0.9rem; font-weight:600;">เบอร์โทรศัพท์</label>
+       <input type="tel" id="inp-tel" class="form-control" placeholder="08x-xxx-xxxx">
+       
+       <button class="btn btn-confirm" onclick="confirmBooking()">ยืนยันและส่งไลน์</button>
+       <button class="btn" style="background:#f1f5f9; color:#64748b;" onclick="document.getElementById('bookingModal').classList.remove('show')">ปิดหน้าต่าง</button>
+    </div>
+  </div>
+
+  <script>
+    // **********************************************************
+    // ⚠️ แก้ลิงก์นี้ให้เป็นอันใหม่ที่คุณ Deploy ล่าสุด
+    const API_ENDPOINT = "https://script.google.com/macros/s/AKfycbxMVqlYGeuj75wQm41kZCD4wf2weZajj27b0omuC6HlHzWja4sJYz6HF6m5b5nlmSUMtw/exec";
+    const LINE_OA_ID = "@649dqeft";
+    // **********************************************************
+
+    const APP_CONFIG = {
+      ttm: { title: "แพทย์แผนไทย", color: "#2e7d32", func: "getTTMData" },
+      tcm: { title: "แพทย์แผนจีน", color: "#e53935", func: "getTCMData" },
+      postpartum: { title: "บริการหลังคลอด", color: "#ec4899", func: "getPostpartumData" },
+      steam: { title: "อบไอน้ำสมุนไพร", color: "#0288d1", func: "getSteamData" },
+      wellness: { title: "Wellness Clinic", color: "#D4AF37", func: "getWellnessData" }
+    };
+
+    let currentApp = '';
+    let bookingData = {};
+
+    // --- STANDARD APP FUNCTIONS ---
+    function openApp(type) {
+        currentApp = type;
+        document.getElementById('view-home').classList.add('hidden');
+        document.getElementById('view-dashboard').classList.remove('hidden');
+        
+        let conf = APP_CONFIG[type];
+        document.documentElement.style.setProperty('--primary', conf.color);
+        document.documentElement.style.setProperty('--primary-dark', conf.color); // Simplified
+        document.getElementById('app-title').innerText = conf.title;
+        document.getElementById('app-logo').src = document.querySelector(`.card-${type === 'wellness' ? 'well' : type === 'postpartum' ? 'pp' : type} img`).src;
+        
+        fetchData();
     }
-  }
-  return false; // หาแถวไม่เจอ หรือไม่ว่าง
-}
+    
+    function goHome() {
+        document.getElementById('view-dashboard').classList.add('hidden');
+        document.getElementById('view-home').classList.remove('hidden');
+    }
 
-function calculateIMCPlan(startTime, ptDuration, needTTM, needTCM) {
-  var startH = parseFloat(startTime.replace(":", "."));
-  if (startTime.includes("30")) startH = parseInt(startTime.split(":")[0]) + 0.5;
-  
-  var ttmTime = null, tcmTime = null, endTime = 0, flowType = "";
-  
-  if (ptDuration === 1.5 && needTTM && needTCM) {
-      tcmTime = addHours(startH, 1.0); 
-      ttmTime = addHours(startH, 2.0); 
-      endTime = startH + 3.0;
-      flowType = "PT ➔ จีน ➔ ไทย";
-  } 
-  else if (ptDuration === 1.0 && needTTM && needTCM) {
-      ttmTime = addHours(startH, 1.0);
-      tcmTime = addHours(startH, 2.0);
-      endTime = startH + 2.5;
-      flowType = "PT ➔ ไทย ➔ จีน";
-  } 
-  else {
-      var gap = (ptDuration === 1.5) ? 0.5 : 0; 
-      if (needTCM) {
-         tcmTime = formatTime(startH + ptDuration + gap);
-         endTime = startH + ptDuration + gap + 0.5;
-         flowType = "PT ➔ จีน";
-      }
-      if (needTTM) {
-         ttmTime = formatTime(startH + ptDuration + gap);
-         endTime = startH + ptDuration + gap + 1.0;
-         flowType = "PT ➔ ไทย";
-      }
-      if (!needTCM && !needTTM) {
-         endTime = startH + ptDuration;
-         flowType = "PT เท่านั้น";
-      }
-  }
+    function fetchData() {
+        let container = document.getElementById('contentArea');
+        let scroller = document.getElementById('dateScroller');
+        container.innerHTML = '<div style="text-align:center; padding:40px;"><i class="fas fa-circle-notch fa-spin"></i> กำลังโหลดข้อมูล...</div>';
+        scroller.innerHTML = '';
 
-  // Check Constraints
-  if (ttmTime) {
-     var ttmStart = timeToVal(ttmTime);
-     if (ttmStart < 13 && (ttmStart + 1) > 12.001) return { error: true };
-     if ((ttmStart + 1) > 16.001) return { error: true };
-  }
-  if (tcmTime) {
-     var tcmStart = timeToVal(tcmTime);
-     if (tcmStart < 13 && (tcmStart + 0.5) > 12.001) return { error: true };
-     if ((tcmStart + 0.5) > 16.51) return { error: true };
-  }
-  if (startH < 13 && (startH + ptDuration) > 12.001) return { error: true };
+        fetch(`${API_ENDPOINT}?action=${APP_CONFIG[currentApp].func}`)
+            .then(res => res.json())
+            .then(data => {
+                renderData(data);
+            })
+            .catch(err => {
+                container.innerHTML = `<div style="text-align:center; color:red;">โหลดข้อมูลไม่สำเร็จ<br>${err}</div>`;
+            });
+    }
 
-  return { error: false, ttmTime: ttmTime, tcmTime: tcmTime, endTimeStr: formatTime(endTime), flowType: flowType };
-}
+    function renderData(data) {
+        let container = document.getElementById('contentArea');
+        let scroller = document.getElementById('dateScroller');
+        container.innerHTML = '';
+        
+        if(data.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:20px;">ไม่พบข้อมูลรอบว่าง</div>';
+            return;
+        }
 
-function bookIMCQueue(data) {
-   // ฟังก์ชันบันทึก (Placeholder - ยังไม่ได้เขียนลง Sheet จริง)
-   // สามารถเพิ่มโค้ดค้นหา Row แล้ว setValue ได้ที่นี่
-   return { status: 'success', message: 'บันทึกคิว IMC เรียบร้อย' };
-}
+        // Render Tabs
+        data.forEach((day, index) => {
+            let chip = document.createElement('div');
+            chip.className = `date-chip ${index === 0 ? 'active' : ''}`;
+            chip.innerText = day.displayDate;
+            chip.onclick = () => {
+                document.querySelectorAll('.date-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                renderSlots(day.slots);
+            };
+            scroller.appendChild(chip);
+        });
 
-// --- Helpers ---
-function convertToSheetDate(fullDateStr) {
-  // รับค่า: "วันอาทิตย์ที่ 5 มกราคม 2569"
-  // แปลงเป็น: "5 มกราคม" (ตามไฟล์ CSV)
-  try {
-    var parts = fullDateStr.split(" "); 
-    // parts[0]=วัน.., parts[1]=5, parts[2]=มกราคม, parts[3]=2569
-    return parts[1] + " " + parts[2];
-  } catch(e) { return fullDateStr; }
-}
+        // Render First Day
+        renderSlots(data[0].slots);
+    }
 
-function cleanTime(t) {
-  // แปลง 08:30 -> 8:30 เพื่อให้เทียบกันได้
-  if(!t) return "";
-  if(t.startsWith("0")) return t.substring(1);
-  return t;
-}
+    function renderSlots(slots) {
+        let container = document.getElementById('contentArea');
+        container.innerHTML = '';
+        
+        slots.forEach(slot => {
+            let colorClass = slot.isFull ? 'is-full' : 'is-available';
+            let icon = slot.isFull ? '<i class="fas fa-lock"></i>' : '<i class="fas fa-check-circle" style="color:#4caf50;"></i>';
+            let action = slot.isFull ? '' : `onclick="prepareStandardBooking('${slot.time}')"`;
+            
+            let html = `<div class="slot-card ${colorClass}" ${action}>
+                          <div>
+                             <div style="font-weight:bold; font-size:1.1rem;">${slot.time} น.</div>
+                             <div style="font-size:0.9rem; color:#666;">${slot.val}</div>
+                          </div>
+                          <div style="font-size:1.2rem;">${icon}</div>
+                        </div>`;
+            container.innerHTML += html;
+        });
+    }
 
-function addHours(startH, add) { return formatTime(startH + add); }
-function formatTime(val) {
-  var h = Math.floor(val);
-  var m = (val - h) * 60;
-  if (Math.abs(m - 30) < 1) m = 30; else m = 0;
-  var hStr = (h < 10) ? "0" + h : "" + h;
-  var mStr = (m === 30) ? "30" : "00";
-  return hStr + ":" + mStr;
-}
-function timeToVal(str) {
-  if(!str) return 0;
-  var p = str.split(":");
-  return parseInt(p[0]) + (parseInt(p[1])/60);
-}
+    function prepareStandardBooking(time) {
+        // สำหรับการจองปกติ (Demo)
+        bookingData = { time: time, dept: APP_CONFIG[currentApp].title };
+        document.getElementById('modal-content').innerText = `บริการ: ${bookingData.dept}\nเวลา: ${bookingData.time}`;
+        document.getElementById('bookingModal').classList.add('show');
+    }
+
+    // --- IMC LOGIC ---
+    function openIMCSetup() {
+       document.getElementById('view-home').classList.add('hidden');
+       document.getElementById('view-imc-setup').classList.remove('hidden');
+       document.getElementById('imc-date').value = new Date().toISOString().split('T')[0];
+       document.getElementById('imc-results').innerHTML = '';
+    }
+    function closeIMC() {
+       document.getElementById('view-imc-setup').classList.add('hidden');
+       document.getElementById('view-home').classList.remove('hidden');
+    }
+    function selectPT(val, el) {
+       document.querySelectorAll('.radio-box').forEach(b => b.classList.remove('active'));
+       el.classList.add('active');
+    }
+    function searchIMCSlots() {
+       var ptDur = document.querySelector('input[name="pt_dur"]:checked').value;
+       var needTTM = document.getElementById('chk_ttm').checked;
+       var needTCM = document.getElementById('chk_tcm').checked;
+       var dateVal = document.getElementById('imc-date').value; 
+       
+       if(!dateVal) { alert('กรุณาเลือกวันที่'); return; }
+       
+       // แปลงวันที่ส่งไป Backend
+       var dObj = new Date(dateVal);
+       var thMonth = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
+       var dateThai = `${dObj.getDate()} ${thMonth[dObj.getMonth()]}`; // ส่งแค่ "5 มกราคม" ให้ตรงกับ CSV
+
+       var resDiv = document.getElementById('imc-results');
+       resDiv.innerHTML = '<div style="text-align:center; color:#9c27b0;"><i class="fas fa-circle-notch fa-spin"></i> กำลังประมวลผล...</div>';
+
+       fetch(API_ENDPOINT, {
+          method: 'POST',
+          body: JSON.stringify({
+             action: 'checkIMC',
+             date: dateThai,
+             ptDuration: ptDur,
+             needTTM: needTTM,
+             needTCM: needTCM
+          })
+       })
+       .then(res => res.json())
+       .then(data => {
+           if(data.status === 'error') {
+               resDiv.innerHTML = `<div style="color:red; text-align:center;">${data.message}</div>`;
+           } else if(data.slots.length === 0) {
+               resDiv.innerHTML = `<div style="text-align:center; color:#999; padding:20px;">
+                                     <i class="far fa-calendar-times fa-3x"></i><br><br>
+                                     ไม่พบรอบเวลาที่ลงตัวในวันนี้
+                                   </div>`;
+           } else {
+               let html = '';
+               data.slots.forEach(s => {
+                   let flow = s.plan.flowType ? `<br><small style="color:#666">(${s.plan.flowType})</small>` : '';
+                   html += `<div class="time-slot-btn" onclick='prepareIMCBooking(${JSON.stringify(s)})'>
+                              <div>
+                                 <div style="font-weight:bold; font-size:1.2rem; color:#333;">เริ่ม ${s.time} น.</div>
+                                 <div style="font-size:0.9rem; color:#7b1fa2;">เสร็จสิ้นประมาณ ${s.plan.endTimeStr} น.${flow}</div>
+                              </div>
+                              <i class="fas fa-chevron-right" style="color:#9c27b0;"></i>
+                            </div>`;
+               });
+               resDiv.innerHTML = html;
+           }
+       })
+       .catch(err => {
+           resDiv.innerHTML = `<div style="color:red; text-align:center;">เชื่อมต่อไม่ได้: ${err}</div>`;
+       });
+    }
+
+    function prepareIMCBooking(slot) {
+        currentApp = 'imc';
+        let ptDur = document.querySelector('input[name="pt_dur"]:checked').value;
+        let dateVal = document.getElementById('imc-date').value;
+        
+        let detail = `PT (${ptDur} ชม.) เริ่ม ${slot.time}`;
+        if(slot.plan.tcmTime) detail += `\n- จีน: ${slot.plan.tcmTime}`;
+        if(slot.plan.ttmTime) detail += `\n- ไทย: ${slot.plan.ttmTime}`;
+        
+        bookingData = { detail: detail, date: dateVal, time: slot.time };
+        document.getElementById('modal-content').innerText = detail;
+        document.getElementById('bookingModal').classList.add('show');
+    }
+
+    function confirmBooking() {
+        let name = document.getElementById('inp-name').value;
+        let tel = document.getElementById('inp-tel').value;
+        if(!name) { alert('กรุณากรอกชื่อ'); return; }
+        
+        let msg = '';
+        if (currentApp === 'imc') {
+            msg = `จองคิว IMC\nชื่อ: ${name}\nเบอร์: ${tel}\nวันที่: ${bookingData.date}\n\nแผนการรักษา:\n${bookingData.detail}`;
+        } else {
+            msg = `จองคิว${bookingData.dept}\nชื่อ: ${name}\nเบอร์: ${tel}\nรอบเวลา: ${bookingData.time}`;
+        }
+        
+        let dummy = document.createElement("textarea");
+        document.body.appendChild(dummy); dummy.value = msg; dummy.select(); document.execCommand("copy"); document.body.removeChild(dummy);
+        window.location.href = `https://line.me/R/oaMessage/${LINE_OA_ID}/?${encodeURIComponent(msg)}`;
+    }
+  </script>
+</body>
+</html>
