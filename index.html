@@ -101,11 +101,8 @@
     .date-chip.active { background: white; color: var(--day-color); transform: scale(1.1); font-weight: bold; border: none; box-shadow: 0 8px 20px rgba(0,0,0,0.25); }
     .date-chip.active::after { content:''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: var(--day-color); }
 
-    /* --- FIX: IMC Date Scroller Style (แก้ไขให้ตัวอักษรไม่จม) --- */
-    /* เมื่ออยู่ในโหมด IMC ตัวหนังสือในกล่องที่เลือก (Active) ต้องเป็นสีม่วง */
-    #imc-date-scroller .date-chip.active {
-        color: var(--imc-primary) !important;
-    }
+    /* --- FIX: IMC Date Scroller Style --- */
+    #imc-date-scroller .date-chip.active { color: var(--imc-primary) !important; }
     
     .container { max-width: 600px; margin: 0 auto; padding: 0 15px 80px; }
     .selected-date-header { font-size: 1.1rem; font-weight: 700; color: #334155; padding: 25px 5px 15px; display: flex; align-items: center; }
@@ -246,7 +243,6 @@
     </div>
 
     <div class="menu-container">
-        
         <div class="dept-card card-ttm" onclick="openApp('ttm')">
           <img src="https://img2.pic.in.th/pic/619e72dc2124132ccf4620717d4fa58d.md.png" class="dept-icon">
           <div class="dept-info"><h3 data-i18n="ttm_title">แพทย์แผนไทย</h3><p data-i18n="ttm_desc">นวดรักษา, ประคบ, นวดส่งเสริมฯ</p></div>
@@ -257,17 +253,6 @@
           <img src="https://img2.pic.in.th/pic/--06d2d95efaba2074.md.png" class="dept-icon">
           <div class="dept-info"><h3 data-i18n="tcm_title">แพทย์แผนจีน</h3><p data-i18n="tcm_desc">ฝังเข็ม, ครอบแก้ว, ฝังเข็มใบหน้า</p></div>
           <div class="arrow-btn"><i class="fas fa-chevron-right"></i></div>
-        </div>
-
-        <div class="dept-card card-imc" onclick="openIMCSetup()">
-           <div style="width:60px; height:60px; background:#f3e5f5; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:20px; border:4px solid #f8fafc; color:var(--imc-primary); font-size:1.8rem;">
-              <i class="fas fa-wheelchair"></i>
-           </div>
-           <div class="dept-info">
-              <h3 data-i18n="imc_title">กลุ่มผู้ป่วย IMC</h3>
-              <p style="color:var(--imc-primary);" data-i18n="imc_desc">กายภาพ + แผนไทย/จีน</p>
-           </div>
-           <div class="arrow-btn"><i class="fas fa-chevron-right"></i></div>
         </div>
 
         <div class="dept-card card-postpartum" onclick="openApp('postpartum')">
@@ -289,6 +274,17 @@
                 <p data-i18n="well_desc">สครับเกลือ, สปาผิว, นวดอโรม่า</p>
             </div>
             <div class="arrow-btn"><i class="fas fa-chevron-right"></i></div>
+        </div>
+
+        <div class="dept-card card-imc" onclick="openIMCSetup()">
+           <div style="width:60px; height:60px; background:#f3e5f5; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:20px; border:4px solid #f8fafc; color:var(--imc-primary); font-size:1.8rem;">
+              <i class="fas fa-wheelchair"></i>
+           </div>
+           <div class="dept-info">
+              <h3 data-i18n="imc_title">ฟื้นฟูสภาพกลุ่มผู้ป่วย IMC</h3>
+              <p style="color:var(--imc-primary); font-size:0.85rem;" data-i18n="imc_desc">โรคหลอดเลือดสมอง Stroke ไม่เกิน 6 เดือน (นับจากวันเริ่มฟื้นฟู)</p>
+           </div>
+           <div class="arrow-btn"><i class="fas fa-chevron-right"></i></div>
         </div>
 
         <div class="info-card">
@@ -339,7 +335,7 @@
                  <i class="fas fa-wheelchair"></i>
              </div>
              <div class="header-titles">
-                 <h1 data-i18n="imc_title">กลุ่มผู้ป่วย IMC</h1>
+                 <h1 data-i18n="imc_title">ฟื้นฟูสภาพกลุ่มผู้ป่วย IMC</h1>
                  <p data-i18n="sched_realtime">ตารางนัดแบบบูรณาการ</p>
              </div>
           </div>
@@ -469,9 +465,16 @@
         </div>
 
         <div id="imc-fields" class="hidden">
-            <div style="background:#f3e5f5; padding:15px; border-radius:12px; border:1px solid #e1bee7; margin-bottom:20px;">
+            <div style="background:#f3e5f5; padding:15px; border-radius:12px; border:1px solid #e1bee7; margin-bottom:15px;">
                 <label class="form-label" style="color:var(--imc-primary); margin-bottom:5px;">รายละเอียดแผนการรักษา:</label>
                 <div id="imc-plan-detail" style="font-weight:600; white-space:pre-line; color:#4a148c; line-height:1.6;"></div>
+            </div>
+            <div style="background:#fffbeb; padding:10px; border-radius:12px; border:1px solid #fcd34d; margin-bottom:20px; font-size:0.85rem; color:#92400e;">
+                <i class="fas fa-info-circle"></i> <b>สิทธิการรักษา:</b> เบิกได้ตามสิทธิรักษา ยกเว้น <b>สิทธิประกันสังคม</b>
+                <ul style="margin:5px 0 0 15px; padding:0;">
+                    <li>นวดและประคบเพื่อการฟื้นฟู 250 บาท</li>
+                    <li>ฝังเข็ม 150 - 200 บาท</li>
+                </ul>
             </div>
         </div>
 
@@ -571,7 +574,7 @@
             dept: "แผนก", service: "บริการ", datetime: "วันเวลา", details: "รายละเอียด", note: "หมายเหตุ",
             warning_msg: "<strong>โปรดทราบ!</strong><br>คิวจะถูกจองสำเร็จ<br>ต่อเมื่อเจ้าหน้าที่ <u>ตอบรับทางไลน์</u> แล้วเท่านั้น",
             // IMC Translations
-            imc_title: "กลุ่มผู้ป่วย IMC", imc_desc: "กายภาพ + แผนไทย/จีน"
+            imc_title: "ฟื้นฟูสภาพกลุ่มผู้ป่วย IMC", imc_desc: "โรคหลอดเลือดสมอง Stroke ไม่เกิน 6 เดือน (นับจากวันเริ่มฟื้นฟู)"
         },
         en: {
             dept_ttm_alt: "Thai Traditional & Alternative Medicine", hospital_name: "Sadao Hospital", online_24: "Online System 24 hrs.",
@@ -603,7 +606,7 @@
             dept: "Department", service: "Service", datetime: "Date/Time", details: "Details", note: "Note",
             warning_msg: "<strong>Please Note!</strong><br>Booking is confirmed<br>only after staff <u>reply via LINE</u>.",
             // IMC Translations
-            imc_title: "IMC Patient", imc_desc: "Physical Therapy + TTM/TCM"
+            imc_title: "IMC Rehabilitation", imc_desc: "Stroke patients < 6 months (from recovery start date)"
         }
     };
 
@@ -638,7 +641,7 @@
       steam: { title: "อบไอน้ำสมุนไพร", titleEn: "Herbal Steam", logo: "https://img2.pic.in.th/pic/-3b445847427fcbfd.png", color: "#0288d1", dark: "#01579b", func: "getSteamData" },
       wellness: { title: "Wellness Clinic", titleEn: "Wellness Clinic", logo: "https://img2.pic.in.th/pic/Wellness-logo.png", color: "#D4AF37", dark: "#AA8C2C", func: "getWellnessData" },
       // IMC Added
-      imc: { title: "กลุ่มผู้ป่วย IMC", titleEn: "IMC Patient", logo: "https://img2.pic.in.th/pic/6f7b352408393a1295f3000e7d9e6754.md.png", color: "#9c27b0", dark: "#7b1fa2", func: "" }
+      imc: { title: "ฟื้นฟูสภาพกลุ่มผู้ป่วย IMC", titleEn: "IMC Rehabilitation", logo: "https://img2.pic.in.th/pic/6f7b352408393a1295f3000e7d9e6754.md.png", color: "#9c27b0", dark: "#7b1fa2", func: "" }
     };
 
     const SERVICE_OPTIONS = {
