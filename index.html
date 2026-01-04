@@ -894,7 +894,7 @@
       }
     }
 
-    // --- IMC LOGIC FUNCTIONS (STRICT FILTER) ---
+    // --- IMC LOGIC FUNCTIONS (STRICT FILTER & CORRECTED UI) ---
     function renderIMCTable(dayIndex) {
        let dayData = globalData[dayIndex];
        let container = document.getElementById('contentArea');
@@ -902,7 +902,7 @@
        
        let headerHtml = `<div class="selected-date-header"><span class="header-bar" style="background-color: ${dayColor}"></span>${dayData.fullLabel || dayData.displayDate}</div>`;
 
-       // ** FILTER UI (No 'All' Button) **
+       // ** FILTER UI **
        let filterHtml = `
        <div class="imc-filter-box">
            <div class="filter-group">
@@ -1008,10 +1008,10 @@
                 let h = pkg.category; 
                 let d = pkg.detail;   
                 
-                // Logic Check
+                // Logic Check (Parsing)
                 let hasPT = h.includes("กายภาพ") || d.includes("กายภาพ") || d.includes("ทำกายภาพ");
-                let isPT60 = hasPT && (h.includes("1 ชม.") || h.includes("1 ชม ")) && !h.includes("30 นาที");
-                let isPT90 = hasPT && (h.includes("1 ชม. 30 นาที") || h.includes("1.5"));
+                let isPT60 = hasPT && (h.includes("1 ชม.") || h.includes("1 ชม ")) && !h.includes("30 นาที") && !h.includes("1.5");
+                let isPT90 = hasPT && (h.includes("1 ชม. 30 นาที") || h.includes("1.5") || h.includes("90 นาที"));
 
                 let hasMassage = h.includes("นวด") || d.includes("นวด");
                 let hasAcu = h.includes("ฝังเข็ม") || d.includes("ฝังเข็ม");
@@ -1028,11 +1028,11 @@
                 } else if (imcFilter.ttm) {
                     // เลือกแค่นวด: ต้องมีนวด และ ห้ามมีฝังเข็ม
                     if (!hasMassage) return;
-                    if (hasAcu) return; 
+                    if (hasAcu) return; // Strict: No Acu allowed
                 } else if (imcFilter.tcm) {
                     // เลือกแค่ฝังเข็ม: ต้องมีฝังเข็ม และ ห้ามมีนวด
                     if (!hasAcu) return;
-                    if (hasMassage) return;
+                    if (hasMassage) return; // Strict: No Massage allowed
                 }
                 // ถ้าไม่เลือกเลย: แสดงทั้งหมด (ที่ผ่านเงื่อนไข PT)
 
