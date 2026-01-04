@@ -111,7 +111,7 @@
     .bg-av { background: #e8f5e9; color: #1b5e20; border: 1px solid #c8e6c9; }
     .bg-full { background: #fee2e2; color: #b71c1c; border: 1px solid #ffcdd2; }
 
-    /* --- IMC FILTER & STYLES (UPDATED) --- */
+    /* --- IMC FILTER & STYLES --- */
     .imc-filter-box { background: white; padding: 20px; border-radius: 24px; margin-bottom: 20px; box-shadow: var(--shadow-sm); border: 1px solid #e2e8f0; }
     .filter-group { margin-bottom: 15px; }
     .filter-title { font-size: 0.9rem; font-weight: 700; color: #334155; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
@@ -757,9 +757,9 @@
         "8:30": "9:30", "9:30": "10:30"
     };
     
-    // ** IMC DEFAULT VARIABLES **
-    // ค่าเริ่มต้น: pt='90' (1.5 ชม.), ttm=false (ไม่ติ๊ก), tcm=false (ไม่ติ๊ก)
-    let imcFilter = { pt: '90', ttm: false, tcm: false };
+    // ** IMC VARIABLES - DEFAULT SETTINGS **
+    // ค่าเริ่มต้น: pt='90' (1.5 ชม.), ttm=true (มีนวด), tcm=true (มีฝังเข็ม)
+    let imcFilter = { pt: '90', ttm: true, tcm: true };
 
     let currentApp = '', globalData = [], bookingData = {};
     let refreshInterval;
@@ -894,7 +894,7 @@
       }
     }
 
-    // --- IMC LOGIC FUNCTIONS (RESTORED UI) ---
+    // --- IMC LOGIC FUNCTIONS (STRICT FILTER) ---
     function renderIMCTable(dayIndex) {
        let dayData = globalData[dayIndex];
        let container = document.getElementById('contentArea');
@@ -902,7 +902,7 @@
        
        let headerHtml = `<div class="selected-date-header"><span class="header-bar" style="background-color: ${dayColor}"></span>${dayData.fullLabel || dayData.displayDate}</div>`;
 
-       // ** RESTORED FILTER UI (Without 'All' Button) **
+       // ** FILTER UI (No 'All' Button) **
        let filterHtml = `
        <div class="imc-filter-box">
            <div class="filter-group">
@@ -1016,13 +1016,25 @@
                 let hasMassage = h.includes("นวด") || d.includes("นวด");
                 let hasAcu = h.includes("ฝังเข็ม") || d.includes("ฝังเข็ม");
 
-                // Filter Logic
+                // --- 1. Filter PT ---
                 if (imcFilter.pt === 'none' && hasPT) return; 
                 if (imcFilter.pt === '60' && !isPT60) return;
                 if (imcFilter.pt === '90' && !isPT90) return;
 
-                if (imcFilter.ttm && !hasMassage) return;
-                if (imcFilter.tcm && !hasAcu) return;
+                // --- 2. Filter Extra Services (STRICT LOGIC) ---
+                if (imcFilter.ttm && imcFilter.tcm) {
+                    // เลือกทั้งคู่: ต้องมีทั้งคู่
+                    if (!hasMassage || !hasAcu) return;
+                } else if (imcFilter.ttm) {
+                    // เลือกแค่นวด: ต้องมีนวด และ ห้ามมีฝังเข็ม
+                    if (!hasMassage) return;
+                    if (hasAcu) return; 
+                } else if (imcFilter.tcm) {
+                    // เลือกแค่ฝังเข็ม: ต้องมีฝังเข็ม และ ห้ามมีนวด
+                    if (!hasAcu) return;
+                    if (hasMassage) return;
+                }
+                // ถ้าไม่เลือกเลย: แสดงทั้งหมด (ที่ผ่านเงื่อนไข PT)
 
                 foundCount++;
                 
