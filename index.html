@@ -757,7 +757,7 @@
         "8:30": "9:30", "9:30": "10:30"
     };
     
-    // ** IMC VARIABLES - DEFAULT SETTINGS **
+    // ** IMC DEFAULT VARIABLES **
     // ค่าเริ่มต้น: pt='90' (1.5 ชม.), ttm=true (มีนวด), tcm=true (มีฝังเข็ม)
     let imcFilter = { pt: '90', ttm: true, tcm: true };
 
@@ -894,7 +894,7 @@
       }
     }
 
-    // --- IMC LOGIC FUNCTIONS (STRICT FILTER & CORRECTED UI) ---
+    // --- IMC LOGIC FUNCTIONS (STRICT FILTER) ---
     function renderIMCTable(dayIndex) {
        let dayData = globalData[dayIndex];
        let container = document.getElementById('contentArea');
@@ -1010,8 +1010,9 @@
                 
                 // Logic Check (Parsing)
                 let hasPT = h.includes("กายภาพ") || d.includes("กายภาพ") || d.includes("ทำกายภาพ");
-                let isPT60 = hasPT && (h.includes("1 ชม.") || h.includes("1 ชม ")) && !h.includes("30 นาที") && !h.includes("1.5");
                 let isPT90 = hasPT && (h.includes("1 ชม. 30 นาที") || h.includes("1.5") || h.includes("90 นาที"));
+                // 1 ชม. คือ มี "1 ชม." และต้องไม่ใช่ 1.5 ชม. (ตัดเงื่อนไข 30 นาทีทิ้งไป เพราะอาจเป็นของฝังเข็ม)
+                let isPT60 = hasPT && (h.includes("1 ชม.") || h.includes("1 ชม ")) && !isPT90;
 
                 let hasMassage = h.includes("นวด") || d.includes("นวด");
                 let hasAcu = h.includes("ฝังเข็ม") || d.includes("ฝังเข็ม");
