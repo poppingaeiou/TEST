@@ -16,9 +16,6 @@
         --radius: 20px; 
         --shadow-sm: 0 4px 6px -1px rgba(0,0,0,0.05); 
         --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.08); 
-        --wellness-primary: #D4AF37; 
-        --wellness-dark: #AA8C2C;
-        --wellness-text: #423818;
     }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body { font-family: 'Prompt', sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; min-height: 100vh; color: #333; position: relative; overflow-x: hidden; }
@@ -27,25 +24,7 @@
     .fade-in { animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
     /* --- Language Button --- */
-    .lang-btn {
-        position: fixed;
-        top: 15px;
-        right: 15px;
-        z-index: 9999;
-        background: rgba(255, 255, 255, 0.9);
-        border: 2px solid var(--primary);
-        color: var(--primary);
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-weight: bold;
-        font-family: 'Prompt', sans-serif;
-        cursor: pointer;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
+    .lang-btn { position: fixed; top: 15px; right: 15px; z-index: 9999; background: rgba(255, 255, 255, 0.9); border: 2px solid var(--primary); color: var(--primary); padding: 5px 12px; border-radius: 20px; font-weight: bold; font-family: 'Prompt', sans-serif; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: all 0.2s; display: flex; align-items: center; gap: 5px; }
     .lang-btn:hover { background: var(--primary); color: white; }
 
     /* --- Layout & Components --- */
@@ -54,7 +33,6 @@
     .hero-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to bottom, rgba(46,125,50,0.3), rgba(27,94,32,0.85)); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; color: white; backdrop-filter: blur(1px); }
     .main-logo { width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3)); background: white; border-radius: 50%; padding: 2px; }
     .home-title h1 { font-size: 1.5rem; font-weight: 700; margin: 5px 0 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-    .home-title h2 { font-size: 0.9rem; font-weight: 400; margin: 0; opacity: 0.9; }
     .status-pill { background: rgba(255,255,255,0.2); padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; gap: 6px; }
     
     .menu-container { width: 100%; padding: 0 20px; z-index: 2; }
@@ -66,7 +44,9 @@
     .card-tcm::after { background: #e53935; }
     .card-postpartum::after { background: #ec4899; }
     .card-steam::after { background: #0288d1; }
-    .card-imc::after { background: #673ab7; } /* สีม่วงสำหรับ IMC */
+    .card-imc { border: 1px solid #d8b4fe; background: linear-gradient(135deg, #fff 50%, #faf5ff 100%); }
+    .card-imc::after { background: #9333ea; }
+    .card-imc:hover .arrow-btn { background: #9333ea; }
     
     .card-wellness { border: 1px solid #F8E79B; background: linear-gradient(135deg, #fff 50%, #fffcf2 100%); }
     .card-wellness::after { background: linear-gradient(to bottom, #D4AF37, #AA8C2C); }
@@ -82,7 +62,6 @@
     .card-tcm:hover .arrow-btn { background: #e53935; }
     .card-postpartum:hover .arrow-btn { background: #ec4899; }
     .card-steam:hover .arrow-btn { background: #0288d1; }
-    .card-imc:hover .arrow-btn { background: #673ab7; }
 
     .info-card { margin-top: 20px; background: white; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); border: 1px solid #e2e8f0; }
     .info-img { width: 100%; height: 160px; object-fit: cover; }
@@ -130,10 +109,15 @@
     .bg-av { background: #e8f5e9; color: #1b5e20; border: 1px solid #c8e6c9; }
     .bg-full { background: #fee2e2; color: #b71c1c; border: 1px solid #ffcdd2; }
 
-    /* [NEW] IMC Filters */
-    .imc-filter-box { background: #fff; padding: 15px; border-radius: 16px; margin-top: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; animation: fadeIn 0.3s; }
-    .imc-label { font-size: 0.85rem; color: #64748b; font-weight: 600; margin-bottom: 5px; display:block; }
-    .imc-select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #cbd5e1; font-family: 'Prompt',sans-serif; margin-bottom: 10px; background: #f8fafc; font-size: 0.95rem; }
+    /* --- IMC TABLE STYLES --- */
+    .imc-controls { display:flex; justify-content:center; gap:10px; margin-bottom:15px; padding:10px; background:white; border-radius:12px; box-shadow:var(--shadow-sm); }
+    .imc-duration-btn { padding:8px 16px; border:1px solid #d8b4fe; border-radius:20px; background:#fff; color:#9333ea; cursor:pointer; transition:0.2s; font-size:0.9rem; }
+    .imc-duration-btn.active { background:#9333ea; color:white; font-weight:bold; }
+    
+    .imc-table-container { overflow-x: auto; border-radius:12px; box-shadow: var(--shadow-sm); background:white; }
+    .btn-book-imc { background:#e8f5e9; color:#1b5e20; border:1px solid #c8e6c9; border-radius:12px; padding:6px 10px; cursor:pointer; font-size:0.8rem; display:inline-flex; align-items:center; gap:4px; font-family:'Prompt', sans-serif; transition:0.2s; width:100%; justify-content:center; white-space:nowrap; }
+    .btn-book-imc:hover { background:#4caf50; color:white; }
+    .btn-book-imc-disabled { background:#fee2e2; color:#b71c1c; border:1px solid #ffcdd2; border-radius:12px; padding:6px 10px; font-size:0.8rem; display:inline-flex; align-items:center; gap:4px; width:100%; justify-content:center; opacity:0.8; white-space:nowrap; }
 
     /* --- Modal & Inputs --- */
     .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.3s; backdrop-filter: blur(5px); }
@@ -226,6 +210,12 @@
 
     <div class="menu-container">
         
+        <div class="dept-card card-imc" onclick="openApp('imc')">
+            <img src="https://img5.pic.in.th/file/secure-sv1/clipboard-pulse-line.png" class="dept-icon" style="padding:10px; background:white;" onerror="this.src='https://placehold.co/60x60?text=IMC'">
+            <div class="dept-info"><h3 data-i18n="imc_title">IMC Clinic (ต่อเนื่อง)</h3><p data-i18n="imc_desc">เทียบเวลา กายภาพ -> แผนไทย/จีน</p></div>
+            <div class="arrow-btn"><i class="fas fa-chevron-right"></i></div>
+        </div>
+
         <div class="dept-card card-ttm" onclick="openApp('ttm')">
           <img src="https://img2.pic.in.th/pic/619e72dc2124132ccf4620717d4fa58d.md.png" class="dept-icon">
           <div class="dept-info"><h3 data-i18n="ttm_title">แพทย์แผนไทย</h3><p data-i18n="ttm_desc">นวดรักษา, ประคบ, นวดส่งเสริมฯ</p></div>
@@ -236,12 +226,6 @@
           <img src="https://img2.pic.in.th/pic/--06d2d95efaba2074.md.png" class="dept-icon">
           <div class="dept-info"><h3 data-i18n="tcm_title">แพทย์แผนจีน</h3><p data-i18n="tcm_desc">ฝังเข็ม, ครอบแก้ว, ฝังเข็มใบหน้า</p></div>
           <div class="arrow-btn"><i class="fas fa-chevron-right"></i></div>
-        </div>
-
-        <div class="dept-card card-imc" onclick="openApp('imc')">
-           <img src="https://img2.pic.in.th/pic/-ac25686004b90150.png" class="dept-icon">
-           <div class="dept-info"><h3 data-i18n="imc_title">ฟื้นฟูผู้ป่วย IMC</h3><p data-i18n="imc_desc">Stroke (< 6 เดือน) นวด/ฝังเข็ม</p></div>
-           <div class="arrow-btn"><i class="fas fa-chevron-right"></i></div>
         </div>
 
         <div class="dept-card card-postpartum" onclick="openApp('postpartum')">
@@ -286,25 +270,6 @@
         </div>
       </div>
       <div id="liveClock" class="live-clock"><i class="far fa-clock"></i> <span>...</span></div>
-      
-      <div id="imc-filters" class="hidden" style="margin-bottom:10px; margin-top:10px;">
-          <div class="imc-filter-box">
-              <label class="imc-label"><i class="fas fa-user-injured"></i> ประวัติกายภาพบำบัด</label>
-              <select id="imc-filter-pt" class="imc-select" onchange="updateImcSlots()">
-                  <option value="1.30">มีนัดกายภาพ 1.30 ชม.</option>
-                  <option value="1.00">มีนัดกายภาพ 1 ชม.</option>
-                  <option value="none">ไม่มีนัดกายภาพ</option>
-              </select>
-              
-              <label class="imc-label"><i class="fas fa-hand-holding-heart"></i> บริการที่ต้องการ</label>
-              <select id="imc-filter-type" class="imc-select" onchange="updateImcSlots()">
-                  <option value="both">นวดฟื้นฟู + ฝังเข็ม</option>
-                  <option value="massage">นวดฟื้นฟู (อย่างเดียว)</option>
-                  <option value="acu">ฝังเข็ม (อย่างเดียว)</option>
-              </select>
-          </div>
-      </div>
-
       <div id="dateScroller" class="date-scroller"></div>
     </div>
 
@@ -473,12 +438,12 @@
             dept_ttm_alt: "กลุ่มงานการแพทย์แผนไทยและการแพทย์ทางเลือก",
             hospital_name: "โรงพยาบาลสะเดา",
             online_24: "ระบบออนไลน์ 24 ชม.",
+            imc_title: "IMC Clinic (ต่อเนื่อง)",
+            imc_desc: "เทียบเวลา กายภาพ -> แผนไทย/จีน",
             ttm_title: "แพทย์แผนไทย",
             ttm_desc: "นวดรักษา, ประคบ, นวดส่งเสริมฯ",
             tcm_title: "แพทย์แผนจีน",
             tcm_desc: "ฝังเข็ม, ครอบแก้ว, ฝังเข็มใบหน้า",
-            imc_title: "ฟื้นฟูผู้ป่วย IMC",
-            imc_desc: "Stroke (< 6 เดือน) นวด/ฝังเข็ม",
             pp_title: "บริการหลังคลอด",
             pp_desc: "หลังคลอดธรรมชาติ 7 วัน / หลังผ่า 1 เดือน",
             steam_title: "อบไอน้ำสมุนไพร",
@@ -538,18 +503,26 @@
             datetime: "วันเวลา",
             details: "รายละเอียด",
             note: "หมายเหตุ",
-            warning_msg: "<strong>โปรดทราบ!</strong><br>คิวจะถูกจองสำเร็จ<br>ต่อเมื่อเจ้าหน้าที่ <u>ตอบรับทางไลน์</u> แล้วเท่านั้น"
+            warning_msg: "<strong>โปรดทราบ!</strong><br>คิวจะถูกจองสำเร็จ<br>ต่อเมื่อเจ้าหน้าที่ <u>ตอบรับทางไลน์</u> แล้วเท่านั้น",
+            pt_duration_label: "ระยะเวลากายภาพ:",
+            pt_start: "เริ่มกายภาพ",
+            pt_manual: "(ดูในสมุด)",
+            finish_time: "เสร็จเวลา",
+            to_ttm: "ไปแผนไทย",
+            to_tcm: "ไปแผนจีน",
+            hr_1: "1 ชม.",
+            hr_1_5: "1.5 ชม."
         },
         en: {
             dept_ttm_alt: "Thai Traditional & Alternative Medicine",
             hospital_name: "Sadao Hospital",
             online_24: "Online System 24 hrs.",
+            imc_title: "IMC Clinic (Continuous)",
+            imc_desc: "Match Time: PT -> TTM/TCM",
             ttm_title: "Thai Traditional Medicine",
             ttm_desc: "Treatment Massage, Compress, Health Massage",
             tcm_title: "Chinese Medicine",
             tcm_desc: "Acupuncture, Cupping, Facial Acupuncture",
-            imc_title: "IMC Rehabilitation",
-            imc_desc: "Stroke (< 6 mths) Massage/Acupuncture",
             pp_title: "Postpartum Care",
             pp_desc: "Natural Birth 7 Days / C-Section 1 Month",
             steam_title: "Herbal Steam",
@@ -609,7 +582,15 @@
             datetime: "Date/Time",
             details: "Details",
             note: "Note",
-            warning_msg: "<strong>Please Note!</strong><br>Booking is confirmed<br>only after staff <u>reply via LINE</u>."
+            warning_msg: "<strong>Please Note!</strong><br>Booking is confirmed<br>only after staff <u>reply via LINE</u>.",
+            pt_duration_label: "PT Duration:",
+            pt_start: "PT Start",
+            pt_manual: "(Available)",
+            finish_time: "Finish Time",
+            to_ttm: "To TTM",
+            to_tcm: "To TCM",
+            hr_1: "1 hr",
+            hr_1_5: "1.5 hr"
         }
     };
 
@@ -640,19 +621,24 @@
         // Re-render Slots if view is dashboard
         if (!document.getElementById('view-dashboard').classList.contains('hidden') && globalData.length > 0) {
             renderScroller();
-            renderSlots(selectedIndex);
+            
+            // ** IMC LOGIC **
+            if (currentApp === 'imc') {
+                renderIMCTable(selectedIndex, ptDuration);
+            } else {
+                renderSlots(selectedIndex);
+            }
             updatePriceDisplay();
         }
     }
 
     // **********************************************************
-    // URL Web App (Backend) ของคุณ
+    // URL Web App (Backend)
     // **********************************************************
     const API_ENDPOINT = "https://script.google.com/macros/s/AKfycbxMVqlYGeuj75wQm41kZCD4wf2weZajj27b0omuC6HlHzWja4sJYz6HF6m5b5nlmSUMtw/exec";
 
     const LINE_OA_ID = "@649dqeft";
     
-    // --- อัปเดต: ตารางราคาและสิทธิการรักษา (ใหม่ล่าสุด) ---
     const SERVICE_PRICES = {
         ttm: {
             "นวดและประคบเพื่อการรักษา": "เบิกได้ตามสิทธิ (ยกเว้นประกันสังคม ชำระเงินเอง 250 บาท)",
@@ -675,15 +661,9 @@
             "สครับเกลือ": "500 บาท",
             "สปาผิว": "650 บาท",
             "นวดน้ำมันอโรม่า": "550 บาท"
-        },
-        imc: {
-             "นวดฟื้นฟู": "เบิกได้ตามสิทธิ",
-             "ฝังเข็ม": "เบิกได้ตามสิทธิ",
-             "นวดฟื้นฟู + ฝังเข็ม": "เบิกได้ตามสิทธิ"
         }
     };
 
-    // English Prices (Simple mapping for demo)
     const SERVICE_PRICES_EN = {
         ttm: {
             "Treatment Massage": "Reimbursable (SSO self-pay 250 THB)",
@@ -706,11 +686,6 @@
             "Salt Scrub": "500 THB",
             "Skin Spa": "650 THB",
             "Aroma Massage": "550 THB"
-        },
-        imc: {
-             "Rehab Massage": "Reimbursable",
-             "Acupuncture": "Reimbursable",
-             "Massage + Acupuncture": "Reimbursable"
         }
     };
 
@@ -721,8 +696,7 @@
       postpartum: { title: "บริการหลังคลอด", titleEn: "Postpartum Care", logo: "https://img2.pic.in.th/pic/eb06897c542c79b64690c8e794fa84a4.png", color: "#ec4899", dark: "#be185d", func: "getPostpartumData" },
       steam: { title: "อบไอน้ำสมุนไพร", titleEn: "Herbal Steam", logo: "https://img2.pic.in.th/pic/-3b445847427fcbfd.png", color: "#0288d1", dark: "#01579b", func: "getSteamData" },
       wellness: { title: "Wellness Clinic", titleEn: "Wellness Clinic", logo: "https://img2.pic.in.th/pic/Wellness-logo.png", color: "#D4AF37", dark: "#AA8C2C", func: "getWellnessData" },
-      // [NEW] IMC Config
-      imc: { title: "ฟื้นฟูผู้ป่วย IMC", titleEn: "IMC Rehabilitation", logo: "https://img2.pic.in.th/pic/-ac25686004b90150.png", color: "#673ab7", dark: "#4527a0", func: "getIMCData" }
+      imc: { title: "IMC Clinic", titleEn: "IMC Clinic", logo: "https://img5.pic.in.th/file/secure-sv1/clipboard-pulse-line.png", color: "#9333ea", dark: "#7e22ce", func: "getIMCCombinedData" }
     };
 
     const SERVICE_OPTIONS = {
@@ -730,7 +704,6 @@
       tcm: ["ฝังเข็มเพื่อการรักษา", "ครอบแก้ว", "ฝังเข็มใบหน้า", "ปรึกษาแพทย์แผนจีน"]
     };
     
-    // Mapped for English Display in Dropdown
     const SERVICE_OPTIONS_EN = {
       ttm: ["Treatment Massage", "Health Massage", "Foot Massage"],
       tcm: ["Acupuncture", "Cupping", "Facial Acupuncture", "Consultation"]
@@ -756,7 +729,6 @@
         "รัตน์ชนก KW": "รัตน์ชนก (กวาง)", "จินดา J": "จินดา (เจี๊ยบ)"
     };
     
-    // --- NEW: English Name Mapping (ที่ต้องการ) ---
     const STAFF_NAME_MAP_EN = {
         "รจนา M": "Rotjana (Maam)", "อรรถพล B": "Attapon (Bao)", "ศินารัตน์ C": "Sinarat (C)",
         "จุฑามาศ F": "Jutamat (Fon)", "ณิชาภัทร W": "Nichapat (Wawa)", "นิกษ์นิภา T": "Niknipha (Kartoon)",
@@ -770,6 +742,12 @@
         "08:30": "09:30", "09:30": "10:30", "13:00": "14:00", "14:00": "15:00", "17:00": "18:00",
         "8:30": "9:30", "9:30": "10:30"
     };
+    
+    // ** IMC VARIABLES **
+    let globalDataTTM = [];
+    let globalDataTCM = [];
+    let globalDataIMC = [];
+    let ptDuration = 60; // minutes
 
     let currentApp = '', globalData = [], bookingData = {};
     let refreshInterval;
@@ -817,13 +795,6 @@
           document.getElementById('view-home').classList.add('hidden');
           document.getElementById('view-dashboard').classList.remove('hidden');
           
-          // [NEW] Toggle IMC Filters
-          if (type === 'imc') {
-             document.getElementById('imc-filters').classList.remove('hidden');
-          } else {
-             document.getElementById('imc-filters').classList.add('hidden');
-          }
-
           selectedIndex = 0;
           fetchData(true);
           
@@ -869,9 +840,24 @@
 
     function renderApp(data, userObj) {
       if (currentApp !== userObj) return;
-      globalData = data;
+
+      // ** IMC SPECIAL HANDLING **
+      if (userObj === 'imc') {
+          globalDataTTM = data.ttm;
+          globalDataTCM = data.tcm;
+          globalDataIMC = data.imc; // Use this new data!
+          globalData = data.ttm; // Use TTM dates as base for scroller
+      } else {
+          globalData = data;
+      }
+      
       renderScroller();
-      renderSlots(selectedIndex);
+      
+      if (userObj === 'imc') {
+          renderIMCTable(selectedIndex, ptDuration);
+      } else {
+          renderSlots(selectedIndex);
+      }
     }
 
     function renderScroller() {
@@ -892,31 +878,132 @@
       selectedIndex = index;
       document.querySelectorAll('.date-chip').forEach(c => c.classList.remove('active'));
       el.classList.add('active');
-      renderSlots(index);
+      
+      if (currentApp === 'imc') {
+          renderIMCTable(index, ptDuration);
+      } else {
+          renderSlots(index);
+      }
     }
-    
-    // [NEW] Helper to get key for IMC based on filters
-    function getImcColumnKey(ptVal, typeVal) {
-        // Logic mapping based on your request and English keys
-        if (ptVal === "1.30") {
-             if (typeVal === "both") return "IMC_Full_A"; // Or IMC_Full_B, assume A is standard
-             if (typeVal === "massage") return "IMC_Physio_Massage";
-             if (typeVal === "acu") return "IMC_Physio_Acu";
-        } else if (ptVal === "1.00") {
-             if (typeVal === "both") return "IMC_ShortPhysio_Full"; // Or Mix
-             // Note: You didn't provide specific keys for PT 1.00 + Massage Only. 
-             // Returning undefined will show "0" slots.
-             return ""; 
-        } else if (ptVal === "none") {
-             if (typeVal === "both") return "IMC_Massage_Acu";
-             if (typeVal === "massage") return "IMC_Massage_Only";
-             if (typeVal === "acu") return "IMC_Acu_Only";
+
+    // --- IMC LOGIC FUNCTIONS ---
+    function addMinutes(timeStr, minutes) {
+        if(!timeStr) return "";
+        let parts = timeStr.split(':');
+        let h = parseInt(parts[0]);
+        let m = parseInt(parts[1]);
+        
+        let date = new Date();
+        date.setHours(h, m, 0, 0);
+        date.setMinutes(date.getMinutes() + minutes);
+        
+        let newH = date.getHours().toString(); // remove padStart to match DB e.g. "9:30"
+        let newM = date.getMinutes().toString().padStart(2, '0');
+        return `${newH}:${newM}`;
+    }
+
+    function changePTDuration(mins) {
+        ptDuration = mins;
+        document.querySelectorAll('.imc-duration-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`btn-dur-${mins}`).classList.add('active');
+        renderIMCTable(selectedIndex, ptDuration);
+    }
+
+    function renderIMCTable(dayIndex, ptDurationMinutes) {
+        let dayTTM = globalDataTTM[dayIndex]; 
+        let dayTCM = globalDataTCM[dayIndex];
+        let dayIMC = globalDataIMC[dayIndex]; // Real PT Data
+        
+        let dayColor = DAY_COLORS[dayTTM.dayOfWeek];
+        
+        let headerHtml = `<div class="selected-date-header"><span class="header-bar" style="background-color: ${dayColor}"></span>${dayTTM.fullLabel || dayTTM.displayDate}</div>`;
+        
+        // Control Bar
+        let controls = `
+        <div class="imc-controls">
+            <div style="display:flex; align-items:center; gap:8px; font-weight:600; font-size:0.9rem;">
+                <i class="fas fa-clock"></i> ${t('pt_duration_label')}
+            </div>
+            <div id="btn-dur-60" class="imc-duration-btn ${ptDurationMinutes===60?'active':''}" onclick="changePTDuration(60)">${t('hr_1')}</div>
+            <div id="btn-dur-90" class="imc-duration-btn ${ptDurationMinutes===90?'active':''}" onclick="changePTDuration(90)">${t('hr_1_5')}</div>
+        </div>
+        `;
+
+        let html = headerHtml + controls + '<div class="imc-table-container"><table style="width:100%; border-collapse: collapse; min-width:350px;">';
+        html += `<thead>
+                    <tr style="background:#f1f5f9; color:#64748b; font-size:0.85rem;">
+                        <th style="padding:10px; text-align:left; white-space:nowrap;">${t('pt_start')}<br><small>${t('pt_manual')}</small></th>
+                        <th style="padding:10px; white-space:nowrap;">${t('finish_time')}</th>
+                        <th style="padding:10px; text-align:center;">${t('to_ttm')}</th>
+                        <th style="padding:10px; text-align:center;">${t('to_tcm')}</th>
+                    </tr>
+                 </thead><tbody>`;
+
+        if (!dayIMC || dayIMC.slots.length === 0) {
+             html += `<tr><td colspan="4" style="text-align:center; padding:30px; color:#999;">${t('no_slot')}</td></tr>`;
+        } else {
+            // ** LOOP FROM REAL IMC SHEET SLOTS **
+            dayIMC.slots.forEach(slot => {
+                // If val contains 'งด' skip
+                if(slot.val.includes('งด')) return;
+                
+                let startTime = slot.time;
+                let endTime = addMinutes(startTime, ptDurationMinutes);
+                
+                // Search Slots in TTM/TCM
+                let ttmSlot = dayTTM.slots.find(s => s.time === endTime) || { val: 'ไม่มีรอบ', count: 0, staff: [] };
+                let tcmSlot = dayTCM.slots.find(s => s.time === endTime) || { val: 'ไม่มีรอบ', count: 0, staff: [] };
+                
+                let ttmBtn = getStatusButton(ttmSlot, 'TTM', dayIndex, startTime);
+                let tcmBtn = getStatusButton(tcmSlot, 'TCM', dayIndex, startTime);
+                
+                // PT Availability Indicator (Green dot if count > 0)
+                let ptIndicator = "";
+                if (slot.count > 0 && !slot.val.includes('เต็ม')) {
+                    ptIndicator = `<span style="color:#2e7d32; font-size:0.8rem; background:#e8f5e9; padding:2px 6px; border-radius:10px; margin-left:4px;">ว่าง ${slot.count}</span>`;
+                } else {
+                    ptIndicator = `<span style="color:#c62828; font-size:0.8rem; background:#fee2e2; padding:2px 6px; border-radius:10px; margin-left:4px;">เต็ม</span>`;
+                }
+
+                html += `<tr style="border-bottom:1px solid #e2e8f0;">
+                            <td style="padding:12px; font-weight:bold; color:#333;">
+                                ${startTime} ${ptIndicator}
+                            </td>
+                            <td style="padding:12px; color:#666;">${endTime}</td>
+                            <td style="padding:12px;">${ttmBtn}</td>
+                            <td style="padding:12px;">${tcmBtn}</td>
+                         </tr>`;
+            });
         }
-        return "";
+
+        html += '</tbody></table></div>';
+        document.getElementById('contentArea').innerHTML = html;
+    }
+
+    function getStatusButton(slot, dept, dayIndex, ptTime) {
+        if (slot.count > 0 && !slot.val.includes('งด')) {
+             let staffJson = JSON.stringify(slot.staff || []).replace(/"/g, "&quot;");
+             return `<button class="btn-book-imc" onclick="bookFromIMC('${dept}', '${slot.time}', ${dayIndex}, '${ptTime}', ${staffJson}, ${slot.count})">
+                        <i class="fas fa-check-circle"></i> ${t('avail')} (${slot.count})
+                    </button>`;
+        } else {
+             return `<div class="btn-book-imc-disabled"><i class="fas fa-times-circle"></i> ${t('full')}</div>`;
+        }
     }
     
-    function updateImcSlots() {
-        renderSlots(selectedIndex);
+    function bookFromIMC(dept, time, dayIndex, ptTime, staffList, count) {
+        let originalApp = currentApp;
+        currentApp = (dept === 'TTM') ? 'ttm' : 'tcm';
+        
+        let dateFull = (dept === 'TTM' ? globalDataTTM : globalDataTCM)[dayIndex].fullLabel;
+        
+        openBooking(time, dateFull, dayIndex, staffList, count, "");
+        
+        setTimeout(() => {
+            let noteField = document.getElementById('inp-note');
+            noteField.value = `[IMC] ต่อเนื่องจากกายภาพ (รอบ ${ptTime})`;
+            currentApp = 'imc';
+        }, 100);
     }
 
     function renderSlots(index) {
@@ -932,49 +1019,17 @@
       }
 
       let html = headerHtml + '<div class="grid-container">';
-      
-      // [NEW] Prepare IMC Logic variables
-      let imcKey = "";
-      if (currentApp === 'imc') {
-          let ptVal = document.getElementById('imc-filter-pt').value;
-          let typeVal = document.getElementById('imc-filter-type').value;
-          imcKey = getImcColumnKey(ptVal, typeVal);
-      }
-
       day.slots.forEach((slot, i) => {
-        let val = "";
-        let count = 0;
-        let slotGender = "";
+        let val = slot.val ? slot.val.toString() : "";
+        if (val === 'งด') return;
 
-        // --- Logic: Determine Value & Count based on App ---
-        if (currentApp === 'imc') {
-            if (imcKey && slot.raw && slot.raw[imcKey]) {
-                let rawVal = slot.raw[imcKey].toString().trim();
-                if (rawVal === "งด" || rawVal === "เต็ม" || rawVal === "") {
-                    val = rawVal || "0"; 
-                    count = 0;
-                } else {
-                    count = parseInt(rawVal);
-                    if (isNaN(count)) count = 0;
-                    val = (count > 0) ? `ว่าง ${count} คิว` : "คิวเต็ม";
-                }
-            } else {
-                 val = "0"; // Invalid combination or missing key
-            }
-        } else {
-            // Standard apps
-            val = slot.val ? slot.val.toString() : "";
-            count = slot.count || 0;
-            slotGender = slot.gender || "";
-        }
-        
-        if (val === 'งด' || val === '0') return; // Hide closed slots for cleaner UI? Or show as full? Let's hide '0' for IMC invalid combos
-
-        let isFull = (val.includes('เต็ม') || val.includes('งด') || count === 0);
+        let isFull = (val.includes('เต็ม') || val.includes('งด'));
         let displayVal = val;
         
-        // Translate status
         if (val.includes('เต็ม')) displayVal = t('full');
+
+        let count = slot.count || 0;
+        let slotGender = slot.gender || "";
 
         let genderClass = "";
         let genderIcon = "";
@@ -1011,7 +1066,6 @@
         if (currentApp === 'postpartum') icon = '<i class="fas fa-heart"></i>';
         if (currentApp === 'steam') icon = '<i class="fas fa-hot-tub-person"></i>';
         if (currentApp === 'wellness') icon = '<i class="fas fa-spa" style="color:#D4AF37;"></i>';
-        if (currentApp === 'imc') icon = '<i class="fas fa-wheelchair"></i>';
         if (isFull) icon = '<i class="fas fa-lock"></i>';
         
         let staffJson = JSON.stringify(slot.staff || []).replace(/"/g, "&quot;");
@@ -1020,12 +1074,6 @@
         
         html += `<div class="slot-card ${cardClass}" style="animation-delay:${i*0.05}s; ${cursor}" ${action}><div class="time-wrap"><div class="icon-status">${icon}</div><div class="time-text">${slot.time} น.</div></div><div class="status-badge ${badgeClass}">${displayVal}</div></div>`;
       });
-      
-      // If IMC has no valid slots for selection
-      if (currentApp === 'imc' && html === headerHtml + '<div class="grid-container">') {
-          html += `<div style="text-align:center; padding:20px; color:#94a3b8; border:2px dashed #e2e8f0; border-radius:10px;">ไม่พบคิวว่างสำหรับเงื่อนไขนี้</div>`;
-      }
-
       container.innerHTML = html + '</div>';
     }
 
@@ -1074,7 +1122,6 @@
         else { box.style.display = 'none'; chk.checked = false; }
     }
 
-    // --- ฟังก์ชันแสดงรายชื่อพนักงาน ---
     function renderStaffList(availableStaffList) {
         const optionsContainer = document.getElementById('staff-options');
         optionsContainer.innerHTML = '';
@@ -1132,10 +1179,13 @@
           
           document.getElementById('inp-name').value = '';
           document.getElementById('inp-tel').value = '';
-          document.getElementById('inp-note').value = '';
+          // Note field might be pre-filled by IMC, don't clear it if it's already set
+          if (!document.getElementById('inp-note').value.includes('[IMC]')) {
+             document.getElementById('inp-note').value = '';
+          }
+          
           document.getElementById('inp-2hr').checked = false;
           document.getElementById('box-option-2hr').style.display = 'none';
-          
           document.getElementById('price-tag').style.display = 'none';
 
           document.querySelector('.modal-card').scrollTop = 0;
@@ -1145,12 +1195,16 @@
           document.getElementById('steam-fields').classList.add('hidden');
 
           nextSlotStaffList = [];
-          let nextTime = TIME_PAIRS[time];
-          if (nextTime) {
-              let dayData = globalData[dayIndex];
-              let nextSlot = dayData.slots.find(s => s.time === nextTime);
-              if (nextSlot && nextSlot.val && !nextSlot.val.includes('เต็ม') && !nextSlot.val.includes('งด')) {
-                  nextSlotStaffList = nextSlot.staff || [];
+          
+          // Only check next slot if NOT IMC mode (or if switched to TTM/TCM from IMC)
+          if (currentApp !== 'postpartum' && currentApp !== 'steam' && currentApp !== 'wellness') {
+              let nextTime = TIME_PAIRS[time];
+              if (nextTime) {
+                  let dayData = globalData[dayIndex];
+                  let nextSlot = dayData.slots.find(s => s.time === nextTime);
+                  if (nextSlot && nextSlot.val && !nextSlot.val.includes('เต็ม') && !nextSlot.val.includes('งด')) {
+                      nextSlotStaffList = nextSlot.staff || [];
+                  }
               }
           }
 
@@ -1176,40 +1230,6 @@
               document.getElementById('inp-service').value = bookingData.service;
               updatePriceDisplay();
 
-          } else if (currentApp === 'imc') {
-              // [NEW] IMC Booking Flow
-              document.getElementById('normal-fields').classList.remove('hidden');
-              document.getElementById('group-staff').classList.add('hidden');
-              document.getElementById('inp-staff-val').value = "ทีมฟื้นฟู IMC";
-              
-              let select = document.getElementById('inp-service');
-              select.innerHTML = '';
-              
-              // Auto-fill service based on filter selection
-              let typeVal = document.getElementById('imc-filter-type').value;
-              let serviceName = "นวดฟื้นฟู + ฝังเข็ม";
-              if (typeVal === "massage") serviceName = "นวดฟื้นฟู";
-              if (typeVal === "acu") serviceName = "ฝังเข็ม";
-              
-              // Map to EN if needed
-              if (currentLang === 'en') {
-                  if (typeVal === 'both') serviceName = "Massage + Acupuncture";
-                  if (typeVal === 'massage') serviceName = "Rehab Massage";
-                  if (typeVal === 'acu') serviceName = "Acupuncture";
-              }
-
-              let opt = document.createElement('option');
-              opt.value = serviceName;
-              opt.innerText = serviceName;
-              select.appendChild(opt);
-              
-              // Add Physio info to Note/Extra Info
-              let ptVal = document.getElementById('imc-filter-pt').value;
-              let ptText = (ptVal === 'none') ? 'ไม่มีนัดกายภาพ' : `มีนัดกายภาพ ${ptVal} ชม.`;
-              bookingData.extraInfo = `\n(ข้อมูล: ${ptText})`;
-
-              updatePriceDisplay();
-
           } else {
               document.getElementById('normal-fields').classList.remove('hidden');
               
@@ -1233,7 +1253,7 @@
                           let displayLabel = price ? `${s} (${price})` : s;
                           
                           let opt = document.createElement('option');
-                          opt.value = displayLabel;
+                          opt.value = displayLabel; 
                           opt.innerText = displayLabel;
                           select.appendChild(opt);
 
@@ -1257,12 +1277,12 @@
                   }
 
               } else {
-                 let options = (currentLang === 'en') ? SERVICE_OPTIONS_EN[currentApp] : SERVICE_OPTIONS[currentApp];
-                 if (options) {
-                       options.forEach(s => {
-                         let opt = document.createElement('option'); opt.value = s; opt.innerText = s; select.appendChild(opt);
-                       });
-                 }
+                  let options = (currentLang === 'en') ? SERVICE_OPTIONS_EN[currentApp] : SERVICE_OPTIONS[currentApp];
+                  if (options) {
+                        options.forEach(s => {
+                          let opt = document.createElement('option'); opt.value = s; opt.innerText = s; select.appendChild(opt);
+                        });
+                  }
               }
               updatePriceDisplay();
           }
@@ -1329,9 +1349,7 @@
       bookingData.name = name;
       bookingData.tel = tel;
       bookingData.note = document.getElementById('inp-note').value.trim() || "-";
-      
-      // Initialize extraInfo if not already set by IMC
-      if (!bookingData.extraInfo) bookingData.extraInfo = "";
+      bookingData.extraInfo = "";
 
       if (currentApp === 'postpartum') {
           let birthDate = document.getElementById('inp-birth-date').value;
@@ -1425,7 +1443,9 @@
         if (!serviceName) return;
 
         let cleanName = serviceName.split(' (')[0]; 
+        
         let price = "-";
+        
         let priceList = (currentLang === 'en') ? SERVICE_PRICES_EN : SERVICE_PRICES;
         let priceWellness = (currentLang === 'en') ? WELLNESS_PRICES_EN : WELLNESS_PRICES;
 
