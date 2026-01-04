@@ -111,7 +111,23 @@
     .bg-av { background: #e8f5e9; color: #1b5e20; border: 1px solid #c8e6c9; }
     .bg-full { background: #fee2e2; color: #b71c1c; border: 1px solid #ffcdd2; }
 
-    /* --- IMC STYLES (NO FILTER UI) --- */
+    /* --- IMC FILTER & STYLES (UPDATED) --- */
+    .imc-filter-box { background: white; padding: 20px; border-radius: 24px; margin-bottom: 20px; box-shadow: var(--shadow-sm); border: 1px solid #e2e8f0; }
+    .filter-group { margin-bottom: 15px; }
+    .filter-title { font-size: 0.9rem; font-weight: 700; color: #334155; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    
+    .radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    .radio-pill { cursor: pointer; position: relative; }
+    .radio-pill input { position: absolute; opacity: 0; }
+    .radio-pill span { display: block; padding: 8px 16px; background: #f1f5f9; border-radius: 25px; font-size: 0.9rem; color: #64748b; border: 1px solid transparent; transition: all 0.2s; }
+    .radio-pill input:checked + span { background: #9333ea; color: white; box-shadow: 0 4px 10px rgba(147, 51, 234, 0.3); font-weight: 600; }
+
+    .chk-group { display: flex; gap: 10px; }
+    .chk-pill { cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: #fff; border: 1px solid #cbd5e1; border-radius: 25px; font-size: 0.9rem; color: #475569; transition: all 0.2s; }
+    .chk-pill:hover { border-color: #9333ea; }
+    .chk-pill input:checked + span { color: #9333ea; font-weight: 700; }
+    .chk-pill.active { border-color: #9333ea; background: #faf5ff; }
+
     .imc-card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 16px; border: 1px solid #f1f5f9; box-shadow: var(--shadow-sm); animation: slideUp 0.3s; position: relative; overflow: hidden; }
     .imc-card::before { content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 6px; background: #9333ea; }
     
@@ -741,9 +757,9 @@
         "8:30": "9:30", "9:30": "10:30"
     };
     
-    // ** IMC VARIABLES - SET DEFAULT HERE **
-    // pt: '90' = 1.5 hr, ttm: true = นวดไทย, tcm: true = ฝังเข็ม
-    let imcFilter = { pt: '90', ttm: true, tcm: true };
+    // ** IMC DEFAULT VARIABLES **
+    // ค่าเริ่มต้น: pt='90' (1.5 ชม.), ttm=false (ไม่ติ๊ก), tcm=false (ไม่ติ๊ก)
+    let imcFilter = { pt: '90', ttm: false, tcm: false };
 
     let currentApp = '', globalData = [], bookingData = {};
     let refreshInterval;
@@ -878,7 +894,7 @@
       }
     }
 
-    // --- IMC LOGIC FUNCTIONS (REMOVED UI BUTTONS) ---
+    // --- IMC LOGIC FUNCTIONS (RESTORED UI) ---
     function renderIMCTable(dayIndex) {
        let dayData = globalData[dayIndex];
        let container = document.getElementById('contentArea');
@@ -886,11 +902,43 @@
        
        let headerHtml = `<div class="selected-date-header"><span class="header-bar" style="background-color: ${dayColor}"></span>${dayData.fullLabel || dayData.displayDate}</div>`;
 
-       // Removed Filter Buttons as requested
-       let filterHtml = '';
+       // ** RESTORED FILTER UI (Without 'All' Button) **
+       let filterHtml = `
+       <div class="imc-filter-box">
+           <div class="filter-group">
+               <div class="filter-title"><i class="fas fa-wheelchair"></i> กายภาพบำบัด</div>
+               <div class="radio-group">
+                   <label class="radio-pill"><input type="radio" name="pt_dur" value="none" onchange="updateIMCFilter('pt', 'none')" ${imcFilter.pt==='none'?'checked':''}><span>ไม่ทำกายภาพ</span></label>
+                   <label class="radio-pill"><input type="radio" name="pt_dur" value="60" onchange="updateIMCFilter('pt', '60')" ${imcFilter.pt==='60'?'checked':''}><span>1 ชม.</span></label>
+                   <label class="radio-pill"><input type="radio" name="pt_dur" value="90" onchange="updateIMCFilter('pt', '90')" ${imcFilter.pt==='90'?'checked':''}><span>1.5 ชม.</span></label>
+               </div>
+           </div>
+           <div class="filter-group" style="margin-bottom:0;">
+               <div class="filter-title"><i class="fas fa-plus-circle"></i> บริการร่วม</div>
+               <div class="chk-group">
+                   <label class="chk-pill ${imcFilter.ttm?'active':''}" id="lbl-ttm">
+                       <input type="checkbox" onchange="updateIMCFilter('ttm', this.checked)" ${imcFilter.ttm?'checked':''}>
+                       <i class="fas fa-hands"></i> <span>นวดไทย</span>
+                   </label>
+                   <label class="chk-pill ${imcFilter.tcm?'active':''}" id="lbl-tcm">
+                       <input type="checkbox" onchange="updateIMCFilter('tcm', this.checked)" ${imcFilter.tcm?'checked':''}>
+                       <i class="fas fa-syringe"></i> <span>ฝังเข็ม</span>
+                   </label>
+               </div>
+           </div>
+       </div>
+       <div id="imc-slots-area"></div>
+       `;
        
-       container.innerHTML = headerHtml + filterHtml + '<div id="imc-slots-area"></div>';
+       container.innerHTML = headerHtml + filterHtml;
        renderIMCSlots(dayData);
+    }
+
+    function updateIMCFilter(key, val) {
+        imcFilter[key] = val;
+        if(key === 'ttm') document.getElementById('lbl-ttm').classList.toggle('active', val);
+        if(key === 'tcm') document.getElementById('lbl-tcm').classList.toggle('active', val);
+        renderIMCSlots(globalData[selectedIndex]);
     }
 
     function generateTimelineHTML(text) {
@@ -1005,7 +1053,7 @@
             html = `<div style="text-align:center;padding:40px;color:#cbd5e1">
                       <i class="fas fa-filter" style="font-size:2rem; margin-bottom:10px;"></i><br>
                       ไม่พบคิวที่ตรงกับเงื่อนไข<br>
-                      <small>(กายภาพ 1.5 ชม. + นวด + ฝังเข็ม)</small>
+                      <small>(ลองเปลี่ยนตัวเลือกตัวกรองด้านบน)</small>
                     </div>`;
         }
         area.innerHTML = html;
