@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>จองคิวออนไลน์ รพ.สะเดา</title>
+  
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2e7d32">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="https://img5.pic.in.th/file/secure-sv1/IMC.png">
+
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
@@ -28,6 +35,32 @@
     /* --- Language Button --- */
     .lang-btn { position: fixed; top: 15px; right: 15px; z-index: 9999; background: rgba(255, 255, 255, 0.9); border: 2px solid var(--primary); color: var(--primary); padding: 5px 12px; border-radius: 20px; font-weight: bold; font-family: 'Prompt', sans-serif; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: all 0.2s; display: flex; align-items: center; gap: 5px; }
     .lang-btn:hover { background: var(--primary); color: white; }
+
+    /* --- Install App Button --- */
+    .install-btn {
+        position: fixed; bottom: 20px; right: 20px; z-index: 9990;
+        background: #1e293b; color: white; border: none;
+        padding: 12px 20px; border-radius: 30px;
+        font-family: 'Prompt', sans-serif; font-weight: 600;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        display: none; /* ซ่อนไว้ก่อน */
+        align-items: center; gap: 8px; cursor: pointer;
+        animation: bounceIn 0.5s;
+    }
+    .install-btn:hover { background: #0f172a; transform: scale(1.05); }
+    @keyframes bounceIn {
+        0% { transform: scale(0); opacity: 0; }
+        60% { transform: scale(1.1); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* --- iOS Install Instructions Modal --- */
+    .ios-prompt-bg { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 9998; display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(4px); }
+    .ios-prompt-card { background: white; width: 100%; max-width: 400px; border-radius: 20px 20px 0 0; padding: 30px 20px 50px 20px; text-align: center; position: relative; animation: slideUp 0.3s; }
+    .ios-prompt-card h3 { margin: 0 0 15px 0; color: #333; }
+    .ios-step { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; text-align: left; font-size: 0.95rem; color: #555; background: #f8fafc; padding: 10px; border-radius: 12px; }
+    .ios-icon { font-size: 1.5rem; color: #0288d1; width: 30px; text-align: center; }
+    .close-ios { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; color: #999; cursor: pointer; }
 
     /* --- Layout & Components --- */
     .home-container { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 40px; }
@@ -231,6 +264,26 @@
   <button class="lang-btn" onclick="toggleLanguage()">
     <i class="fas fa-globe"></i> <span id="lang-text">TH</span>
   </button>
+  
+  <button id="install-btn" class="install-btn" onclick="installPWA()">
+    <i class="fas fa-download"></i> <span data-i18n="install_app">ติดตั้งแอป</span>
+  </button>
+
+  <div id="ios-install-prompt" class="ios-prompt-bg" onclick="closeIosPrompt(event)">
+      <div class="ios-prompt-card">
+          <div class="close-ios" onclick="closeIosPrompt(event, true)">&times;</div>
+          <h3><span data-i18n="install_on_ios">ติดตั้งบน iOS</span></h3>
+          <div class="ios-step">
+              <div class="ios-icon"><i class="fas fa-share-from-square"></i></div>
+              <div><span data-i18n="tap_share">แตะที่ปุ่ม <b>แชร์</b> (ด้านล่าง)</span></div>
+          </div>
+          <div class="ios-step">
+              <div class="ios-icon"><i class="far fa-square-plus"></i></div>
+              <div><span data-i18n="tap_add_home">เลือก <b>เพิ่มไปยังหน้าจอโฮม</b></span></div>
+          </div>
+          <div style="font-size:0.85rem; color:#888; margin-top:15px;"><span data-i18n="ios_note">เพื่อให้ใช้งานได้สะดวกและเต็มหน้าจอ</span></div>
+      </div>
+  </div>
 
   <div id="view-home" class="home-container fade-in">
     <div class="hero-banner">
@@ -350,19 +403,19 @@
         <div id="imc-specific-fields" class="hidden">
            <div class="form-group">
                <label class="form-label" data-i18n="lbl_selected_queue">คิวที่เลือก</label>
-               <div id="inp-imc-detail" class="form-control" style="background:#f3e8ff; border:1px solid #d8b4fe; min-height:50px; color:#555; pointer-events:none; font-size:0.9rem;"></div>
+               <div id="inp-imc-detail" class="form-control" style="background:#f3e8ff; border:1px solid #d8b4fe; min-height:50px; color:#555; pointer-events:none; font-size:0.9rem; white-space: pre-wrap; line-height: 1.5;"></div>
            </div>
            
            <div class="form-group">
                <label class="form-label" data-i18n="lbl_stroke_history">ประวัติการวินิจฉัยโรคหลอดเลือดสมอง (Stroke)</label>
                <div style="display:flex; flex-direction:column; gap:10px;">
-                   <label class="radio-pill" style="width:100%; justify-content:flex-start;">
+                   <label class="radio-pill" style="width:100%; justify-content:flex-start; padding:10px 16px;">
                        <input type="radio" name="stroke_history" value="ไม่เกิน 6 เดือน (IMC)">
-                       <span style="width:100%; text-align:center;" data-i18n="stroke_less_6m">ไม่เกิน 6 เดือน (IMC)</span>
+                       <span style="width:100%;" data-i18n="stroke_less_6m">ไม่เกิน 6 เดือน (IMC)</span>
                    </label>
-                   <label class="radio-pill" style="width:100%; justify-content:flex-start;">
+                   <label class="radio-pill" style="width:100%; justify-content:flex-start; padding:10px 16px;">
                        <input type="radio" name="stroke_history" value="เกิน 6 เดือน (Old CVA)">
-                       <span style="width:100%; text-align:center;" data-i18n="stroke_more_6m">เกิน 6 เดือน (Old CVA)</span>
+                       <span style="width:100%;" data-i18n="stroke_more_6m">เกิน 6 เดือน (Old CVA)</span>
                    </label>
                </div>
            </div>
@@ -492,6 +545,11 @@
 
     const translations = {
         th: {
+            install_app: "ติดตั้งแอป",
+            install_on_ios: "ติดตั้งบน iOS",
+            tap_share: "แตะที่ปุ่ม <b>แชร์</b> (ด้านล่าง)",
+            tap_add_home: "เลือก <b>เพิ่มไปยังหน้าจอโฮม</b>",
+            ios_note: "เพื่อให้ใช้งานได้สะดวกและเต็มหน้าจอ",
             dept_ttm_alt: "กลุ่มงานการแพทย์แผนไทยและการแพทย์ทางเลือก",
             hospital_name: "โรงพยาบาลสะเดา",
             online_24: "ระบบออนไลน์ 24 ชม.",
@@ -567,6 +625,11 @@
             stroke_more_6m: "เกิน 6 เดือน (Old CVA)"
         },
         en: {
+            install_app: "Install App",
+            install_on_ios: "Install on iOS",
+            tap_share: "Tap <b>Share</b> button",
+            tap_add_home: "Select <b>Add to Home Screen</b>",
+            ios_note: "For full screen experience",
             dept_ttm_alt: "Thai Traditional & Alternative Medicine",
             hospital_name: "Sadao Hospital",
             online_24: "Online System 24 hrs.",
@@ -790,6 +853,7 @@
     // ** IMC VARIABLES - DEFAULT SETTINGS **
     // ค่าเริ่มต้น: pt='90' (1.5 ชม.), ttm=true (มีนวด), tcm=true (มีฝังเข็ม)
     let imcFilter = { pt: '90', ttm: true, tcm: true };
+    let deferredPrompt; // For PWA Install Prompt
 
     let currentApp = '', globalData = [], bookingData = {};
     let refreshInterval;
@@ -821,6 +885,49 @@
       }, 1000);
     }
     startClock();
+
+    // --- PWA INSTALL LOGIC ---
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        document.getElementById('install-btn').style.display = 'flex';
+    });
+
+    async function installPWA() {
+        // Detect iOS
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        
+        if (isIOS) {
+            document.getElementById('ios-install-prompt').style.display = 'flex';
+        } else if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                deferredPrompt = null;
+                document.getElementById('install-btn').style.display = 'none';
+            }
+        }
+    }
+    
+    function closeIosPrompt(e, force) {
+        if (force || e.target.id === 'ios-install-prompt') {
+            document.getElementById('ios-install-prompt').style.display = 'none';
+        }
+    }
+    
+    // Also show install button on iOS (to trigger manual instructions)
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+        document.getElementById('install-btn').style.display = 'flex';
+    }
+
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./service-worker.js')
+                .then(reg => console.log('SW registered'))
+                .catch(err => console.log('SW fail', err));
+        });
+    }
 
     function openApp(type) {
       try {
