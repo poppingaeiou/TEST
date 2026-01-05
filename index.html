@@ -9,9 +9,7 @@
   <meta name="theme-color" content="#2e7d32">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  
-  <link rel="icon" type="image/png" href="https://img2.pic.in.th/pic/619e72dc2124132ccf4620717d4fa58d.md.png">
-  <link rel="apple-touch-icon" href="https://img2.pic.in.th/pic/619e72dc2124132ccf4620717d4fa58d.md.png">
+  <link rel="apple-touch-icon" href="https://img5.pic.in.th/file/secure-sv1/icon7df8c1ab00bf507e.png">
 
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -45,7 +43,7 @@
         padding: 12px 20px; border-radius: 30px;
         font-family: 'Prompt', sans-serif; font-weight: 600;
         box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        display: none; 
+        display: none; /* ซ่อนไว้ก่อน */
         align-items: center; gap: 8px; cursor: pointer;
         animation: bounceIn 0.5s;
     }
@@ -56,14 +54,19 @@
         100% { transform: scale(1); opacity: 1; }
     }
 
+    /* --- iOS Install Instructions Modal --- */
+    .ios-prompt-bg { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 9998; display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(4px); }
+    .ios-prompt-card { background: white; width: 100%; max-width: 400px; border-radius: 20px 20px 0 0; padding: 30px 20px 50px 20px; text-align: center; position: relative; animation: slideUp 0.3s; }
+    .ios-prompt-card h3 { margin: 0 0 15px 0; color: #333; }
+    .ios-step { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; text-align: left; font-size: 0.95rem; color: #555; background: #f8fafc; padding: 10px; border-radius: 12px; }
+    .ios-icon { font-size: 1.5rem; color: #0288d1; width: 30px; text-align: center; }
+    .close-ios { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; color: #999; cursor: pointer; }
+
     /* --- Layout & Components --- */
     .home-container { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 40px; }
     .hero-banner { width: 100%; height: 280px; background-image: url('https://img2.pic.in.th/pic/2e56ebb3c838125fd55c9db5dcd51baf.png'); background-size: cover; background-position: center; position: relative; border-radius: 0 0 30px 30px; overflow: hidden; box-shadow: var(--shadow-md); margin-bottom: -40px; z-index: 1; }
     .hero-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to bottom, rgba(46,125,50,0.3), rgba(27,94,32,0.85)); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; color: white; backdrop-filter: blur(1px); }
-    
-    /* ** 2. โลโก้บนหน้าเว็บ ใช้สีทอง (Golden Logo) ** */
     .main-logo { width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3)); background: white; border-radius: 50%; padding: 2px; }
-    
     .home-title h1 { font-size: 1.5rem; font-weight: 700; margin: 5px 0 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
     .status-pill { background: rgba(255,255,255,0.2); padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; gap: 6px; }
     
@@ -266,10 +269,26 @@
     <i class="fas fa-download"></i> <span data-i18n="install_app">ติดตั้งแอป</span>
   </button>
 
+  <div id="ios-install-prompt" class="ios-prompt-bg" onclick="closeIosPrompt(event)">
+      <div class="ios-prompt-card">
+          <div class="close-ios" onclick="closeIosPrompt(event, true)">&times;</div>
+          <h3><span data-i18n="install_on_ios">ติดตั้งบน iOS</span></h3>
+          <div class="ios-step">
+              <div class="ios-icon"><i class="fas fa-share-from-square"></i></div>
+              <div><span data-i18n="tap_share">แตะที่ปุ่ม <b>แชร์</b> (ด้านล่าง)</span></div>
+          </div>
+          <div class="ios-step">
+              <div class="ios-icon"><i class="far fa-square-plus"></i></div>
+              <div><span data-i18n="tap_add_home">เลือก <b>เพิ่มไปยังหน้าจอโฮม</b></span></div>
+          </div>
+          <div style="font-size:0.85rem; color:#888; margin-top:15px;"><span data-i18n="ios_note">เพื่อให้ใช้งานได้สะดวกและเต็มหน้าจอ</span></div>
+      </div>
+  </div>
+
   <div id="view-home" class="home-container fade-in">
     <div class="hero-banner">
         <div class="hero-overlay">
-            <img src="https://img2.pic.in.th/pic/6f7b352408393a1295f3000e7d9e6754.md.png" class="main-logo">
+            <img src="https://img5.pic.in.th/file/secure-sv1/icon7df8c1ab00bf507e.png" class="main-logo">
             <div class="home-title">
                 <h2 data-i18n="dept_ttm_alt">กลุ่มงานการแพทย์แผนไทยและการแพทย์ทางเลือก</h2>
                 <h1 data-i18n="hospital_name">โรงพยาบาลสะเดา</h1>
@@ -384,19 +403,19 @@
         <div id="imc-specific-fields" class="hidden">
            <div class="form-group">
                <label class="form-label" data-i18n="lbl_selected_queue">คิวที่เลือก</label>
-               <div id="inp-imc-detail" class="form-control" style="background:#f3e8ff; border:1px solid #d8b4fe; min-height:50px; color:#555; pointer-events:none; font-size:0.9rem;"></div>
+               <div id="inp-imc-detail" class="form-control" style="background:#f3e8ff; border:1px solid #d8b4fe; min-height:50px; color:#555; pointer-events:none; font-size:0.9rem; white-space: pre-wrap; line-height: 1.5;"></div>
            </div>
            
            <div class="form-group">
                <label class="form-label" data-i18n="lbl_stroke_history">ประวัติการวินิจฉัยโรคหลอดเลือดสมอง (Stroke)</label>
                <div style="display:flex; flex-direction:column; gap:10px;">
-                   <label class="radio-pill" style="width:100%; justify-content:flex-start;">
+                   <label class="radio-pill" style="width:100%; justify-content:flex-start; padding:10px 16px;">
                        <input type="radio" name="stroke_history" value="ไม่เกิน 6 เดือน (IMC)">
-                       <span style="width:100%; text-align:center;" data-i18n="stroke_less_6m">ไม่เกิน 6 เดือน (IMC)</span>
+                       <span style="width:100%;" data-i18n="stroke_less_6m">ไม่เกิน 6 เดือน (IMC)</span>
                    </label>
-                   <label class="radio-pill" style="width:100%; justify-content:flex-start;">
+                   <label class="radio-pill" style="width:100%; justify-content:flex-start; padding:10px 16px;">
                        <input type="radio" name="stroke_history" value="เกิน 6 เดือน (Old CVA)">
-                       <span style="width:100%; text-align:center;" data-i18n="stroke_more_6m">เกิน 6 เดือน (Old CVA)</span>
+                       <span style="width:100%;" data-i18n="stroke_more_6m">เกิน 6 เดือน (Old CVA)</span>
                    </label>
                </div>
            </div>
@@ -527,6 +546,10 @@
     const translations = {
         th: {
             install_app: "ติดตั้งแอป",
+            install_on_ios: "ติดตั้งบน iOS",
+            tap_share: "แตะที่ปุ่ม <b>แชร์</b> (ด้านล่าง)",
+            tap_add_home: "เลือก <b>เพิ่มไปยังหน้าจอโฮม</b>",
+            ios_note: "เพื่อให้ใช้งานได้สะดวกและเต็มหน้าจอ",
             dept_ttm_alt: "กลุ่มงานการแพทย์แผนไทยและการแพทย์ทางเลือก",
             hospital_name: "โรงพยาบาลสะเดา",
             online_24: "ระบบออนไลน์ 24 ชม.",
@@ -603,6 +626,10 @@
         },
         en: {
             install_app: "Install App",
+            install_on_ios: "Install on iOS",
+            tap_share: "Tap <b>Share</b> button",
+            tap_add_home: "Select <b>Add to Home Screen</b>",
+            ios_note: "For full screen experience",
             dept_ttm_alt: "Thai Traditional & Alternative Medicine",
             hospital_name: "Sadao Hospital",
             online_24: "Online System 24 hrs.",
@@ -867,7 +894,12 @@
     });
 
     async function installPWA() {
-        if (deferredPrompt) {
+        // Detect iOS
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        
+        if (isIOS) {
+            document.getElementById('ios-install-prompt').style.display = 'flex';
+        } else if (deferredPrompt) {
             deferredPrompt.prompt();
             const { outcome } = await deferredPrompt.userChoice;
             if (outcome === 'accepted') {
@@ -877,6 +909,17 @@
         }
     }
     
+    function closeIosPrompt(e, force) {
+        if (force || e.target.id === 'ios-install-prompt') {
+            document.getElementById('ios-install-prompt').style.display = 'none';
+        }
+    }
+    
+    // Also show install button on iOS (to trigger manual instructions)
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+        document.getElementById('install-btn').style.display = 'flex';
+    }
+
     // Register Service Worker
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
@@ -1642,13 +1685,16 @@
       let dummy = document.createElement("textarea");
       document.body.appendChild(dummy); dummy.value = msg; dummy.select(); document.execCommand("copy"); document.body.removeChild(dummy);
       
-      let url = `https://line.me/R/oaMessage/${LINE_OA_ID}/?${encodeURIComponent(msg)}`;
-      
-      if (LINE_OA_ID && LINE_OA_ID.startsWith('@')) {
-          window.location.href = url;
+      // Detect if Desktop
+      var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+      if (isMobile) {
+          // Mobile: Use Deep Link
+          window.location.href = `https://line.me/R/oaMessage/${LINE_OA_ID}/?${encodeURIComponent(msg)}`;
       } else {
-          alert("ระบบคัดลอกข้อมูลการจองแล้ว\nกรุณากด 'วาง' (Paste) ในแชท LINE");
-          window.location.href = "https://lin.ee/Ip6j7HP";
+          // Desktop: Alert & Open Profile Page
+          alert("ระบบคัดลอกข้อมูลการจองแล้ว\nกรุณากด 'วาง' (Ctrl+V) ในแชท LINE");
+          window.open("https://lin.ee/Ip6j7HP", "_blank");
       }
       closeModal();
     }
