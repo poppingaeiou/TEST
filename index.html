@@ -710,7 +710,8 @@
       postpartum: { title: "บริการหลังคลอด", titleEn: "Postpartum Care", logo: "https://img2.pic.in.th/pic/eb06897c542c79b64690c8e794fa84a4.png", color: "#ec4899", dark: "#be185d", func: "getPostpartumData" },
       steam: { title: "อบไอน้ำสมุนไพร", titleEn: "Herbal Steam", logo: "https://img2.pic.in.th/pic/-3b445847427fcbfd.png", color: "#0288d1", dark: "#01579b", func: "getSteamData" },
       wellness: { title: "Wellness Clinic", titleEn: "Wellness Clinic", logo: "https://img2.pic.in.th/pic/Wellness-logo.png", color: "#D4AF37", dark: "#AA8C2C", func: "getWellnessData" },
-      imc: { title: "IMC Clinic", titleEn: "IMC Clinic", logo: "https://img5.pic.in.th/file/secure-sv1/clipboard-pulse-line.png", color: "#9333ea", dark: "#7e22ce", func: "getIMCCombinedData" }
+      // ** แก้ไข: อัปเดต Logo ใน Config ให้ตรงกับที่ใช้ใน Card **
+      imc: { title: "IMC Clinic", titleEn: "IMC Clinic", logo: "https://img5.pic.in.th/file/secure-sv1/IMC.png", color: "#9333ea", dark: "#7e22ce", func: "getIMCCombinedData" }
     };
 
     const SERVICE_OPTIONS = {
@@ -757,7 +758,7 @@
         "8:30": "9:30", "9:30": "10:30"
     };
     
-    // ** IMC VARIABLES - DEFAULT SETTINGS **
+    // ** IMC DEFAULT VARIABLES **
     // ค่าเริ่มต้น: pt='90' (1.5 ชม.), ttm=true (มีนวด), tcm=true (มีฝังเข็ม)
     let imcFilter = { pt: '90', ttm: true, tcm: true };
 
