@@ -1,0 +1,21 @@
+{
+  "name": "จองคิว รพ.สะเดา",
+  "short_name": "Sadao Queue",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#2e7d32",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://img2.pic.in.th/pic/6f7b352408393a1295f3000e7d9e6754.md.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://img2.pic.in.th/pic/6f7b352408393a1295f3000e7d9e6754.md.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
