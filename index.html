@@ -66,7 +66,10 @@
     .home-container { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 40px; }
     .hero-banner { width: 100%; height: 280px; background-image: url('https://img2.pic.in.th/pic/2e56ebb3c838125fd55c9db5dcd51baf.png'); background-size: cover; background-position: center; position: relative; border-radius: 0 0 30px 30px; overflow: hidden; box-shadow: var(--shadow-md); margin-bottom: -40px; z-index: 1; }
     .hero-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to bottom, rgba(46,125,50,0.3), rgba(27,94,32,0.85)); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; color: white; backdrop-filter: blur(1px); }
+    
+    /* ** MAIN LOGO (RESTORED TO GOLD) ** */
     .main-logo { width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3)); background: white; border-radius: 50%; padding: 2px; }
+    
     .home-title h1 { font-size: 1.5rem; font-weight: 700; margin: 5px 0 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
     .status-pill { background: rgba(255,255,255,0.2); padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; gap: 6px; }
     
@@ -288,7 +291,7 @@
   <div id="view-home" class="home-container fade-in">
     <div class="hero-banner">
         <div class="hero-overlay">
-            <img src="https://img5.pic.in.th/file/secure-sv1/icon7df8c1ab00bf507e.png" class="main-logo">
+            <img src="https://img2.pic.in.th/pic/6f7b352408393a1295f3000e7d9e6754.md.png" class="main-logo">
             <div class="home-title">
                 <h2 data-i18n="dept_ttm_alt">กลุ่มงานการแพทย์แผนไทยและการแพทย์ทางเลือก</h2>
                 <h1 data-i18n="hospital_name">โรงพยาบาลสะเดา</h1>
@@ -1442,7 +1445,6 @@
           document.getElementById('inp-2hr').checked = false;
           document.getElementById('box-option-2hr').style.display = 'none';
           document.getElementById('price-tag').style.display = 'none';
-          document.getElementById('imc-specific-fields').classList.add('hidden'); // Reset IMC fields
 
           document.querySelector('.modal-card').scrollTop = 0;
 
@@ -1685,16 +1687,13 @@
       let dummy = document.createElement("textarea");
       document.body.appendChild(dummy); dummy.value = msg; dummy.select(); document.execCommand("copy"); document.body.removeChild(dummy);
       
-      // Detect if Desktop
-      var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-      if (isMobile) {
-          // Mobile: Use Deep Link
-          window.location.href = `https://line.me/R/oaMessage/${LINE_OA_ID}/?${encodeURIComponent(msg)}`;
+      let url = `https://line.me/R/oaMessage/${LINE_OA_ID}/?${encodeURIComponent(msg)}`;
+      
+      if (LINE_OA_ID && LINE_OA_ID.startsWith('@')) {
+          window.location.href = url;
       } else {
-          // Desktop: Alert & Open Profile Page
-          alert("ระบบคัดลอกข้อมูลการจองแล้ว\nกรุณากด 'วาง' (Ctrl+V) ในแชท LINE");
-          window.open("https://lin.ee/Ip6j7HP", "_blank");
+          alert("ระบบคัดลอกข้อมูลการจองแล้ว\nกรุณากด 'วาง' (Paste) ในแชท LINE");
+          window.location.href = "https://lin.ee/Ip6j7HP";
       }
       closeModal();
     }
