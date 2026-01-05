@@ -246,12 +246,6 @@
 
     <div class="menu-container">
         
-        <div class="dept-card card-imc" onclick="openApp('imc')">
-            <img src="https://img5.pic.in.th/file/secure-sv1/clipboard-pulse-line.png" class="dept-icon" style="padding:10px; background:white;" onerror="this.src='https://placehold.co/60x60?text=IMC'">
-            <div class="dept-info"><h3 data-i18n="imc_title">IMC Clinic (ต่อเนื่อง)</h3><p data-i18n="imc_desc">เทียบเวลา กายภาพ -> แผนไทย/จีน</p></div>
-            <div class="arrow-btn"><i class="fas fa-chevron-right"></i></div>
-        </div>
-
         <div class="dept-card card-ttm" onclick="openApp('ttm')">
           <img src="https://img2.pic.in.th/pic/619e72dc2124132ccf4620717d4fa58d.md.png" class="dept-icon">
           <div class="dept-info"><h3 data-i18n="ttm_title">แพทย์แผนไทย</h3><p data-i18n="ttm_desc">นวดรักษา, ประคบ, นวดส่งเสริมฯ</p></div>
@@ -282,6 +276,12 @@
                 <h3>Wellness Clinic</h3>
                 <p data-i18n="well_desc">สครับเกลือ, สปาผิว, นวดอโรม่า</p>
             </div>
+            <div class="arrow-btn"><i class="fas fa-chevron-right"></i></div>
+        </div>
+
+        <div class="dept-card card-imc" onclick="openApp('imc')">
+            <img src="https://img5.pic.in.th/file/secure-sv1/IMC.png" class="dept-icon" style="padding:2px; background:white;">
+            <div class="dept-info"><h3 data-i18n="imc_title">IMC ฟื้นฟูสภาพ ด้วยแพทย์แผนไทยและแพทย์แผนจีน</h3><p data-i18n="imc_desc">นวดและประคบ ฝังเข็มปรับสมดุล (ถ้ามีคิวกายภาพอยู่เดิมเทียบคิวได้)</p></div>
             <div class="arrow-btn"><i class="fas fa-chevron-right"></i></div>
         </div>
 
@@ -474,8 +474,8 @@
             dept_ttm_alt: "กลุ่มงานการแพทย์แผนไทยและการแพทย์ทางเลือก",
             hospital_name: "โรงพยาบาลสะเดา",
             online_24: "ระบบออนไลน์ 24 ชม.",
-            imc_title: "IMC Clinic (ต่อเนื่อง)",
-            imc_desc: "เทียบเวลา กายภาพ -> แผนไทย/จีน",
+            imc_title: "IMC ฟื้นฟูสภาพ ด้วยแพทย์แผนไทยและแพทย์แผนจีน",
+            imc_desc: "นวดและประคบ ฝังเข็มปรับสมดุล (ถ้ามีคิวกายภาพอยู่เดิมเทียบคิวได้)",
             ttm_title: "แพทย์แผนไทย",
             ttm_desc: "นวดรักษา, ประคบ, นวดส่งเสริมฯ",
             tcm_title: "แพทย์แผนจีน",
@@ -545,8 +545,8 @@
             dept_ttm_alt: "Thai Traditional & Alternative Medicine",
             hospital_name: "Sadao Hospital",
             online_24: "Online System 24 hrs.",
-            imc_title: "IMC Clinic (Continuous)",
-            imc_desc: "Match Time: PT -> TTM/TCM",
+            imc_title: "IMC Rehabilitation (Thai & Chinese Medicine)",
+            imc_desc: "Massage, Compress, Acupuncture (Match with Physical Therapy)",
             ttm_title: "Thai Traditional Medicine",
             ttm_desc: "Treatment Massage, Compress, Health Massage",
             tcm_title: "Chinese Medicine",
@@ -757,7 +757,7 @@
         "8:30": "9:30", "9:30": "10:30"
     };
     
-    // ** IMC DEFAULT VARIABLES **
+    // ** IMC VARIABLES - DEFAULT SETTINGS **
     // ค่าเริ่มต้น: pt='90' (1.5 ชม.), ttm=true (มีนวด), tcm=true (มีฝังเข็ม)
     let imcFilter = { pt: '90', ttm: true, tcm: true };
 
