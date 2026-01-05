@@ -346,6 +346,27 @@
           <input type="tel" id="inp-tel" class="form-control" placeholder="08x-xxx-xxxx" autocomplete="off">
           <div id="list-tel" class="autocomplete-list"></div>
         </div>
+
+        <div id="imc-specific-fields" class="hidden">
+           <div class="form-group">
+               <label class="form-label" data-i18n="lbl_selected_queue">คิวที่เลือก</label>
+               <div id="inp-imc-detail" class="form-control" style="background:#f3e8ff; border:1px solid #d8b4fe; min-height:50px; color:#555; pointer-events:none; font-size:0.9rem;"></div>
+           </div>
+           
+           <div class="form-group">
+               <label class="form-label" data-i18n="lbl_stroke_history">ประวัติการวินิจฉัยโรคหลอดเลือดสมอง (Stroke)</label>
+               <div style="display:flex; flex-direction:column; gap:10px;">
+                   <label class="radio-pill" style="width:100%; justify-content:flex-start;">
+                       <input type="radio" name="stroke_history" value="ไม่เกิน 6 เดือน (IMC)">
+                       <span style="width:100%; text-align:center;" data-i18n="stroke_less_6m">ไม่เกิน 6 เดือน (IMC)</span>
+                   </label>
+                   <label class="radio-pill" style="width:100%; justify-content:flex-start;">
+                       <input type="radio" name="stroke_history" value="เกิน 6 เดือน (Old CVA)">
+                       <span style="width:100%; text-align:center;" data-i18n="stroke_more_6m">เกิน 6 เดือน (Old CVA)</span>
+                   </label>
+               </div>
+           </div>
+        </div>
         
         <div id="normal-fields">
             <div class="form-group">
@@ -540,6 +561,10 @@
             details: "รายละเอียด",
             note: "หมายเหตุ",
             warning_msg: "<strong>โปรดทราบ!</strong><br>คิวจะถูกจองสำเร็จ<br>ต่อเมื่อเจ้าหน้าที่ <u>ตอบรับทางไลน์</u> แล้วเท่านั้น",
+            lbl_selected_queue: "คิวที่เลือก",
+            lbl_stroke_history: "ประวัติการวินิจฉัยโรคหลอดเลือดสมอง (Stroke)",
+            stroke_less_6m: "ไม่เกิน 6 เดือน (IMC)",
+            stroke_more_6m: "เกิน 6 เดือน (Old CVA)"
         },
         en: {
             dept_ttm_alt: "Thai Traditional & Alternative Medicine",
@@ -611,6 +636,10 @@
             details: "Details",
             note: "Note",
             warning_msg: "<strong>Please Note!</strong><br>Booking is confirmed<br>only after staff <u>reply via LINE</u>.",
+            lbl_selected_queue: "Selected Queue",
+            lbl_stroke_history: "History of Stroke Diagnosis",
+            stroke_less_6m: "Less than 6 months (IMC)",
+            stroke_more_6m: "More than 6 months (Old CVA)"
         }
     };
 
@@ -825,8 +854,18 @@
 
     function fetchData(isFirstLoad) {
       if (isFetching || (!isFirstLoad && document.hidden)) return;
+      
+      // Client-side cache check (simple)
+      const cachedData = localStorage.getItem('local_cache_' + currentApp);
+      const cacheTime = localStorage.getItem('local_time_' + currentApp);
+      const now = new Date().getTime();
+
+      if (isFirstLoad && cachedData && cacheTime && (now - cacheTime < 60000)) { // 1 min client cache
+          renderApp(JSON.parse(cachedData), currentApp);
+      }
+
       isFetching = true;
-      if (isFirstLoad) {
+      if (isFirstLoad && !cachedData) {
          document.getElementById('contentArea').innerHTML = `<div style="text-align:center;padding:50px;color:#999"><i class="fas fa-circle-notch fa-spin"></i> ${t('loading')}</div>`;
       } else {
          document.getElementById('loadingIndicator').classList.add('show');
@@ -840,6 +879,10 @@
                 console.error("API Error:", data.message);
                 return;
             }
+            // Update local cache
+            localStorage.setItem('local_cache_' + currentApp, JSON.stringify(data));
+            localStorage.setItem('local_time_' + currentApp, new Date().getTime());
+
             renderApp(data, currentApp);
             document.getElementById('loadingIndicator').classList.remove('show');
             isFetching = false;
@@ -1085,14 +1128,25 @@
                 staff: "IMC Team" 
             };
             
+            // Clear fields
             document.getElementById('inp-name').value = '';
             document.getElementById('inp-tel').value = '';
-            document.getElementById('inp-note').value = detail; 
+            document.getElementById('inp-note').value = '';
             
+            // Set Read-only detail field
+            document.getElementById('inp-imc-detail').innerText = detail;
+
+            // Reset Stroke selection
+            document.querySelectorAll('input[name="stroke_history"]').forEach(r => r.checked = false);
+            
+            // Hide other specific fields
             document.getElementById('normal-fields').classList.add('hidden');
             document.getElementById('postpartum-fields').classList.add('hidden');
             document.getElementById('steam-fields').classList.add('hidden');
             document.getElementById('price-tag').style.display = 'none';
+            
+            // Show IMC specific fields
+            document.getElementById('imc-specific-fields').classList.remove('hidden');
 
             loadUserData();
             switchStep('step-form');
@@ -1281,6 +1335,7 @@
           document.getElementById('inp-2hr').checked = false;
           document.getElementById('box-option-2hr').style.display = 'none';
           document.getElementById('price-tag').style.display = 'none';
+          document.getElementById('imc-specific-fields').classList.add('hidden'); // Reset IMC fields
 
           document.querySelector('.modal-card').scrollTop = 0;
 
@@ -1444,7 +1499,15 @@
       bookingData.note = document.getElementById('inp-note').value.trim() || "-";
       bookingData.extraInfo = "";
 
-      if (currentApp === 'postpartum') {
+      if (currentApp === 'imc') {
+           // Handle IMC Data
+           let detail = document.getElementById('inp-imc-detail').innerText;
+           let strokeOption = document.querySelector('input[name="stroke_history"]:checked');
+           let strokeVal = strokeOption ? strokeOption.value : "ไม่ระบุ";
+           
+           bookingData.extraInfo = `\n${t('lbl_selected_queue')}:\n${detail}\n\n${t('lbl_stroke_history')}: ${strokeVal}`;
+           
+      } else if (currentApp === 'postpartum') {
           let birthDate = document.getElementById('inp-birth-date').value;
           let deliveryType = document.getElementById('inp-delivery-type').value;
           let hospital = document.getElementById('inp-hospital').value;
