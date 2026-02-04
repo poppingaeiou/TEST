@@ -33,8 +33,30 @@
     .hidden { display: none !important; }
     .fade-in { animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
+    /* --- Loading Overlay --- */
+    .loading-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(255, 255, 255, 0.9);
+        z-index: 9999;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        opacity: 0; visibility: hidden; transition: all 0.3s;
+        backdrop-filter: blur(5px);
+    }
+    .loading-overlay.active { opacity: 1; visibility: visible; }
+    
+    .loading-spinner {
+        width: 60px; height: 60px;
+        border: 6px solid #e2e8f0;
+        border-top: 6px solid var(--primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+    }
+    .loading-text { font-size: 1.2rem; font-weight: 700; color: #334155; }
+    .loading-sub { font-size: 0.9rem; color: #64748b; margin-top: 5px; }
+
     /* --- Language Button --- */
-    .lang-btn { position: fixed; top: 15px; right: 15px; z-index: 9999; background: rgba(255, 255, 255, 0.9); border: 2px solid var(--primary); color: var(--primary); padding: 5px 12px; border-radius: 20px; font-weight: bold; font-family: 'Prompt', sans-serif; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: all 0.2s; display: flex; align-items: center; gap: 5px; }
+    .lang-btn { position: fixed; top: 15px; right: 15px; z-index: 9998; background: rgba(255, 255, 255, 0.9); border: 2px solid var(--primary); color: var(--primary); padding: 5px 12px; border-radius: 20px; font-weight: bold; font-family: 'Prompt', sans-serif; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: all 0.2s; display: flex; align-items: center; gap: 5px; }
     .lang-btn:hover { background: var(--primary); color: white; }
 
     /* --- Install App Button --- */
@@ -269,6 +291,12 @@
   <button id="install-btn" class="install-btn" onclick="installPWA()">
     <i class="fas fa-download"></i> <span data-i18n="install_app">ติดตั้งแอป</span>
   </button>
+
+  <div id="loadingOverlay" class="loading-overlay">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">กำลังบันทึกข้อมูล...</div>
+      <div class="loading-sub">กรุณารอสักครู่ ห้ามปิดหน้านี้</div>
+  </div>
 
   <div id="ios-install-prompt" class="ios-prompt-bg" onclick="closeIosPrompt(event)">
       <div class="ios-prompt-card">
@@ -742,7 +770,7 @@
     // **********************************************************
     // URL Web App (Backend)
     // **********************************************************
-    const API_ENDPOINT = "https://script.google.com/macros/s/AKfycbxMVqlYGeuj75wQm41kZCD4wf2weZajj27b0omuC6HlHzWja4sJYz6HF6m5b5nlmSUMtw/exec";
+    const API_ENDPOINT = "https://script.google.com/macros/s/AKfycbxuZ1uo7q2V6vnKddOdnmEO_L8QIh6q1btJdUtoUroVj8q4dIPmeGX6DJHYbGr7bmCD/exec";
 
     const LINE_OA_ID = "@649dqeft";
     
@@ -1732,7 +1760,7 @@
 
     function backToForm() { switchStep('step-form'); }
     
-    // 🟢 UPDATED: Confirm Booking with Grid Coordinates
+    // 🟢 UPDATED: Confirm Booking with Loading Overlay
     function confirmBooking() { 
         let payload = {
             appType: currentApp,
@@ -1742,18 +1770,14 @@
             note: bookingData.note
         };
 
-        // ถ้าเป็น TTM/TCM ให้แนบพิกัด (Coordinates) ไปด้วย
         if ((currentApp === 'ttm' || currentApp === 'tcm') && selectedSlotData) {
             payload.sheetName = selectedSlotData.sheetName;
             payload.row = selectedSlotData.row;
             payload.col = selectedSlotData.col;
         }
 
-        // Show loading state
-        let btn = document.querySelector('.btn-confirm');
-        let originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> บันทึก...';
-        btn.disabled = true;
+        // Show Loading Overlay
+        document.getElementById('loadingOverlay').classList.add('active');
 
         fetch(API_ENDPOINT, {
             method: 'POST',
@@ -1761,8 +1785,8 @@
         })
         .then(res => res.json())
         .then(data => {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
+            // Hide Loading Overlay
+            document.getElementById('loadingOverlay').classList.remove('active');
             
             if(data.status === 'success') {
                 saveUserData(bookingData.name, bookingData.tel); 
@@ -1772,8 +1796,7 @@
             }
         })
         .catch(err => {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
+            document.getElementById('loadingOverlay').classList.remove('active');
             alert('Connection Error: ' + err.message);
         });
     }
