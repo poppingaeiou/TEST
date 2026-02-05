@@ -33,7 +33,7 @@
     .hidden { display: none !important; }
     .fade-in { animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
-    /* --- 1. Full Page Loader (ตอนดึงข้อมูล) --- */
+    /* --- 1. Full Page Loader (ตอนเปิดตาราง) --- */
     .page-loader {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background: #ffffff;
@@ -48,7 +48,7 @@
     .circle-bg { fill: none; stroke: #e2e8f0; stroke-width: 8; }
     .circle-progress {
         fill: none; stroke: var(--primary); stroke-width: 8;
-        stroke-dasharray: 283; /* 2 * pi * 45 */
+        stroke-dasharray: 283; 
         stroke-dashoffset: 283;
         transition: stroke-dashoffset 0.1s linear;
         stroke-linecap: round;
@@ -580,9 +580,7 @@
   </div>
 
   <script>
-    // **********************************************************
-    // Language Configuration
-    // **********************************************************
+    // --- LANGUAGE CONFIG ---
     let currentLang = 'th';
     const translations = {
         th: {
@@ -624,7 +622,6 @@
             stroke_less_6m: "ไม่เกิน 6 เดือน (IMC)", stroke_more_6m: "เกิน 6 เดือน (Old CVA)"
         },
         en: {
-            // (Same EN translations as previous, kept for brevity in this full block)
              install_app: "Install App", install_on_ios: "Install on iOS", tap_share: "Tap <b>Share</b> button",
              tap_add_home: "Select <b>Add to Home Screen</b>", ios_note: "For full screen experience",
              dept_ttm_alt: "Thai Traditional & Alternative Medicine", hospital_name: "Sadao Hospital",
@@ -677,7 +674,10 @@
         }
     }
 
+    // --- CONFIG ---
+    // ⚠️ อย่าลืมอัปเดตลิงก์ API หลังจาก Deploy New Version นะครับ ⚠️
     const API_ENDPOINT = "https://script.google.com/macros/s/AKfycbxMVqlYGeuj75wQm41kZCD4wf2weZajj27b0omuC6HlHzWja4sJYz6HF6m5b5nlmSUMtw/exec";
+    
     const LINE_OA_ID = "@649dqeft";
     const SERVICE_PRICES = { ttm: { "นวดและประคบเพื่อการรักษา": "เบิกได้ตามสิทธิ (ยกเว้นประกันสังคม ชำระเงินเอง 250 บาท)", "นวดตัวส่งเสริมสุขภาพ(ชำระเงินเอง)": "200 บาท (เพิ่มประคบสมุนไพร +50 บาท)", "นวดเท้าส่งเสริมสุขภาพ(ชำระเงินเอง)": "200 บาท" }, tcm: { "ฝังเข็มเพื่อการรักษา": "สิทธิข้าราชการเบิกได้ / สิทธิอื่นชำระเงินเอง 150-200 บาท<br><small style='color:#666'>(สิทธิบัตรทองในกลุ่มIMC เบิกได้)</small>", "ครอบแก้ว": "150 บาท", "ฝังเข็มใบหน้า": "300 บาท", "ปรึกษาแพทย์แผนจีน": "ฟรี" }, postpartum: { "บริการมารดาหลังคลอด": "เบิกได้ตามสิทธิ (ยกเว้นประกันสังคม ชำระเงินเอง 500 บาท)" }, steam: { "อบไอน้ำสมุนไพร": "เบิกได้ตามสิทธิ (ยกเว้นประกันสังคม ชำระเงินเอง 100 บาท)" }, wellness: { "สครับเกลือ": "500 บาท", "สปาผิว": "650 บาท", "นวดน้ำมันอโรม่า": "550 บาท" } };
     const SERVICE_PRICES_EN = { ttm: { "Treatment Massage": "Reimbursable (SSO self-pay 250 THB)", "Health Massage": "200 THB (+Herbal Compress +50 THB)", "Foot Massage": "200 THB" }, tcm: { "Acupuncture": "Gov Reimbursable / Others 150-200 THB", "Cupping": "150 THB", "Facial Acupuncture": "300 THB", "Consultation": "Free" }, postpartum: { "Postpartum Care": "Reimbursable (SSO self-pay 500 THB)" }, steam: { "Herbal Steam": "Reimbursable (SSO self-pay 100 THB)" }, wellness: { "Salt Scrub": "500 THB", "Skin Spa": "650 THB", "Aroma Massage": "550 THB" } };
@@ -1129,7 +1129,10 @@
       document.querySelector('.modal-card').scrollTop = 0;
       let name = document.getElementById('inp-name').value.trim(); let tel = document.getElementById('inp-tel').value.trim();
       if(!name || !tel) { alert((currentLang === 'en') ? 'Please enter Name and Phone' : 'กรุณากรอกชื่อและเบอร์โทรศัพท์'); return; }
-      bookingData.name = name; bookingData.tel = tel; bookingData.note = document.getElementById('inp-note').value.trim() || ""; bookingData.extraInfo = "";
+      bookingData.name = name; bookingData.tel = tel; 
+      // แก้ไข: ส่งค่าว่างถ้าไม่มี note (ป้องกันการเขียนทับ)
+      bookingData.note = document.getElementById('inp-note').value.trim() || ""; 
+      bookingData.extraInfo = "";
 
       if (currentApp === 'imc') {
            let detail = document.getElementById('inp-imc-detail').innerText; let strokeOption = document.querySelector('input[name="stroke_history"]:checked'); let strokeVal = strokeOption ? strokeOption.value : "ไม่ระบุ"; bookingData.extraInfo = `\n${t('lbl_selected_queue')}:\n${detail}\n\n${t('lbl_stroke_history')}: ${strokeVal}`;
@@ -1152,7 +1155,7 @@
 
     function backToForm() { switchStep('step-form'); }
 
-    // Fake Progress Logic
+    // --- Simulated Progress ---
     let progressInterval;
     function simulateProgress() {
         const circle = document.querySelector('.progress-ring__circle');
