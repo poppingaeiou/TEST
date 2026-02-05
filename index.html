@@ -4,31 +4,48 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>จองคิวออนไลน์ รพ.สะเดา</title>
+  
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#2e7d32">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
   <link rel="apple-touch-icon" href="https://img5.pic.in.th/file/secure-sv1/icon7df8c1ab00bf507e.png">
+
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <style>
-    /* CSS Variables & Reset */
-    :root { --primary: #2e7d32; --primary-dark: #1b5e20; --imc-primary: #9333ea; --imc-light: #faf5ff; --bg-color: #f8fafc; --radius: 20px; --shadow-sm: 0 4px 6px -1px rgba(0,0,0,0.05); --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.08); }
+    /* --- RESTORED CSS STYLE (HIGH QUALITY) --- */
+    :root { 
+        --primary: #2e7d32; 
+        --primary-dark: #1b5e20; 
+        --imc-primary: #9333ea;
+        --imc-light: #faf5ff;
+        --bg-color: #f8fafc; 
+        --radius: 20px; 
+        --shadow-sm: 0 4px 6px -1px rgba(0,0,0,0.05); 
+        --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.08); 
+    }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body { font-family: 'Prompt', sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; min-height: 100vh; color: #333; position: relative; overflow-x: hidden; }
     body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('https://img5.pic.in.th/file/secure-sv1/52083c99d955995f60b4a9dd8448920a.png') no-repeat center center; background-size: cover; opacity: 0.04; z-index: -1; filter: grayscale(50%); pointer-events: none; }
     .hidden { display: none !important; }
     .fade-in { animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
-    /* Page Loader */
-    .page-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s; }
+    /* Full Page Loader */
+    .page-loader {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: #ffffff; z-index: 10000;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        transition: opacity 0.5s;
+    }
     .page-loader.hidden { opacity: 0; pointer-events: none; }
     .loader-circle { width: 100px; height: 100px; position: relative; margin-bottom: 20px; }
     .loader-svg { transform: rotate(-90deg); width: 100px; height: 100px; }
     .circle-bg { fill: none; stroke: #e2e8f0; stroke-width: 8; }
-    .circle-progress { fill: none; stroke: #2e7d32; stroke-width: 8; stroke-dasharray: 283; stroke-dashoffset: 283; transition: stroke-dashoffset 0.1s linear; stroke-linecap: round; }
-    .loader-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: bold; color: #2e7d32; }
+    .circle-progress { fill: none; stroke: var(--primary); stroke-width: 8; stroke-dasharray: 283; stroke-dashoffset: 283; transition: stroke-dashoffset 0.1s linear; stroke-linecap: round; }
+    .loader-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: bold; color: var(--primary); }
     .loader-label { font-size: 1.1rem; color: #334155; font-weight: 600; min-height: 24px; text-align: center; padding: 0 20px; animation: fadeText 0.5s; }
     .loader-sub { font-size: 0.85rem; color: #94a3b8; margin-top: 8px; }
     @keyframes fadeText { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
@@ -38,68 +55,108 @@
     .loading-overlay.active { opacity: 1; visibility: visible; }
     .progress-ring { position: relative; width: 120px; height: 120px; }
     .progress-ring__circle { transition: stroke-dashoffset 0.35s; transform: rotate(-90deg); transform-origin: 50% 50%; }
-    .progress-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; font-weight: 700; color: #2e7d32; }
+    .progress-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; font-weight: 700; color: var(--primary); }
     .loading-status-text { margin-top: 20px; font-size: 1.1rem; color: #334155; font-weight: 600; }
     .check-icon { font-size: 3rem; color: #2e7d32; display: none; animation: popIn 0.3s; }
-    .loading-overlay.success .progress-ring { display: none; } .loading-overlay.success .check-icon { display: block; }
-    @keyframes popIn { 0% { transform: scale(0); opacity:0; } 80% { transform: scale(1.1); } 100% { transform: scale(1); opacity:1; } }
+    .loading-overlay.success .progress-ring { display: none; }
+    .loading-overlay.success .check-icon { display: block; }
 
     /* UI Components */
-    .lang-btn { position: fixed; top: 15px; right: 15px; z-index: 9998; background: rgba(255, 255, 255, 0.9); border: 2px solid var(--primary); color: var(--primary); padding: 5px 12px; border-radius: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 5px; }
-    .install-btn { position: fixed; bottom: 20px; right: 20px; z-index: 9990; background: #1e293b; color: white; border: none; padding: 12px 20px; border-radius: 30px; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: none; align-items: center; gap: 8px; cursor: pointer; }
-    .ios-prompt-bg { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 9998; display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(4px); }
-    .ios-prompt-card { background: white; width: 100%; max-width: 400px; border-radius: 20px 20px 0 0; padding: 30px 20px 50px 20px; text-align: center; position: relative; animation: slideUp 0.3s; }
+    .lang-btn { position: fixed; top: 15px; right: 15px; z-index: 9998; background: rgba(255, 255, 255, 0.9); border: 2px solid var(--primary); color: var(--primary); padding: 5px 12px; border-radius: 20px; font-weight: bold; font-family: 'Prompt', sans-serif; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: all 0.2s; display: flex; align-items: center; gap: 5px; }
+    .lang-btn:hover { background: var(--primary); color: white; }
+
+    .install-btn { position: fixed; bottom: 20px; right: 20px; z-index: 9990; background: #1e293b; color: white; border: none; padding: 12px 20px; border-radius: 30px; font-family: 'Prompt', sans-serif; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: none; align-items: center; gap: 8px; cursor: pointer; animation: bounceIn 0.5s; }
+    .install-btn:hover { background: #0f172a; transform: scale(1.05); }
+    @keyframes bounceIn { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+    @keyframes popIn { 0% { transform: scale(0); opacity:0; } 80% { transform: scale(1.1); } 100% { transform: scale(1); opacity:1; } }
+
+    /* Layout & Cards */
     .home-container { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 40px; }
     .hero-banner { width: 100%; height: 280px; background-image: url('https://img2.pic.in.th/pic/2e56ebb3c838125fd55c9db5dcd51baf.png'); background-size: cover; background-position: center; position: relative; border-radius: 0 0 30px 30px; overflow: hidden; box-shadow: var(--shadow-md); margin-bottom: -40px; z-index: 1; }
     .hero-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to bottom, rgba(46,125,50,0.3), rgba(27,94,32,0.85)); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; color: white; backdrop-filter: blur(1px); }
     .main-logo { width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3)); background: white; border-radius: 50%; padding: 2px; }
+    .home-title h1 { font-size: 1.5rem; font-weight: 700; margin: 5px 0 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
     .status-pill { background: rgba(255,255,255,0.2); padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; gap: 6px; }
+    
     .menu-container { width: 100%; padding: 0 20px; z-index: 2; }
     .dept-card { background: white; border-radius: var(--radius); padding: 24px; margin-bottom: 16px; display: flex; align-items: center; cursor: pointer; box-shadow: var(--shadow-md); border: 1px solid rgba(255,255,255,0.8); position: relative; overflow: hidden; transition: all 0.3s; }
     .dept-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
     .dept-card::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; }
-    .card-ttm::after { background: #2e7d32; } .card-tcm::after { background: #e53935; } .card-postpartum::after { background: #ec4899; } .card-steam::after { background: #0288d1; } .card-imc { border: 1px solid #d8b4fe; background: linear-gradient(135deg, #fff 50%, #faf5ff 100%); } .card-imc::after { background: #9333ea; } .card-wellness { border: 1px solid #F8E79B; background: linear-gradient(135deg, #fff 50%, #fffcf2 100%); } .card-wellness::after { background: linear-gradient(to bottom, #D4AF37, #AA8C2C); }
+    .card-ttm::after { background: #2e7d32; } .card-tcm::after { background: #e53935; } .card-postpartum::after { background: #ec4899; } .card-steam::after { background: #0288d1; }
+    .card-imc { border: 1px solid #d8b4fe; background: linear-gradient(135deg, #fff 50%, #faf5ff 100%); } .card-imc::after { background: #9333ea; }
+    .card-wellness { border: 1px solid #F8E79B; background: linear-gradient(135deg, #fff 50%, #fffcf2 100%); } .card-wellness::after { background: linear-gradient(to bottom, #D4AF37, #AA8C2C); } .card-wellness h3 { color: #AA8C2C !important; }
+
     .dept-icon { width: 60px; height: 60px; border-radius: 50%; margin-right: 20px; object-fit: cover; border: 4px solid #f1f5f9; }
+    .dept-info h3 { margin: 0 0 6px 0; font-size: 1.2rem; font-weight: 700; color: #1e293b; }
+    .dept-info p { margin: 0; font-size: 0.85rem; color: #64748b; line-height: 1.4; }
+    .arrow-btn { margin-left: auto; width: 36px; height: 36px; border-radius: 50%; background: #f8fafc; display: flex; align-items: center; justify-content: center; color: #94a3b8; }
+    .dept-card:hover .arrow-btn { color: white; } .card-ttm:hover .arrow-btn { background: #2e7d32; } .card-tcm:hover .arrow-btn { background: #e53935; } .card-postpartum:hover .arrow-btn { background: #ec4899; } .card-steam:hover .arrow-btn { background: #0288d1; }
+
     .info-card { margin-top: 20px; background: white; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); border: 1px solid #e2e8f0; }
     .info-img { width: 100%; height: 160px; object-fit: cover; }
+    .info-content { padding: 15px 20px; } .info-content h4 { margin: 0 0 5px; color: #1e293b; font-size: 1rem; } .info-content p { margin: 0; color: #64748b; font-size: 0.85rem; }
+
+    /* Dashboard */
     .top-section { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 15px 15px 25px 15px; position: sticky; top: 0; z-index: 100; border-radius: 0 0 30px 30px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.3); transition: background 0.5s ease; }
     .back-btn { position: absolute; top: 15px; left: 15px; background: rgba(255,255,255,0.2); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(4px); }
+    .header-content { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px; margin-top: 5px; }
     .app-logo { width: 50px; height: 50px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.9); background: white; object-fit:contain; }
+    .header-titles h1 { margin: 0; font-size: 1.3rem; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     .live-clock { text-align: center; background: rgba(0,0,0,0.15); border-radius: 20px; padding: 4px 14px; font-size: 0.8rem; margin: 10px auto 15px; width: fit-content; display: flex; gap: 6px; align-items: center; color: rgba(255,255,255,0.95); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.2); }
     .date-scroller { display: flex; overflow-x: auto; padding-bottom: 5px; gap: 10px; scrollbar-width: none; margin: 0 5px; }
     .date-chip { --day-color: #555; background: rgba(255,255,255,0.15); backdrop-filter: blur(4px); color: white; border-radius: 16px; padding: 10px 0; min-width: 65px; text-align: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; transition: all 0.3s; position: relative; overflow: hidden; }
-    .date-chip.active { background: white; color: var(--day-color); transform: scale(1.1); font-weight: bold; border: none; box-shadow: 0 8px 20px rgba(0,0,0,0.25); }
+    .date-chip small { font-size: 0.75rem; display: block; margin-bottom: 4px; opacity: 0.9; } .date-chip span { font-size: 1.2rem; display: block; line-height: 1; font-weight: 700; }
+    .date-chip.active { background: white; color: var(--day-color); transform: scale(1.1); font-weight: bold; border: none; box-shadow: 0 8px 20px rgba(0,0,0,0.25); } .date-chip.active::after { content:''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: var(--day-color); }
+
+    .container { max-width: 600px; margin: 0 auto; padding: 0 15px 80px; }
+    .selected-date-header { font-size: 1.1rem; font-weight: 700; color: #334155; padding: 25px 5px 15px; display: flex; align-items: center; }
+    .header-bar { width: 6px; height: 24px; border-radius: 4px; margin-right: 12px; background-color: var(--primary); }
+    .grid-container { display: flex; flex-direction: column; gap: 14px; }
     .slot-card { display: flex; justify-content: space-between; align-items: center; background: white; border-radius: 18px; padding: 18px 20px; box-shadow: var(--shadow-sm); border: 1px solid #f1f5f9; position: relative; overflow: hidden; opacity: 0; animation: slideUp 0.3s ease-out forwards; min-height: 75px; transition: transform 0.2s; }
     .slot-card:active { transform: scale(0.98); } .slot-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; }
     .is-available::before { background: #4caf50; } .is-full::before { background: #ef4444; }
     .gender-male { background: #e3f2fd !important; border-color: #90caf9 !important; } .gender-male::before { background: #1976d2 !important; }
     .gender-female { background: #fce4ec !important; border-color: #f48fb1 !important; } .gender-female::before { background: #d81b60 !important; }
-    .icon-status { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+    .time-wrap { display: flex; align-items: center; gap: 16px; } .icon-status { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; } .time-text { font-weight: 700; font-size: 1.1rem; color: #334155; }
     .is-available .icon-status { background: #e8f5e9; color: #2e7d32; } .is-full .icon-status { background: #fee2e2; color: #c62828; }
     .status-badge { padding: 6px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; min-width: 70px; text-align: center; }
     .bg-av { background: #e8f5e9; color: #1b5e20; border: 1px solid #c8e6c9; } .bg-full { background: #fee2e2; color: #b71c1c; border: 1px solid #ffcdd2; }
-    .imc-card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 16px; border: 1px solid #f1f5f9; box-shadow: var(--shadow-sm); animation: slideUp 0.3s; position: relative; overflow: hidden; }
-    .imc-card::before { content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 6px; background: #9333ea; }
-    .timeline-container { display: flex; align-items: center; gap: 8px; background: #f8fafc; padding: 15px; border-radius: 16px; margin-top: 5px; overflow-x: auto; white-space: nowrap; border: 1px dashed #cbd5e1; }
-    .timeline-step { display: flex; flex-direction: column; align-items: center; min-width: 60px; position: relative; text-align: center; }
-    .step-time { font-weight: bold; font-size: 0.85rem; color: #64748b; margin-bottom: 2px; } .step-label { font-size: 0.8rem; font-weight: 600; padding: 4px 10px; border-radius: 10px; }
-    .c-pt { color: #0288d1; background: #e0f2fe; } .c-ttm { color: #15803d; background: #dcfce7; } .c-tcm { color: #b91c1c; background: #fee2e2; } .c-end { color: #555; background: #eee; }
-    .btn-book-imc { border:none; border-radius:14px; background:#9333ea; color:white; cursor:pointer; font-family:'Prompt'; font-weight: 600; padding: 8px 18px; box-shadow: 0 4px 10px rgba(147, 51, 234, 0.25); transition: 0.2s; }
-    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.3s; backdrop-filter: blur(5px); }
-    .modal-overlay.show { opacity: 1; visibility: visible; }
-    .modal-card { background: white; width: 90%; max-width: 380px; border-radius: 28px; padding: 28px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); transform: translateY(20px); transition: all 0.3s; max-height: 90vh; overflow-y: auto; }
-    .modal-overlay.show .modal-card { transform: translateY(0); }
-    .form-control { width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 14px; font-family: 'Prompt', sans-serif; font-size: 1rem; outline: none; background: #f8fafc; }
-    .form-control:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.1); }
-    .custom-select-wrapper { position: relative; user-select: none; }
-    .custom-select { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 14px; background: #f8fafc; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
-    .select-items { position: absolute; top: 115%; left: 0; right: 0; background: white; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 20px 40px rgba(0,0,0,0.15); max-height: 260px; overflow-y: auto; z-index: 20; display: none; }
-    .custom-select.open + .select-items { display: block; animation: fadeIn 0.2s; }
-    .select-item { padding: 12px; display: flex; align-items: center; gap: 12px; cursor: pointer; border-bottom: 1px solid #f1f5f9; }
+
+    .contact-section { background: white; border-radius: var(--radius); padding: 30px; margin-top: 30px; text-align: center; box-shadow: var(--shadow-sm); border: 1px solid #f1f5f9; }
+    .social-btn { display: inline-flex; width: 40px; height: 40px; border-radius: 50%; background: #ddd; color: white; align-items: center; justify-content: center; margin: 0 5px; text-decoration: none; font-size: 1.1rem; transition: transform 0.2s; }
+    .social-btn:hover { transform: translateY(-3px); }
+    .btn-fb { background: #1877F2; } .btn-line { background: #06C755; } .btn-yt { background: #FF0000; } .btn-phone { background: #333; }
+
+    /* Modal & Form */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.3s; backdrop-filter: blur(5px); } .modal-overlay.show { opacity: 1; visibility: visible; }
+    .modal-card { background: white; width: 90%; max-width: 380px; border-radius: 28px; padding: 28px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); transform: translateY(20px); transition: all 0.3s; max-height: 90vh; overflow-y: auto; } .modal-overlay.show .modal-card { transform: translateY(0); }
+    .modal-header { font-size: 1.3rem; font-weight: 700; margin-bottom: 24px; color: var(--primary); border-bottom: 2px solid #f1f5f9; padding-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .form-group { margin-bottom: 20px; position: relative; } .form-label { display: block; margin-bottom: 8px; font-size: 0.95rem; color: #334155; font-weight: 600; }
+    .form-control { width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 14px; font-family: 'Prompt', sans-serif; font-size: 1rem; outline: none; background: #f8fafc; } .form-control:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.1); }
+    textarea.form-control { resize: none; height: 90px; }
+    .custom-select-wrapper { position: relative; user-select: none; } .custom-select { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 14px; background: #f8fafc; cursor: pointer; display: flex; align-items: center; justify-content: space-between; } .custom-select:hover { background: white; border-color: var(--primary); }
+    .select-selected { display: flex; align-items: center; gap: 12px; font-weight: 500; color: #333; } .select-img { width: 36px; height: 36px; border-radius: 50%; object-fit: contain; border: 1px solid #ddd; background: #fff; }
+    .select-items { position: absolute; top: 115%; left: 0; right: 0; background: white; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 20px 40px rgba(0,0,0,0.15); max-height: 260px; overflow-y: auto; z-index: 20; display: none; } .custom-select.open + .select-items { display: block; animation: fadeIn 0.2s; }
+    .select-item { padding: 12px; display: flex; align-items: center; gap: 12px; cursor: pointer; border-bottom: 1px solid #f1f5f9; } .select-item:hover { background: #f0fdf4; }
+    .item-img { width: 44px; height: 44px; border-radius: 50%; object-fit: contain; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); background: #fff; } .item-text { font-size: 1rem; color: #334155; }
     .badge-2hr { background: linear-gradient(135deg, #00c853, #64dd17); color: white; font-size: 0.7rem; padding: 3px 8px; border-radius: 12px; margin-left: auto; font-weight: 700; box-shadow: 0 2px 4px rgba(0,200,83,0.3); display: flex; align-items: center; gap: 4px; white-space: nowrap; }
-    .btn-confirm { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3); } .btn-confirm:active { transform: scale(0.97); }
-    .btn-cancel { background: #f1f5f9; color: #64748b; }
+    .option-2hr-container { margin-top: 15px; padding: 15px; background-color: #fffbeb; border: 2px solid #f59e0b; border-radius: 16px; display: none; animation: popIn 0.3s; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.15); }
+    .option-2hr-label { display: flex; align-items: center; gap: 12px; cursor: pointer; color: #b45309; font-weight: 700; font-size: 1rem; margin: 0; }
+    .option-2hr-note { font-size: 0.85rem; color: #dc2626; margin-top: 6px; padding-left: 30px; font-weight: 500; }
+    .chk-2hr { width: 20px; height: 20px; accent-color: #f59e0b; cursor: pointer; }
+    .autocomplete-list { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #cbd5e1; border-radius: 0 0 14px 14px; max-height: 160px; overflow-y: auto; z-index: 10; box-shadow: 0 10px 20px rgba(0,0,0,0.1); display: none; }
+    .autocomplete-item { padding: 10px 14px; cursor: pointer; font-size: 0.95rem; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; gap: 8px; } .autocomplete-item:hover { background: #f8fafc; color: var(--primary); }
+    .btn-autofill { font-size: 0.85rem; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; display: none; align-items: center; gap: 6px; font-weight: 600; box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.3); transition: transform 0.2s, box-shadow 0.2s; }
+    .btn-group { display: flex; gap: 14px; margin-top: 30px; }
     .btn { flex: 1; padding: 14px; border: none; border-radius: 14px; font-size: 1rem; cursor: pointer; font-family: 'Prompt', sans-serif; transition: 0.2s; font-weight: 600; }
+    .btn-cancel { background: #f1f5f9; color: #64748b; } .btn-cancel:hover { background: #e2e8f0; }
+    .btn-confirm { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3); } .btn-confirm:active { transform: scale(0.97); }
+    .summary-box { background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; border-left: 6px solid var(--primary); margin-bottom: 24px; }
+    .summary-row { display: flex; margin-bottom: 8px; font-size: 1rem; } .summary-label { flex: 0 0 110px; color: #64748b; font-size: 0.9rem; } .summary-val { flex: 1; color: #1e293b; font-weight: 600; }
+    .warning-popup { text-align: center; padding: 15px 5px; } .warning-icon { font-size: 4rem; color: #f59e0b; margin-bottom: 20px; } .warning-text { font-size: 1.1rem; color: #334155; margin-bottom: 30px; line-height: 1.6; }
+    .imc-filter-box { background: white; padding: 20px; border-radius: 24px; margin-bottom: 20px; box-shadow: var(--shadow-sm); border: 1px solid #e2e8f0; }
+    .ios-prompt-bg { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 9998; display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(4px); }
+    .ios-prompt-card { background: white; width: 100%; max-width: 400px; border-radius: 20px 20px 0 0; padding: 30px 20px 50px 20px; text-align: center; position: relative; animation: slideUp 0.3s; }
   </style>
 </head>
 <body>
@@ -161,15 +218,10 @@
 
   <script>
     let currentLang = 'th';
-    const translations = { th: {}, en: {} }; 
-    // Paste Translations here (omitted for brevity, same as V19)
-    // ... [Translations Object from previous answer] ...
-    const translations_short = {
+    const translations = {
         th: { install_app: "ติดตั้งแอป", install_on_ios: "ติดตั้งบน iOS", tap_share: "แตะที่ปุ่ม <b>แชร์</b>", tap_add_home: "เลือก <b>เพิ่มไปยังหน้าจอโฮม</b>", ios_note: "เพื่อให้ใช้งานได้สะดวกและเต็มหน้าจอ", dept_ttm_alt: "กลุ่มงานการแพทย์แผนไทยและการแพทย์ทางเลือก", hospital_name: "โรงพยาบาลสะเดา", online_24: "ระบบออนไลน์ 24 ชม.", imc_title: "IMC ฟื้นฟูสภาพ", imc_desc: "นวดและประคบ ฝังเข็มปรับสมดุล", ttm_title: "แพทย์แผนไทย", ttm_desc: "นวดรักษา, ประคบ, นวดส่งเสริมฯ", tcm_title: "แพทย์แผนจีน", tcm_desc: "ฝังเข็ม, ครอบแก้ว, ฝังเข็มใบหน้า", pp_title: "บริการหลังคลอด", pp_desc: "หลังคลอดธรรมชาติ 7 วัน / หลังผ่า 1 เดือน", steam_title: "อบไอน้ำสมุนไพร", steam_desc: "ช่วยการไหลเวียนโลหิต ภูมิแพ้ นอนไม่หลับ", well_desc: "สครับเกลือ, สปาผิว, นวดอโรม่า", building_info: "ตึกอุบัติเหตุ 4 ชั้น (ตึกมรกต)", floor_info: "สถานที่ให้บริการแพทย์แผนไทย ชั้น 4", sched_realtime: "ตารางนัด (Real-time)", contact_channel: "ช่องทางติดต่อ", call: "โทร", or: "หรือ", form_title: "กรอกข้อมูลจองคิว", use_old_data: "ใช้ข้อมูลเดิม", lbl_name: "ชื่อ-นามสกุล", ph_name: "เช่น ใจดี มีสุข", lbl_tel: "เบอร์โทรศัพท์", lbl_service: "เลือกบริการ", rate_rights: "อัตราค่าบริการ/สิทธิ:", lbl_provider: "ผู้ให้บริการ (ผู้ช่วยแพทย์แผนไทย)", unspecified: "ไม่ระบุ", unspecified_any: "ไม่ระบุ (ใครก็ได้)", book_2hr: "จองต่อเนื่อง 2 ชั่วโมง (ว่าง)", note_2hr: "*ชั่วโมงที่ 2 ชำระเพิ่ม 200 บาท", lbl_birthdate: "วันเดือนปี ที่คลอด", lbl_delivery_type: "ประเภทการคลอด", pl_select: "-- กรุณาเลือก --", natural_birth: "คลอดเองตามธรรมชาติ", c_section: "ผ่าตัดคลอด", lbl_hospital: "คลอดโรงพยาบาลอะไร", ph_hospital: "ระบุชื่อโรงพยาบาล", sso_fee: "เฉพาะสิทธิ <strong>ประกันสังคม</strong> มีค่าบริการ 500 บาท", lbl_gender: "เพศ", female: "หญิง", male: "ชาย", lbl_extra_patient: "ผู้รับบริการเพิ่มเติม (ถ้ามี)", btn_add_patient: "เพิ่มผู้รับบริการ", limit_patient: "*เพิ่มได้ไม่เกินจำนวนคิวว่างในรอบนี้", lbl_note: "หมายเหตุ (ถ้ามี)", ph_note: "เช่น กระดูกหัก/ผ่าตัด...", btn_cancel: "ยกเลิก", btn_save: "บันทึก", check_info: "ตรวจสอบข้อมูล", btn_edit: "แก้ไข", btn_confirm_booking: "ยืนยันการจอง", ack_send: "รับทราบ & ส่งข้อมูลเข้าไลน์", avail: "ว่าง", queue: "คิว", full: "เต็ม", closed: "งด", round_m: "รอบชาย", round_f: "รอบหญิง", loading: "กำลังโหลด...", no_service: "⛔ งดให้บริการ", no_slot: "ไม่มีรอบว่างในวันนี้", dept: "แผนก", service: "บริการ", datetime: "วันเวลา", details: "รายละเอียด", note: "หมายเหตุ", warning_msg: "<strong>โปรดทราบ!</strong><br>คิวจะถูกจองสำเร็จ<br>ต่อเมื่อเจ้าหน้าที่ <u>ตอบรับทางไลน์</u> แล้วเท่านั้น", lbl_selected_queue: "คิวที่เลือก", lbl_stroke_history: "ประวัติ Stroke", stroke_less_6m: "ไม่เกิน 6 เดือน (IMC)", stroke_more_6m: "เกิน 6 เดือน (Old CVA)" },
         en: { install_app: "Install App", install_on_ios: "Install on iOS", tap_share: "Tap <b>Share</b>", tap_add_home: "Select <b>Add to Home Screen</b>", ios_note: "For full screen experience", dept_ttm_alt: "Thai Traditional & Alternative Medicine", hospital_name: "Sadao Hospital", online_24: "Online System 24 hrs.", imc_title: "IMC Rehabilitation", imc_desc: "Massage, Compress, Acupuncture", ttm_title: "Thai Traditional Medicine", ttm_desc: "Treatment Massage, Compress", tcm_title: "Chinese Medicine", tcm_desc: "Acupuncture, Cupping", pp_title: "Postpartum Care", pp_desc: "Natural Birth 7 Days / C-Section 1 Month", steam_title: "Herbal Steam", steam_desc: "Circulation, Allergy, Insomnia", well_desc: "Salt Scrub, Skin Spa", building_info: "Accident Building 4 Floors", floor_info: "4th Floor", sched_realtime: "Schedule (Real-time)", contact_channel: "Contact Channels", call: "Call", or: "or", form_title: "Booking Form", use_old_data: "Use History", lbl_name: "Full Name", ph_name: "e.g. John Doe", lbl_tel: "Phone Number", lbl_service: "Select Service", rate_rights: "Fee/Rights:", lbl_provider: "Provider", unspecified: "Unspecified", unspecified_any: "Any Provider", book_2hr: "Book 2 Hours (Avail)", note_2hr: "*2nd Hour: +200 THB", lbl_birthdate: "Date of Birth (Baby)", lbl_delivery_type: "Delivery Type", pl_select: "-- Please Select --", natural_birth: "Natural Birth", c_section: "C-Section", lbl_hospital: "Hospital Name", ph_hospital: "Hospital Name", sso_fee: "<strong>SSO</strong> fee: 500 THB", lbl_gender: "Gender", female: "Female", male: "Male", lbl_extra_patient: "Additional Patients", btn_add_patient: "Add Patient", limit_patient: "*Max available slots", lbl_note: "Note (Optional)", ph_note: "e.g. Surgery...", btn_cancel: "Cancel", btn_save: "Save", check_info: "Verify Info", btn_edit: "Edit", btn_confirm_booking: "Confirm Booking", ack_send: "Acknowledge & Send LINE", avail: "Avail", queue: "Q", full: "Full", closed: "Closed", round_m: "Male", round_f: "Female", loading: "Loading...", no_service: "⛔ Service Closed", no_slot: "No slots today", dept: "Dept", service: "Service", datetime: "Date/Time", details: "Details", note: "Note", warning_msg: "<strong>Note!</strong><br>Booking confirmed<br>after staff <u>reply via LINE</u>.", lbl_selected_queue: "Queue", lbl_stroke_history: "Stroke History", stroke_less_6m: "< 6 months (IMC)", stroke_more_6m: "> 6 months (Old CVA)" }
     };
-    Object.assign(translations, translations_short); // Merge
-
     function t(key) { return translations[currentLang][key] || key; }
     function toggleLanguage() {
         currentLang = (currentLang === 'th') ? 'en' : 'th';
@@ -363,9 +415,29 @@
        let headerHtml = `<div class="selected-date-header"><span class="header-bar" style="background-color: ${dayColor}"></span>${dayData.fullLabel || dayData.displayDate}</div>`;
        let filterHtml = `
        <div class="imc-filter-box">
-           <div class="filter-group"><div class="filter-title"><i class="fas fa-wheelchair"></i> กายภาพบำบัด</div><div class="radio-group"><label class="radio-pill"><input type="radio" name="pt_dur" value="none" onchange="updateIMCFilter('pt', 'none')" ${imcFilter.pt==='none'?'checked':''}><span>ไม่ทำกายภาพ</span></label><label class="radio-pill"><input type="radio" name="pt_dur" value="60" onchange="updateIMCFilter('pt', '60')" ${imcFilter.pt==='60'?'checked':''}><span>1 ชม.</span></label><label class="radio-pill"><input type="radio" name="pt_dur" value="90" onchange="updateIMCFilter('pt', '90')" ${imcFilter.pt==='90'?'checked':''}><span>1.5 ชม.</span></label></div></div>
-           <div class="filter-group" style="margin-bottom:0;"><div class="filter-title"><i class="fas fa-plus-circle"></i> บริการร่วม</div><div class="chk-group"><label class="chk-pill ${imcFilter.ttm?'active':''}" id="lbl-ttm"><input type="checkbox" onchange="updateIMCFilter('ttm', this.checked)" ${imcFilter.ttm?'checked':''}> <i class="fas fa-hands"></i> <span>นวดไทย</span></label><label class="chk-pill ${imcFilter.tcm?'active':''}" id="lbl-tcm"><input type="checkbox" onchange="updateIMCFilter('tcm', this.checked)" ${imcFilter.tcm?'checked':''}> <i class="fas fa-syringe"></i> <span>ฝังเข็ม</span></label></div></div>
-       </div><div id="imc-slots-area"></div>`;
+           <div class="filter-group">
+               <div class="filter-title"><i class="fas fa-wheelchair"></i> กายภาพบำบัด</div>
+               <div class="radio-group">
+                   <label class="radio-pill"><input type="radio" name="pt_dur" value="none" onchange="updateIMCFilter('pt', 'none')" ${imcFilter.pt==='none'?'checked':''}><span>ไม่ทำกายภาพ</span></label>
+                   <label class="radio-pill"><input type="radio" name="pt_dur" value="60" onchange="updateIMCFilter('pt', '60')" ${imcFilter.pt==='60'?'checked':''}><span>1 ชม.</span></label>
+                   <label class="radio-pill"><input type="radio" name="pt_dur" value="90" onchange="updateIMCFilter('pt', '90')" ${imcFilter.pt==='90'?'checked':''}><span>1.5 ชม.</span></label>
+               </div>
+           </div>
+           <div class="filter-group" style="margin-bottom:0;">
+               <div class="filter-title"><i class="fas fa-plus-circle"></i> บริการร่วม</div>
+               <div class="chk-group">
+                   <label class="chk-pill ${imcFilter.ttm?'active':''}" id="lbl-ttm">
+                       <input type="checkbox" onchange="updateIMCFilter('ttm', this.checked)" ${imcFilter.ttm?'checked':''}>
+                       <i class="fas fa-hands"></i> <span>นวดไทย</span>
+                   </label>
+                   <label class="chk-pill ${imcFilter.tcm?'active':''}" id="lbl-tcm">
+                       <input type="checkbox" onchange="updateIMCFilter('tcm', this.checked)" ${imcFilter.tcm?'checked':''}>
+                       <i class="fas fa-syringe"></i> <span>ฝังเข็ม</span>
+                   </label>
+               </div>
+           </div>
+       </div>
+       <div id="imc-slots-area"></div>`;
        container.innerHTML = headerHtml + filterHtml;
        renderIMCSlots(dayData);
     }
@@ -381,20 +453,29 @@
         let steps = text.split(" ต่อด้วย ");
         let html = '<div class="timeline-container">';
         steps.forEach((step, index) => {
-            let label = step.split("เวลา")[0].replace("ทำ", "").trim(); if (index > 0) label = step.split(" ")[0].trim();
-            let timeMatch = step.match(/(\d{2}[.:]\d{2})/); let time = timeMatch ? timeMatch[1] : "";
+            let label = step.split("เวลา")[0].replace("ทำ", "").trim();
+            if (index > 0) label = step.split(" ")[0].trim();
+            let timeMatch = step.match(/(\d{2}[.:]\d{2})/);
+            let time = timeMatch ? timeMatch[1] : "";
             let cls = ""; if(label.includes("กายภาพ")) cls = "c-pt"; else if(label.includes("นวด")) cls = "c-ttm"; else if(label.includes("ฝังเข็ม")) cls = "c-tcm";
             let icon = ""; if(label.includes("กายภาพ")) icon = '<i class="fas fa-wheelchair"></i>'; else if(label.includes("นวด")) icon = '<i class="fas fa-hands"></i>'; else if(label.includes("ฝังเข็ม")) icon = '<i class="fas fa-syringe"></i>';
             html += `<div class="timeline-step"><span class="step-time">${time}</span><span class="step-label ${cls}">${icon} ${label}</span></div>`;
             if (index < steps.length - 1) html += `<div class="step-arrow"><i class="fas fa-chevron-right"></i></div>`;
         });
-        if (text.includes("เสร็จสิ้น")) { let finishMatch = text.match(/เสร็จสิ้น (\d{2}[.:]\d{2})/); if(finishMatch) html += `<div class="step-arrow"><i class="fas fa-flag-checkered"></i></div><div class="timeline-step"><span class="step-time">${finishMatch[1]}</span><span class="step-label c-end">เสร็จสิ้น</span></div>`; }
-        html += '</div>'; return html;
+        if (text.includes("เสร็จสิ้น")) {
+            let finishMatch = text.match(/เสร็จสิ้น (\d{2}[.:]\d{2})/);
+            if(finishMatch) html += `<div class="step-arrow"><i class="fas fa-flag-checkered"></i></div><div class="timeline-step"><span class="step-time">${finishMatch[1]}</span><span class="step-label c-end">เสร็จสิ้น</span></div>`;
+        }
+        html += '</div>';
+        return html;
     }
 
     function renderIMCSlots(dayData) {
         let area = document.getElementById('imc-slots-area');
-        if (!dayData || !dayData.slots || dayData.slots.length === 0) { area.innerHTML = `<div style="text-align:center;padding:40px;color:#cbd5e1"><i class="fas fa-calendar-times" style="font-size:2rem;margin-bottom:10px;"></i><br>${t('no_slot')}</div>`; return; }
+        if (!dayData || !dayData.slots || dayData.slots.length === 0) {
+            area.innerHTML = `<div style="text-align:center;padding:40px;color:#cbd5e1"><i class="fas fa-calendar-times" style="font-size:2rem;margin-bottom:10px;"></i><br>${t('no_slot')}</div>`;
+            return;
+        }
         let html = ""; let foundCount = 0;
         dayData.slots.forEach(slot => {
             if(!slot.imcData) return;
@@ -405,8 +486,12 @@
                 let isPT60 = hasPT && (h.includes("1 ชม.") || h.includes("1 ชม ")) && !isPT90;
                 let hasMassage = h.includes("นวด") || d.includes("นวด");
                 let hasAcu = h.includes("ฝังเข็ม") || d.includes("ฝังเข็ม");
-                if (imcFilter.pt === 'none' && hasPT) return; if (imcFilter.pt === '60' && !isPT60) return; if (imcFilter.pt === '90' && !isPT90) return;
-                if (imcFilter.ttm && imcFilter.tcm) { if (!hasMassage || !hasAcu) return; } else if (imcFilter.ttm) { if (!hasMassage) return; if (hasAcu) return; } else if (imcFilter.tcm) { if (!hasAcu) return; if (hasMassage) return; }
+                if (imcFilter.pt === 'none' && hasPT) return; 
+                if (imcFilter.pt === '60' && !isPT60) return;
+                if (imcFilter.pt === '90' && !isPT90) return;
+                if (imcFilter.ttm && imcFilter.tcm) { if (!hasMassage || !hasAcu) return; } 
+                else if (imcFilter.ttm) { if (!hasMassage) return; if (hasAcu) return; } 
+                else if (imcFilter.tcm) { if (!hasAcu) return; if (hasMassage) return; }
                 foundCount++;
                 let tags = "";
                 if(hasPT) tags += `<span class="imc-tag tag-pt">กายภาพ ${isPT90 ? '1.5h' : '1h'}</span>`;
@@ -427,7 +512,10 @@
             document.getElementById('inp-name').value = ''; document.getElementById('inp-tel').value = ''; document.getElementById('inp-note').value = '';
             document.getElementById('inp-imc-detail').innerText = detail;
             document.querySelectorAll('input[name="stroke_history"]').forEach(r => r.checked = false);
-            document.getElementById('normal-fields').classList.add('hidden'); document.getElementById('postpartum-fields').classList.add('hidden'); document.getElementById('steam-fields').classList.add('hidden'); document.getElementById('price-tag').style.display = 'none';
+            document.getElementById('normal-fields').classList.add('hidden');
+            document.getElementById('postpartum-fields').classList.add('hidden');
+            document.getElementById('steam-fields').classList.add('hidden');
+            document.getElementById('price-tag').style.display = 'none';
             document.getElementById('imc-specific-fields').classList.remove('hidden');
             loadUserData(); switchStep('step-form'); document.getElementById('bookingModal').classList.add('show');
         } catch(e) { console.error(e); }
@@ -452,8 +540,10 @@
         if (!isFull) {
             if (count > 0) {
                 let iconsHtml = '<div style="display:flex; margin-right:6px;">';
-                let displayCount = Math.min(count, 5); for(let k=0; k < displayCount; k++) iconsHtml += '<i class="fas fa-user" style="font-size:0.75rem; margin:0 1px; opacity:0.7;"></i>';
-                if (count > 5) iconsHtml += '<span style="font-size:0.8rem; opacity:0.7;">+</span>'; iconsHtml += '</div>';
+                let displayCount = Math.min(count, 5);
+                for(let k=0; k < displayCount; k++) iconsHtml += '<i class="fas fa-user" style="font-size:0.75rem; margin:0 1px; opacity:0.7;"></i>';
+                if (count > 5) iconsHtml += '<span style="font-size:0.8rem; opacity:0.7;">+</span>';
+                iconsHtml += '</div>';
                 let textHtml = `<span style="font-weight:600; font-size:0.9rem;">${t('avail')} ${count} ${t('queue')}</span>`;
                 displayVal = `<div style="display:flex; flex-direction:column; align-items:flex-end;">${genderIcon}<div style="display:flex; align-items:center;">${iconsHtml}${textHtml}</div></div>`;
             }
@@ -462,15 +552,22 @@
         if (!isFull && genderClass !== "") cardClass += " " + genderClass;
         let badgeClass = isFull ? 'bg-full' : 'bg-av';
         let icon = '<i class="fas fa-leaf"></i>';
-        if (currentApp === 'tcm') icon = '<i class="fas fa-star"></i>'; if (currentApp === 'postpartum') icon = '<i class="fas fa-heart"></i>'; if (currentApp === 'steam') icon = '<i class="fas fa-hot-tub-person"></i>'; if (currentApp === 'wellness') icon = '<i class="fas fa-spa" style="color:#D4AF37;"></i>'; if (isFull) icon = '<i class="fas fa-lock"></i>';
+        if (currentApp === 'tcm') icon = '<i class="fas fa-star"></i>';
+        if (currentApp === 'postpartum') icon = '<i class="fas fa-heart"></i>';
+        if (currentApp === 'steam') icon = '<i class="fas fa-hot-tub-person"></i>';
+        if (currentApp === 'wellness') icon = '<i class="fas fa-spa" style="color:#D4AF37;"></i>';
+        if (isFull) icon = '<i class="fas fa-lock"></i>';
+        
         let staffJson = JSON.stringify(slot.staff || []).replace(/"/g, "&quot;");
         let action = isFull ? '' : `onclick="openBooking('${slot.time}', '${day.fullLabel || day.displayDate}', ${index}, ${staffJson}, ${count}, '${slotGender}')"`;
         let cursor = isFull ? '' : 'cursor:pointer';
+        
         html += `<div class="slot-card ${cardClass}" style="animation-delay:${i*0.05}s; ${cursor}" ${action}><div class="time-wrap"><div class="icon-status">${icon}</div><div class="time-text">${slot.time} น.</div></div><div class="status-badge ${badgeClass}">${displayVal}</div></div>`;
       });
       container.innerHTML = html + '</div>';
     }
 
+    // --- UTILS & FORM ---
     function setupAutocomplete(inputId, listId, storageKey, keyName) {
         const input = document.getElementById(inputId); const list = document.getElementById(listId);
         input.addEventListener('input', function() {
@@ -490,7 +587,8 @@
         });
         document.addEventListener('click', function(e) { if (e.target !== input && e.target !== list) list.style.display = 'none'; });
     }
-    setupAutocomplete('inp-name', 'list-name', 'ttm_booking_history', 'name'); setupAutocomplete('inp-tel', 'list-tel', 'ttm_booking_history', 'tel');
+    setupAutocomplete('inp-name', 'list-name', 'ttm_booking_history', 'name');
+    setupAutocomplete('inp-tel', 'list-tel', 'ttm_booking_history', 'tel');
 
     function toggleStaffDropdown() { document.getElementById('staff-trigger').classList.toggle('open'); }
     window.addEventListener('click', function(e) { if (!document.querySelector('.custom-select-wrapper').contains(e.target)) document.getElementById('staff-trigger').classList.remove('open'); });
@@ -502,43 +600,72 @@
         if (can2Hr && currentApp === 'ttm') { box.style.display = 'block'; } else { box.style.display = 'none'; chk.checked = false; }
     }
 
-    // 🟢 2-Hour Selection Logic
+    // 🟢 UPDATED: Select Staff Logic (Friendly Name)
     function selectStaffNew(staffObj, friendlyName, can2Hr) {
         if (!friendlyName) friendlyName = STAFF_NAME_MAP[staffObj.name] || staffObj.name;
         document.getElementById('staff-display-name').innerText = friendlyName;
         document.getElementById('inp-staff-val').value = friendlyName;
-        selectedSlotData = { sheetName: staffObj.sheetName, row: staffObj.row, col: staffObj.col, staffName: staffObj.name };
         
-        let box = document.getElementById('box-option-2hr'); let chk = document.getElementById('inp-2hr');
-        if (can2Hr) { box.style.display = 'block'; } else { box.style.display = 'none'; chk.checked = false; updatePriceDisplay(); }
+        // Store Full Data
+        selectedSlotData = {
+            sheetName: staffObj.sheetName,
+            row: staffObj.row,
+            col: staffObj.col,
+            staffName: staffObj.name // Store name to lookup next slot later
+        };
+        
+        // 2Hr Checkbox
+        let box = document.getElementById('box-option-2hr');
+        let chk = document.getElementById('inp-2hr');
+        if (can2Hr) { box.style.display = 'block'; } 
+        else { box.style.display = 'none'; chk.checked = false; updatePriceDisplay(); }
+        
         document.getElementById('staff-trigger').classList.remove('open');
     }
 
+    // 🟢 UPDATED: Render Staff List
     function renderStaffList(staffData) {
-        const optionsContainer = document.getElementById('staff-options'); optionsContainer.innerHTML = '';
+        const optionsContainer = document.getElementById('staff-options');
+        optionsContainer.innerHTML = '';
+        
         let isNewSystem = (staffData.length > 0 && staffData[0].row !== undefined);
+
         if (isNewSystem) {
+             // Auto-select first
              if(staffData.length > 0) selectStaffNew(staffData[0]); 
+             
              staffData.forEach(s => {
                 let originalName = s.name;
                 let displayName = STAFF_NAME_MAP[originalName] || originalName;
                 let img = STAFF_IMAGES[originalName] || DEFAULT_IMG;
+
+                // Check 2Hr Availability
                 let is2HrAvail = nextSlotStaffList.some(nextS => nextS.name === originalName);
-                let div = document.createElement('div'); div.className = 'select-item';
-                div.innerHTML = `<img src="${img}" class="item-img"><div class="item-text" style="flex:1;">${displayName}</div>${is2HrAvail ? `<div class="badge-2hr"><i class="fas fa-clock"></i> 2 ชม.</div>` : ''}`;
+
+                let div = document.createElement('div');
+                div.className = 'select-item';
+                div.innerHTML = `
+                    <img src="${img}" class="item-img">
+                    <div class="item-text" style="flex:1;">${displayName}</div>
+                    ${is2HrAvail ? `<div class="badge-2hr"><i class="fas fa-clock"></i> 2 ชม.</div>` : ''}
+                `;
+                
                 div.onclick = function() { selectStaffNew(s, displayName, is2HrAvail); };
                 optionsContainer.appendChild(div);
              });
-        } else {
+        } 
+        else {
              // Legacy
              let html = `<div class="select-item" onclick="selectStaff('${t('unspecified')}', '${DEFAULT_IMG}', false)"><img src="${DEFAULT_IMG}" class="item-img" onerror="this.src='${DEFAULT_IMG}'"><div class="item-text">${t('unspecified_any')}</div></div>`;
              if (staffData && staffData.length > 0) {
                 staffData.forEach(sheetName => {
-                    let displayName = STAFF_NAME_MAP[sheetName] || sheetName; let img = STAFF_IMAGES[sheetName] || DEFAULT_IMG;
+                    let displayName = STAFF_NAME_MAP[sheetName] || sheetName;
+                    let img = STAFF_IMAGES[sheetName] || DEFAULT_IMG;
                     html += `<div class="select-item" onclick="selectStaff('${displayName}', '${img}', false)"><img src="${img}" class="item-img" onerror="this.src='${DEFAULT_IMG}'"><div class="item-text" style="flex:1;">${displayName}</div></div>`;
                 });
              }
-             optionsContainer.innerHTML = html; selectStaff(t('unspecified'), DEFAULT_IMG, false);
+             optionsContainer.innerHTML = html;
+             selectStaff(t('unspecified'), DEFAULT_IMG, false);
         }
     }
 
@@ -546,111 +673,78 @@
     function saveUserData(name, tel) { if(!name || !tel) return; let history = JSON.parse(SafeStorage.getItem('ttm_booking_history')) || []; history = history.filter(item => item.name !== name); history.unshift({ name: name, tel: tel }); if (history.length > 5) history.pop(); SafeStorage.setItem('ttm_booking_history', JSON.stringify(history)); }
     function fillUserData() { let history = JSON.parse(SafeStorage.getItem('ttm_booking_history')) || []; if (history.length > 0) { document.getElementById('inp-name').value = history[0].name; document.getElementById('inp-tel').value = history[0].tel; } }
 
-    function openBooking(time, dateFull, dayIndex, staffDataEncoded, availableCount, slotGender) {
-      try {
-          let staffObjects = (typeof staffDataEncoded === 'string') ? JSON.parse(staffDataEncoded.replace(/&quot;/g, '"')) : staffDataEncoded;
-          bookingData = { dept: (currentLang === 'en' ? APP_CONFIG[currentApp].titleEn : APP_CONFIG[currentApp].title), date: dateFull, time: time, is2Hr: false, appType: currentApp };
-          currentSlotCapacity = availableCount || 0;
-          document.getElementById('inp-name').value = ''; document.getElementById('inp-tel').value = ''; document.getElementById('inp-note').value = '';
-          document.getElementById('inp-2hr').checked = false; document.getElementById('box-option-2hr').style.display = 'none'; document.getElementById('price-tag').style.display = 'none';
-          document.querySelector('.modal-card').scrollTop = 0;
-          document.getElementById('normal-fields').classList.add('hidden'); document.getElementById('postpartum-fields').classList.add('hidden'); document.getElementById('steam-fields').classList.add('hidden');
-          
-          nextSlotStaffList = [];
-          if (currentApp === 'ttm') {
-              let nextTime = ALLOWED_2HR_PAIRS[time];
-              if (nextTime) {
-                  let dayData = globalData[dayIndex];
-                  let nextSlotObj = dayData.slots.find(s => s.time === nextTime);
-                  if (nextSlotObj && nextSlotObj.val && !nextSlotObj.val.includes('เต็ม') && !nextSlotObj.val.includes('งด')) { nextSlotStaffList = nextSlotObj.staff; }
-              }
-          }
-          
-          // Legacy 2HR check
-          if (currentApp !== 'postpartum' && currentApp !== 'steam' && currentApp !== 'wellness' && currentApp !== 'ttm' && currentApp !== 'tcm') {
-              let nextTime = TIME_PAIRS[time]; if (nextTime) { let dayData = globalData[dayIndex]; let nextSlot = dayData.slots.find(s => s.time === nextTime); if (nextSlot && nextSlot.val && !nextSlot.val.includes('เต็ม') && !nextSlot.val.includes('งด')) { if(nextSlot.staff.length > 0 && nextSlot.staff[0].name) { nextSlotStaffList = nextSlot.staff.map(s => s.name); } else { nextSlotStaffList = nextSlot.staff || []; } } }
-          }
-
-          if (currentApp === 'postpartum') { document.getElementById('postpartum-fields').classList.remove('hidden'); bookingData.staff = "ทีมหลังคลอด"; bookingData.service = (currentLang === 'en') ? "Postpartum Care" : "บริการมารดาหลังคลอด"; document.getElementById('inp-service').value = bookingData.service; updatePriceDisplay(); } 
-          else if (currentApp === 'steam') { document.getElementById('steam-fields').classList.remove('hidden'); bookingData.staff = "ห้องอบไอน้ำ"; bookingData.service = (currentLang === 'en') ? "Herbal Steam" : "อบไอน้ำสมุนไพร"; document.getElementById('extra-patients-container').innerHTML = ''; patientCount = 1; if (slotGender && slotGender.includes('ชาย')) { document.getElementById('inp-gender').value = 'ชาย'; } else if (slotGender && slotGender.includes('หญิง')) { document.getElementById('inp-gender').value = 'หญิง'; } document.getElementById('inp-service').value = bookingData.service; updatePriceDisplay(); } 
-          else {
-              document.getElementById('normal-fields').classList.remove('hidden');
-              let select = document.getElementById('inp-service'); select.innerHTML = '';
-              if (currentApp === 'wellness') { document.getElementById('group-staff').classList.add('hidden'); document.getElementById('inp-staff-val').value = "Wellness Center"; let sourceList = (currentLang === 'en' && staffObjects) ? staffObjects.map(s => { if(s == "สครับเกลือ") return "Salt Scrub"; if(s == "สปาผิว") return "Skin Spa"; if(s == "นวดน้ำมันอโรม่า") return "Aroma Massage"; return s; }) : staffObjects; if (sourceList && sourceList.length > 0) { sourceList.forEach(s => { let price = (currentLang === 'en') ? (WELLNESS_PRICES_EN[s] || "") : (WELLNESS_PRICES[s] || ""); let displayLabel = price ? `${s} (${price})` : s; let opt = document.createElement('option'); opt.value = displayLabel; opt.innerText = displayLabel; select.appendChild(opt); }); } else { let opt = document.createElement('option'); opt.innerText = t('no_service'); select.appendChild(opt); } } 
-              else { let options = (currentLang === 'en') ? SERVICE_OPTIONS_EN[currentApp] : SERVICE_OPTIONS[currentApp]; if (options) { options.forEach(s => { let opt = document.createElement('option'); opt.value = s; opt.innerText = s; select.appendChild(opt); }); } }
-              updatePriceDisplay();
-          }
-
-          if (currentApp === 'ttm' || currentApp === 'tcm') {
-              if (staffObjects && staffObjects.length > 0) { document.getElementById('group-staff').classList.remove('hidden'); renderStaffList(staffObjects); } else { document.getElementById('group-staff').classList.add('hidden'); document.getElementById('inp-staff-val').value = "-"; }
-          }
-          loadUserData(); switchStep('step-form'); document.getElementById('bookingModal').classList.add('show');
-      } catch (e) { console.error(e); alert("Error: " + e.message); }
-    }
-
-    function addPatient() { if (patientCount >= currentSlotCapacity) { alert(t('limit_patient') + " (" + currentSlotCapacity + ")"); return; } patientCount++; const container = document.getElementById('extra-patients-container'); const div = document.createElement('div'); div.className = 'extra-patient-item'; div.innerHTML = `<div style="flex:1;"><input type="text" class="form-control inp-extra-name" placeholder="${t('lbl_name')} ${patientCount}"></div><div style="width:100px;"><select class="form-control inp-extra-gender"><option value="หญิง">${t('female')}</option><option value="ชาย">${t('male')}</option></select></div><button type="button" class="btn-remove" onclick="removePatient(this)"><i class="fas fa-trash"></i></button>`; container.appendChild(div); }
-    function removePatient(btn) { btn.parentElement.remove(); patientCount--; }
-    function closeModal() { document.getElementById('bookingModal').classList.remove('show'); }
-    function switchStep(id) { ['step-form', 'step-summary', 'step-warning'].forEach(s => document.getElementById(s).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
-
-    function goToSummary() {
-      document.querySelector('.modal-card').scrollTop = 0;
-      let name = document.getElementById('inp-name').value.trim(); let tel = document.getElementById('inp-tel').value.trim();
-      if(!name || !tel) { alert((currentLang === 'en') ? 'Please enter Name and Phone' : 'กรุณากรอกชื่อและเบอร์โทรศัพท์'); return; }
-      bookingData.name = name; bookingData.tel = tel; 
-      bookingData.note = document.getElementById('inp-note').value.trim() || ""; 
-      bookingData.extraInfo = "";
-      if (currentApp === 'imc') { let detail = document.getElementById('inp-imc-detail').innerText; let strokeOption = document.querySelector('input[name="stroke_history"]:checked'); let strokeVal = strokeOption ? strokeOption.value : "ไม่ระบุ"; bookingData.extraInfo = `\n${t('lbl_selected_queue')}:\n${detail}\n\n${t('lbl_stroke_history')}: ${strokeVal}`; } 
-      else if (currentApp === 'postpartum') { let birthDate = document.getElementById('inp-birth-date').value; let deliveryType = document.getElementById('inp-delivery-type').value; let hospital = document.getElementById('inp-hospital').value; if(!birthDate || !hospital || !deliveryType) { alert((currentLang === 'en') ? 'Please fill all fields' : 'กรุณากรอกข้อมูลให้ครบถ้วน'); return; } bookingData.extraInfo = `\n${t('lbl_birthdate')}: ${birthDate}\n${t('lbl_delivery_type')}: ${deliveryType}\n${t('lbl_hospital')}: ${hospital}`; } 
-      else if (currentApp === 'steam') { let mainGender = document.getElementById('inp-gender').value; let extraInfoText = `\n${t('lbl_gender')}: ${mainGender}`; let extraNames = document.querySelectorAll('.inp-extra-name'); let extraGenders = document.querySelectorAll('.inp-extra-gender'); if (extraNames.length > 0) { extraInfoText += `\n\n${t('lbl_extra_patient')}:`; extraNames.forEach((input, index) => { let pName = input.value.trim(); let pGender = extraGenders[index].value; if(pName) { extraInfoText += `\n- ${pName} (${pGender})`; } }); } bookingData.extraInfo = extraInfoText; bookingData.service = (currentLang === 'en') ? "Herbal Steam" : "อบไอน้ำสมุนไพร"; bookingData.staff = "ห้องอบไอน้ำ"; } 
-      else { bookingData.service = document.getElementById('inp-service') ? document.getElementById('inp-service').value : bookingData.service; bookingData.staff = document.getElementById('inp-staff-val') ? document.getElementById('inp-staff-val').value : bookingData.staff; bookingData.is2Hr = document.getElementById('inp-2hr') ? document.getElementById('inp-2hr').checked : false; }
-      
-      let staffRowHtml = ''; if (currentApp === 'ttm' || currentApp === 'tcm') { let labelStaff = (bookingData.staff !== "ไม่ระบุ" && bookingData.staff !== "Unspecified") ? bookingData.staff : t('unspecified_any'); staffRowHtml = `<div class="summary-row"><div class="summary-label">${t('lbl_provider')}:</div><div class="summary-val" style="color:var(--primary)">${labelStaff}</div></div>`; }
-      let extraTimeHtml = ''; if (bookingData.is2Hr && currentApp === 'ttm') { extraTimeHtml = `<div class="summary-row" style="margin-top:5px; background:#fffbeb; padding:8px; border-radius:12px; border:1px solid #f59e0b;"><div class="summary-val" style="color:#b45309; font-weight:700;"><i class="fas fa-clock"></i> ${t('book_2hr')}</div></div>`; }
-
-      let html = `<div class="summary-row" style="margin-bottom:4px;"><div class="summary-val" style="font-size:1.1rem;">${bookingData.name}</div></div><div class="summary-row"><div class="summary-val" style="color:#64748b;">${bookingData.tel}</div></div><div class="summary-row" style="margin-top:12px;"><div class="summary-label">${t('dept')}:</div><div class="summary-val">${bookingData.dept}</div></div><div class="summary-row"><div class="summary-label">${t('service')}:</div><div class="summary-val">${bookingData.service}</div></div>${staffRowHtml}<div class="summary-row"><div class="summary-label">${t('datetime')}:</div><div class="summary-val">${bookingData.date} ${bookingData.time}</div></div>${extraTimeHtml}<div class="summary-row" style="white-space: pre-wrap;"><div class="summary-label">${t('details')}:</div><div class="summary-val">${bookingData.extraInfo}</div></div><div class="summary-row"><div class="summary-label">${t('note')}:</div><div class="summary-val">${bookingData.note}</div></div>`;
-      document.getElementById('summary-content').innerHTML = html; document.getElementById('warning-text-content').innerHTML = t('warning_msg'); switchStep('step-summary');
-    }
-
-    function backToForm() { switchStep('step-form'); }
-
-    // --- Simulated Progress ---
-    let progressInterval;
-    function simulateProgress() {
-        const circle = document.querySelector('.progress-ring__circle'); const text = document.querySelector('.progress-text');
-        const radius = circle.r.baseVal.value; const circumference = radius * 2 * Math.PI;
-        circle.style.strokeDasharray = `${circumference} ${circumference}`; circle.style.strokeDashoffset = circumference;
-        let progress = 0; clearInterval(progressInterval);
-        progressInterval = setInterval(() => {
-            progress += Math.random() * 5; if (progress > 90) progress = 90;
-            const offset = circumference - (progress / 100) * circumference; circle.style.strokeDashoffset = offset; text.innerText = Math.floor(progress) + '%';
-        }, 100);
-    }
-    function completeProgress(callback) {
-        clearInterval(progressInterval); const circle = document.querySelector('.progress-ring__circle'); const text = document.querySelector('.progress-text'); const overlay = document.getElementById('loadingOverlay');
-        circle.style.strokeDashoffset = 0; text.innerText = '100%'; setTimeout(() => { overlay.classList.add('success'); setTimeout(callback, 800); }, 300);
-    }
-
+    // 🟢 UPDATED: Confirm Booking (Calculate Next Slot Coords)
     function confirmBooking() { 
-        let payload = { appType: currentApp, name: bookingData.name, tel: bookingData.tel, service: bookingData.service, note: bookingData.note };
+        let payload = {
+            appType: currentApp,
+            name: bookingData.name,
+            tel: bookingData.tel,
+            service: bookingData.service,
+            note: bookingData.note
+        };
+
         if ((currentApp === 'ttm' || currentApp === 'tcm') && selectedSlotData) {
-            payload.sheetName = selectedSlotData.sheetName; payload.row = selectedSlotData.row; payload.col = selectedSlotData.col;
+            payload.sheetName = selectedSlotData.sheetName;
+            payload.row = selectedSlotData.row;
+            payload.col = selectedSlotData.col;
+
+            // Handle 2-Hour Booking
             if (bookingData.is2Hr && currentApp === 'ttm') {
                 let targetStaffName = selectedSlotData.staffName;
                 let nextSlotStaffObj = nextSlotStaffList.find(s => s.name === targetStaffName);
-                if (nextSlotStaffObj) { payload.nextRow = nextSlotStaffObj.row; payload.nextCol = nextSlotStaffObj.col; }
+                if (nextSlotStaffObj) {
+                    payload.nextRow = nextSlotStaffObj.row;
+                    payload.nextCol = nextSlotStaffObj.col;
+                }
             }
         }
-        
-        const overlay = document.getElementById('loadingOverlay'); overlay.classList.remove('success'); overlay.classList.add('active'); simulateProgress();
+
+        const overlay = document.getElementById('loadingOverlay');
+        overlay.classList.remove('success'); overlay.classList.add('active');
+        simulateProgress();
+
         fetch(API_ENDPOINT, { method: 'POST', body: JSON.stringify(payload) })
         .then(res => res.json())
         .then(data => {
-            if (data.status === 'success') { completeProgress(() => { saveUserData(bookingData.name, bookingData.tel); switchStep('step-warning'); overlay.classList.remove('active'); }); } 
-            else if (data.status === 'error_occupied') { overlay.classList.remove('active'); alert(data.message); closeModal(); fetchData(false); } 
-            else { overlay.classList.remove('active'); alert('เกิดข้อผิดพลาด: ' + data.message); }
+            if (data.status === 'success') {
+                completeProgress(() => { saveUserData(bookingData.name, bookingData.tel); switchStep('step-warning'); overlay.classList.remove('active'); });
+            } else if (data.status === 'error_occupied') {
+                overlay.classList.remove('active'); alert(data.message); closeModal(); fetchData(false);
+            } else {
+                overlay.classList.remove('active'); alert('เกิดข้อผิดพลาด: ' + data.message);
+            }
         })
         .catch(err => { overlay.classList.remove('active'); alert('Connection Error: ' + err.message); });
+    }
+
+    // ... (Simulated Progress, SendToLine, UpdatePriceDisplay - Same as before) ...
+    let progressInterval;
+    function simulateProgress() {
+        const circle = document.querySelector('.progress-ring__circle');
+        const text = document.querySelector('.progress-text');
+        const radius = circle.r.baseVal.value;
+        const circumference = radius * 2 * Math.PI;
+        circle.style.strokeDasharray = `${circumference} ${circumference}`;
+        circle.style.strokeDashoffset = circumference;
+        let progress = 0; clearInterval(progressInterval);
+        progressInterval = setInterval(() => {
+            progress += Math.random() * 5;
+            if (progress > 90) progress = 90;
+            const offset = circumference - (progress / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
+            text.innerText = Math.floor(progress) + '%';
+        }, 100);
+    }
+
+    function completeProgress(callback) {
+        clearInterval(progressInterval);
+        const circle = document.querySelector('.progress-ring__circle');
+        const text = document.querySelector('.progress-text');
+        const overlay = document.getElementById('loadingOverlay');
+        const radius = circle.r.baseVal.value;
+        const circumference = radius * 2 * Math.PI;
+        circle.style.strokeDashoffset = 0; text.innerText = '100%';
+        setTimeout(() => { overlay.classList.add('success'); setTimeout(callback, 800); }, 300);
     }
 
     function sendToLine() {
