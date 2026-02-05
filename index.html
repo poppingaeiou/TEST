@@ -1411,24 +1411,17 @@
     function toggleStaffDropdown() { document.getElementById('staff-trigger').classList.toggle('open'); }
     window.addEventListener('click', function(e) { if (!document.querySelector('.custom-select-wrapper').contains(e.target)) document.getElementById('staff-trigger').classList.remove('open'); });
 
-    function selectStaff(name, img, can2Hr) {
-        document.getElementById('staff-display-name').innerText = name;
-        document.getElementById('staff-display-img').src = img;
-        document.getElementById('inp-staff-val').value = name;
-        document.getElementById('staff-trigger').classList.remove('open');
-        let box = document.getElementById('box-option-2hr');
-        let chk = document.getElementById('inp-2hr');
-        
-        if (can2Hr && currentApp === 'ttm') { box.style.display = 'block'; } 
-        else { box.style.display = 'none'; chk.checked = false; }
-    }
+    // 🟢 UPDATED: ฟังก์ชันเลือก Staff แบบใหม่ (รองรับชื่อเล่น)
+    function selectStaffNew(staffObj, friendlyName) {
+        // ถ้าไม่ได้ส่งชื่อเล่นมา ให้ลองหาจาก Map หรือใช้ชื่อเดิม
+        if (!friendlyName) {
+            friendlyName = STAFF_NAME_MAP[staffObj.name] || staffObj.name;
+        }
 
-    // 🟢 NEW FUNCTION: เมื่อเลือกหมอ ให้จำพิกัดไว้
-    function selectStaffNew(staffObj) {
-        document.getElementById('staff-display-name').innerText = staffObj.name;
-        document.getElementById('inp-staff-val').value = staffObj.name;
+        document.getElementById('staff-display-name').innerText = friendlyName;
+        document.getElementById('inp-staff-val').value = friendlyName; // เก็บชื่อเล่นไว้โชว์
         
-        // **หัวใจสำคัญ: จำพิกัดไว้ส่งกลับไปบันทึก**
+        // เก็บพิกัดเดิมไว้ส่งกลับ (สำคัญมาก)
         selectedSlotData = {
             sheetName: staffObj.sheetName,
             row: staffObj.row,
@@ -1438,28 +1431,34 @@
         document.getElementById('staff-trigger').classList.remove('open');
     }
 
+    // 🟢 UPDATED: ฟังก์ชัน Render List (แปลงชื่อก่อนแสดง)
     function renderStaffList(staffData) {
         const optionsContainer = document.getElementById('staff-options');
         optionsContainer.innerHTML = '';
         
-        // 🟢 ตรวจสอบว่า staffData เป็นแบบใหม่ (มี row/col) หรือแบบเก่า (Array String)
         let isNewSystem = (staffData.length > 0 && staffData[0].row !== undefined);
 
         if (isNewSystem) {
-             // Logic ใหม่: เลือกคนแรกอัตโนมัติ และ Bind click ไปที่ selectStaffNew
+             // Auto-select คนแรก
              if(staffData.length > 0) {
                  selectStaffNew(staffData[0]); 
              }
+             
              staffData.forEach(s => {
-                let img = STAFF_IMAGES[s.name] || DEFAULT_IMG;
+                let originalName = s.name;
+                let displayName = STAFF_NAME_MAP[originalName] || originalName; // แปลงชื่อ
+                let img = STAFF_IMAGES[originalName] || DEFAULT_IMG; // รูปใช้ชื่อเดิมเป็น Key
+
                 let div = document.createElement('div');
                 div.className = 'select-item';
-                div.innerHTML = `<img src="${img}" class="item-img"><div class="item-text">${s.name}</div>`;
-                div.onclick = function() { selectStaffNew(s); };
+                div.innerHTML = `<img src="${img}" class="item-img"><div class="item-text">${displayName}</div>`;
+                
+                // ส่งทั้ง Object เดิมและชื่อใหม่ไป
+                div.onclick = function() { selectStaffNew(s, displayName); };
                 optionsContainer.appendChild(div);
              });
         } else {
-             // Logic เดิม (Legacy)
+             // Legacy Logic (เหมือนเดิม)
              let html = `<div class="select-item" onclick="selectStaff('${t('unspecified')}', '${DEFAULT_IMG}', false)">
                             <img src="${DEFAULT_IMG}" class="item-img" onerror="this.src='${DEFAULT_IMG}'">
                             <div class="item-text">${t('unspecified_any')}</div>
@@ -1467,26 +1466,30 @@
              
              if (staffData && staffData.length > 0) {
                 staffData.forEach(sheetName => {
-                    let displayName;
-                    if (currentLang === 'en' && STAFF_NAME_MAP_EN[sheetName]) {
-                        displayName = STAFF_NAME_MAP_EN[sheetName];
-                    } else {
-                        displayName = STAFF_NAME_MAP[sheetName] || sheetName;
-                    }
-                    
+                    let displayName = STAFF_NAME_MAP[sheetName] || sheetName;
                     let img = STAFF_IMAGES[sheetName] || DEFAULT_IMG;
-                    let is2HrAvailable = nextSlotStaffList.includes(sheetName);
                     
-                    html += `<div class="select-item" onclick="selectStaff('${displayName}', '${img}', ${is2HrAvailable})">
+                    html += `<div class="select-item" onclick="selectStaff('${displayName}', '${img}', false)">
                                 <img src="${img}" class="item-img" onerror="this.src='${DEFAULT_IMG}'">
                                 <div class="item-text" style="flex:1;">${displayName}</div>
-                                ${is2HrAvailable ? `<div class="badge-2hr"><i class="fas fa-check-circle"></i> ${t('avail')} 2h</div>` : ''}
                             </div>`;
                 });
              }
              optionsContainer.innerHTML = html;
              selectStaff(t('unspecified'), DEFAULT_IMG, false);
         }
+    }
+    
+    // Helper เก่าสำหรับ Legacy (ยังต้องมีอยู่)
+    function selectStaff(name, img, can2Hr) {
+        document.getElementById('staff-display-name').innerText = name;
+        document.getElementById('staff-display-img').src = img;
+        document.getElementById('inp-staff-val').value = name;
+        document.getElementById('staff-trigger').classList.remove('open');
+        let box = document.getElementById('box-option-2hr');
+        let chk = document.getElementById('inp-2hr');
+        if (can2Hr && currentApp === 'ttm') { box.style.display = 'block'; } 
+        else { box.style.display = 'none'; chk.checked = false; }
     }
 
     function loadUserData() {
