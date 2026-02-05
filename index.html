@@ -1102,7 +1102,9 @@
     function openBooking(time, dateFull, dayIndex, staffDataEncoded, availableCount, slotGender) {
       try {
           let staffObjects = (typeof staffDataEncoded === 'string') ? JSON.parse(staffDataEncoded.replace(/&quot;/g, '"')) : staffDataEncoded;
+          // Store time in bookingData correctly here
           bookingData = { dept: (currentLang === 'en' ? APP_CONFIG[currentApp].titleEn : APP_CONFIG[currentApp].title), date: dateFull, time: time, is2Hr: false, appType: currentApp };
+          
           currentSlotCapacity = availableCount || 0;
           document.getElementById('inp-name').value = ''; document.getElementById('inp-tel').value = ''; document.getElementById('inp-note').value = '';
           document.getElementById('inp-2hr').checked = false; document.getElementById('box-option-2hr').style.display = 'none'; document.getElementById('price-tag').style.display = 'none';
@@ -1222,8 +1224,22 @@
     }
 
     function confirmBooking() { 
-        let payload = { appType: currentApp, name: bookingData.name, tel: bookingData.tel, service: bookingData.service, note: bookingData.note, is2Hr: bookingData.is2Hr };
-        if ((currentApp === 'ttm' || currentApp === 'tcm') && selectedSlotData) { payload.sheetName = selectedSlotData.sheetName; payload.row = selectedSlotData.row; payload.col = selectedSlotData.col; }
+        // 🟢 แก้ไข: เพิ่ม time ลงใน payload
+        let payload = { 
+            appType: currentApp, 
+            name: bookingData.name, 
+            tel: bookingData.tel, 
+            service: bookingData.service, 
+            note: bookingData.note, 
+            is2Hr: bookingData.is2Hr,
+            time: bookingData.time // <--- ต้องมีค่านี้ Backend ถึงจะทำงานได้
+        };
+
+        if ((currentApp === 'ttm' || currentApp === 'tcm') && selectedSlotData) { 
+            payload.sheetName = selectedSlotData.sheetName; 
+            payload.row = selectedSlotData.row; 
+            payload.col = selectedSlotData.col; 
+        }
         
         const overlay = document.getElementById('loadingOverlay');
         overlay.classList.remove('success'); overlay.classList.add('active');
