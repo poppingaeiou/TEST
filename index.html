@@ -1763,7 +1763,7 @@
 
     function backToForm() { switchStep('step-form'); }
     
-    // 🟢 UPDATED: Confirm Booking with Loading Overlay
+    // 🟢 UPDATED: Confirm Booking with Loading Overlay + Error Handling
     function confirmBooking() { 
         let payload = {
             appType: currentApp,
@@ -1791,10 +1791,16 @@
             // Hide Loading Overlay
             document.getElementById('loadingOverlay').classList.remove('active');
             
-            if(data.status === 'success') {
+            if (data.status === 'success') {
                 saveUserData(bookingData.name, bookingData.tel); 
                 switchStep('step-warning');
-            } else {
+            } 
+            else if (data.status === 'error_occupied') {
+                alert(data.message); 
+                closeModal();
+                fetchData(false); // Refresh data
+            }
+            else {
                 alert('เกิดข้อผิดพลาด: ' + data.message); 
             }
         })
