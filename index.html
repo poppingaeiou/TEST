@@ -33,7 +33,7 @@
     .hidden { display: none !important; }
     .fade-in { animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
-    /* --- 1. Full Page Loader (Smart Text) --- */
+    /* --- 1. Full Page Loader (ตอนเปิดตาราง) --- */
     .page-loader {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background: #ffffff;
@@ -43,7 +43,7 @@
     }
     .page-loader.hidden { opacity: 0; pointer-events: none; }
 
-    .loader-circle { width: 100px; height: 100px; position: relative; margin-bottom: 20px; }
+    .loader-circle { width: 100px; height: 100px; position: relative; }
     .loader-svg { transform: rotate(-90deg); width: 100px; height: 100px; }
     .circle-bg { fill: none; stroke: #e2e8f0; stroke-width: 8; }
     .circle-progress {
@@ -57,17 +57,10 @@
         position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
         font-size: 1.2rem; font-weight: bold; color: var(--primary);
     }
-    
-    /* ข้อความวิ่ง */
-    .loader-label { 
-        font-size: 1.1rem; color: #334155; font-weight: 600; 
-        min-height: 24px; text-align: center; padding: 0 20px;
-        animation: fadeText 0.5s; 
-    }
-    .loader-sub { font-size: 0.85rem; color: #94a3b8; margin-top: 8px; }
-    @keyframes fadeText { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    .loader-label { margin-top: 20px; font-size: 1rem; color: #64748b; font-weight: 500; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
 
-    /* --- 2. Booking Overlay --- */
+    /* --- 2. Booking Overlay (ตอนกดจอง) --- */
     .loading-overlay {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background: rgba(255, 255, 255, 0.95);
@@ -85,7 +78,7 @@
     .loading-overlay.success .progress-ring { display: none; }
     .loading-overlay.success .check-icon { display: block; }
 
-    /* --- Standard UI --- */
+    /* --- UI Components --- */
     .lang-btn { position: fixed; top: 15px; right: 15px; z-index: 9998; background: rgba(255, 255, 255, 0.9); border: 2px solid var(--primary); color: var(--primary); padding: 5px 12px; border-radius: 20px; font-weight: bold; font-family: 'Prompt', sans-serif; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: all 0.2s; display: flex; align-items: center; gap: 5px; }
     .lang-btn:hover { background: var(--primary); color: white; }
 
@@ -303,8 +296,7 @@
           </svg>
           <div class="loader-text" id="loaderPercent">0%</div>
       </div>
-      <div class="loader-label" id="loaderText">กำลังโหลดข้อมูล...</div>
-      <div class="loader-sub">กรุณารอสักครู่</div>
+      <div class="loader-label">กำลังโหลดข้อมูล...</div>
   </div>
 
   <div id="loadingOverlay" class="loading-overlay">
@@ -588,9 +580,7 @@
   </div>
 
   <script>
-    // **********************************************************
-    // Language Configuration
-    // **********************************************************
+    // --- LANGUAGE CONFIG ---
     let currentLang = 'th';
     const translations = {
         th: {
@@ -685,7 +675,7 @@
     }
 
     // --- CONFIG ---
-    // ⚠️ อย่าลืมอัปเดตลิงก์ API ⚠️
+    // ⚠️ อย่าลืมอัปเดตลิงก์ API หลังจาก Deploy New Version นะครับ ⚠️
     const API_ENDPOINT = "https://script.google.com/macros/s/AKfycbxMVqlYGeuj75wQm41kZCD4wf2weZajj27b0omuC6HlHzWja4sJYz6HF6m5b5nlmSUMtw/exec";
     
     const LINE_OA_ID = "@649dqeft";
@@ -753,41 +743,20 @@
 
     // --- Loading Logic ---
     let loadInterval;
-    const loadMessages = ["กำลังโหลดข้อมูล...", "เชื่อมต่อฐานข้อมูล...", "การโหลดครั้งแรกอาจช้า...", "กำลังเตรียมตารางนัด..."];
-    
     function startPageLoading() {
         const loader = document.getElementById('pageLoader');
         const circle = document.querySelector('.circle-progress');
         const text = document.getElementById('loaderPercent');
-        const label = document.getElementById('loaderText');
-        
         loader.classList.remove('hidden');
         let progress = 0;
         const circumference = 283;
-        
-        // Reset Text
-        label.innerText = loadMessages[0];
-        
         clearInterval(loadInterval);
-        let msgIndex = 0;
-        
         loadInterval = setInterval(() => {
-            // Simulated Progress
-            if (progress < 30) progress += Math.random() * 5; 
-            else if (progress < 70) progress += Math.random() * 2; 
-            else if (progress < 95) progress += 0.5;
-            
+            if (progress < 50) progress += Math.random() * 5; else if (progress < 80) progress += Math.random() * 2; else if (progress < 95) progress += 0.5;
             if (progress > 95) progress = 95;
-
             const offset = circumference - (progress / 100) * circumference;
             circle.style.strokeDashoffset = offset;
             text.innerText = Math.floor(progress) + '%';
-            
-            // Cycle Messages
-            if (Math.floor(progress) % 25 === 0 && progress < 90) {
-                msgIndex = (msgIndex + 1) % loadMessages.length;
-                label.innerText = loadMessages[msgIndex];
-            }
         }, 100);
     }
 
@@ -796,12 +765,7 @@
         const circle = document.querySelector('.circle-progress');
         const text = document.getElementById('loaderPercent');
         const loader = document.getElementById('pageLoader');
-        const label = document.getElementById('loaderText');
-        
-        circle.style.strokeDashoffset = 0; 
-        text.innerText = '100%';
-        label.innerText = "เสร็จสิ้น!";
-        
+        circle.style.strokeDashoffset = 0; text.innerText = '100%';
         setTimeout(() => { loader.classList.add('hidden'); }, 500);
     }
 
@@ -1166,7 +1130,7 @@
       let name = document.getElementById('inp-name').value.trim(); let tel = document.getElementById('inp-tel').value.trim();
       if(!name || !tel) { alert((currentLang === 'en') ? 'Please enter Name and Phone' : 'กรุณากรอกชื่อและเบอร์โทรศัพท์'); return; }
       bookingData.name = name; bookingData.tel = tel; 
-      // แก้ไข: ส่งค่าว่างถ้าไม่มี note
+      // แก้ไข: ส่งค่าว่างถ้าไม่มี note (ป้องกันการเขียนทับ)
       bookingData.note = document.getElementById('inp-note').value.trim() || ""; 
       bookingData.extraInfo = "";
 
@@ -1215,8 +1179,6 @@
         const circle = document.querySelector('.progress-ring__circle');
         const text = document.querySelector('.progress-text');
         const overlay = document.getElementById('loadingOverlay');
-        const radius = circle.r.baseVal.value;
-        const circumference = radius * 2 * Math.PI;
         circle.style.strokeDashoffset = 0; text.innerText = '100%';
         setTimeout(() => { overlay.classList.add('success'); setTimeout(callback, 800); }, 300);
     }
