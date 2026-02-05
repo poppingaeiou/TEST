@@ -33,27 +33,33 @@
     .hidden { display: none !important; }
     .fade-in { animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
-    /* --- Loading Overlay --- */
+    /* --- Loading Overlay (Circular Percent) --- */
     .loading-overlay {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.95);
         z-index: 9999;
         display: flex; flex-direction: column; align-items: center; justify-content: center;
         opacity: 0; visibility: hidden; transition: all 0.3s;
-        backdrop-filter: blur(5px);
+        backdrop-filter: blur(8px);
     }
     .loading-overlay.active { opacity: 1; visibility: visible; }
-    
-    .loading-spinner {
-        width: 60px; height: 60px;
-        border: 6px solid #e2e8f0;
-        border-top: 6px solid var(--primary);
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-bottom: 20px;
+
+    .progress-ring { position: relative; width: 120px; height: 120px; }
+    .progress-ring__circle {
+        transition: stroke-dashoffset 0.35s;
+        transform: rotate(-90deg);
+        transform-origin: 50% 50%;
     }
-    .loading-text { font-size: 1.2rem; font-weight: 700; color: #334155; }
-    .loading-sub { font-size: 0.9rem; color: #64748b; margin-top: 5px; }
+    .progress-text {
+        position: absolute; top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 1.5rem; font-weight: 700; color: var(--primary);
+    }
+    .loading-status-text { margin-top: 20px; font-size: 1.1rem; color: #334155; font-weight: 600; }
+    
+    .check-icon { font-size: 3rem; color: #2e7d32; display: none; animation: popIn 0.3s; }
+    .loading-overlay.success .progress-ring { display: none; }
+    .loading-overlay.success .check-icon { display: block; }
 
     /* --- Language Button --- */
     .lang-btn { position: fixed; top: 15px; right: 15px; z-index: 9998; background: rgba(255, 255, 255, 0.9); border: 2px solid var(--primary); color: var(--primary); padding: 5px 12px; border-radius: 20px; font-weight: bold; font-family: 'Prompt', sans-serif; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: all 0.2s; display: flex; align-items: center; gap: 5px; }
@@ -76,6 +82,7 @@
         60% { transform: scale(1.1); }
         100% { transform: scale(1); opacity: 1; }
     }
+    @keyframes popIn { 0% { transform: scale(0); opacity:0; } 80% { transform: scale(1.1); } 100% { transform: scale(1); opacity:1; } }
 
     /* --- iOS Install Instructions Modal --- */
     .ios-prompt-bg { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 9998; display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(4px); }
@@ -293,9 +300,15 @@
   </button>
 
   <div id="loadingOverlay" class="loading-overlay">
-      <div class="loading-spinner"></div>
-      <div class="loading-text">กำลังบันทึกข้อมูล...</div>
-      <div class="loading-sub">กรุณารอสักครู่ ห้ามปิดหน้านี้</div>
+      <div class="progress-ring">
+          <svg width="120" height="120">
+             <circle stroke="#e2e8f0" stroke-width="8" fill="transparent" r="52" cx="60" cy="60" />
+             <circle class="progress-ring__circle" stroke="#2e7d32" stroke-width="8" fill="transparent" r="52" cx="60" cy="60" stroke-dasharray="326.72" stroke-dashoffset="326.72" />
+          </svg>
+          <div class="progress-text">0%</div>
+      </div>
+      <div class="check-icon"><i class="fas fa-check-circle"></i></div>
+      <div class="loading-status-text">กำลังบันทึกข้อมูล...</div>
   </div>
 
   <div id="ios-install-prompt" class="ios-prompt-bg" onclick="closeIosPrompt(event)">
@@ -1763,7 +1776,7 @@
 
     function backToForm() { switchStep('step-form'); }
     
-    // 🟢 UPDATED: Confirm Booking with Loading Overlay + Error Handling
+    // 🟢 UPDATED: Confirm Booking with Fake Progress + Error Handling
     function confirmBooking() { 
         let payload = {
             appType: currentApp,
@@ -1779,8 +1792,13 @@
             payload.col = selectedSlotData.col;
         }
 
-        // Show Loading Overlay
-        document.getElementById('loadingOverlay').classList.add('active');
+        // Show Loading
+        const overlay = document.getElementById('loadingOverlay');
+        overlay.classList.remove('success');
+        overlay.classList.add('active');
+        
+        // Start Simulated Progress
+        simulateProgress();
 
         fetch(API_ENDPOINT, {
             method: 'POST',
@@ -1788,26 +1806,73 @@
         })
         .then(res => res.json())
         .then(data => {
-            // Hide Loading Overlay
-            document.getElementById('loadingOverlay').classList.remove('active');
-            
             if (data.status === 'success') {
-                saveUserData(bookingData.name, bookingData.tel); 
-                switchStep('step-warning');
+                // Success Animation
+                completeProgress(() => {
+                    saveUserData(bookingData.name, bookingData.tel); 
+                    switchStep('step-warning');
+                    overlay.classList.remove('active');
+                });
             } 
             else if (data.status === 'error_occupied') {
+                overlay.classList.remove('active');
                 alert(data.message); 
                 closeModal();
-                fetchData(false); // Refresh data
+                fetchData(false); 
             }
             else {
+                overlay.classList.remove('active');
                 alert('เกิดข้อผิดพลาด: ' + data.message); 
             }
         })
         .catch(err => {
-            document.getElementById('loadingOverlay').classList.remove('active');
+            overlay.classList.remove('active');
             alert('Connection Error: ' + err.message);
         });
+    }
+
+    // --- Fake Progress Logic ---
+    let progressInterval;
+    
+    function simulateProgress() {
+        const circle = document.querySelector('.progress-ring__circle');
+        const text = document.querySelector('.progress-text');
+        const radius = circle.r.baseVal.value;
+        const circumference = radius * 2 * Math.PI;
+        
+        circle.style.strokeDasharray = `${circumference} ${circumference}`;
+        circle.style.strokeDashoffset = circumference;
+        
+        let progress = 0;
+        clearInterval(progressInterval);
+        
+        progressInterval = setInterval(() => {
+            // Random increment between 1-5%
+            progress += Math.random() * 5;
+            if (progress > 90) progress = 90; // Cap at 90% until done
+            
+            const offset = circumference - (progress / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
+            text.innerText = Math.floor(progress) + '%';
+        }, 100);
+    }
+
+    function completeProgress(callback) {
+        clearInterval(progressInterval);
+        const circle = document.querySelector('.progress-ring__circle');
+        const text = document.querySelector('.progress-text');
+        const overlay = document.getElementById('loadingOverlay');
+        const radius = circle.r.baseVal.value;
+        const circumference = radius * 2 * Math.PI;
+
+        // Jump to 100%
+        circle.style.strokeDashoffset = 0;
+        text.innerText = '100%';
+        
+        setTimeout(() => {
+            overlay.classList.add('success'); // Show Checkmark
+            setTimeout(callback, 800); // Wait a bit then finish
+        }, 300);
     }
 
     function sendToLine() {
